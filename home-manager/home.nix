@@ -5,13 +5,15 @@
   # You can import other home-manager modules here
   imports = [
     # If you want to use modules your own flake exports (from modules/home-manager):
-    # outputs.homeManagerModules.example
+    # outputs.homeManagerModules.default
 
     # Or modules exported from other flakes (such as nix-colors):
-    # inputs.nix-colors.homeManagerModules.default
+    inputs.nix-colors.homeManagerModules.default
+    inputs.hyprland.homeManagerModules.default
 
     # You can also split up your configuration and import pieces of it here:
     # ./nvim.nix
+    ./features/tmux/default.nix
   ];
 
   nixpkgs = {
@@ -47,9 +49,37 @@
     homeDirectory = "/home/unreal";
   };
 
+  programs.alacritty.enable = true;
   # Add stuff for your user as you see fit:
+  wayland.windowManager.hyprland = {
+    enable = true;
+    enableNvidiaPatches = false;
+    extraConfig = ''
+    $mod = SUPER
+
+    bind = $mod,t,exec,alacritty
+    bind = $mod,return,exec,alacritty
+    bind = $mod,d,exec,firefox
+    # workspaces
+    # binds $mod + [shift +] {1..9} to [move to] workspace {1..9}
+    ${builtins.concatStringsSep "\n" (builtins.genList (
+        x: let
+          ws = builtins.toString (x + 1);
+        in ''
+          bind = $mod, ${ws}, workspace, ${ws}
+          bind = $mod SHIFT, ${ws}, movetoworkspace, ${ws}
+        ''
+      )
+      9)}
+    '';
+  };
+
   programs.neovim.enable = true;
-  # home.packages = with pkgs; [ steam ];
+  programs.firefox = {
+    enable = true;
+    package = pkgs.firefox-wayland;
+  };
+  home.packages = with pkgs; [ steam ];
 
   # Enable home-manager and git
   programs.home-manager.enable = true;

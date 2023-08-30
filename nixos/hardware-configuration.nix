@@ -1,9 +1,14 @@
-{ config, lib, ... }:
+{ config, lib, pkgs, ... }:
 
 {
+  boot.kernelPackages = pkgs.linuxPackages_latest;
   boot.initrd.availableKernelModules = [ "xhci_pci" "ahci" "usbhid" "sd_mod" ];
-  boot.initrd.kernelModules = [ ];
+  boot.initrd.kernelModules = [ "amdgpu" ];
   boot.kernelModules = [ "kvm-amd" ];
+  boot.kernelParams = [
+    "video=DP-1:3840x2160@60"
+    "video=DP-2:3840x2160@60"
+  ];
   boot.extraModulePackages = [ ];
 
   fileSystems."/" =
@@ -26,4 +31,6 @@
   networking.useDHCP = lib.mkDefault true;
   powerManagement.cpuFreqGovernor = lib.mkDefault "ondemand";
   hardware.cpu.amd.updateMicrocode = lib.mkDefault config.hardware.enableRedistributableFirmware;
+  hardware.opengl.driSupport = true;
+  hardware.enableRedistributableFirmware = true;
 }
