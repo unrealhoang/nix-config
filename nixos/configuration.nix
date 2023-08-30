@@ -91,6 +91,7 @@
     git
     neovim
     zsh
+    helvum
   ];
 
   # This setups a SSH server. Very important if you're setting up a headless system.
@@ -102,7 +103,17 @@
       PermitRootLogin = "no";
     };
   };
-  services.pipewire.enable = true;
+
+  # rtkit is optional but recommended
+  security.rtkit.enable = true;
+  services.pipewire = {
+    enable = true;
+    alsa.enable = true;
+    alsa.support32Bit = true;
+    pulse.enable = true;
+  };
+  services.blueman.enable = true;
+  hardware.bluetooth.enable = true;
 
   programs.hyprland = {
     enable = true;

@@ -9,11 +9,13 @@
 
     # Or modules exported from other flakes (such as nix-colors):
     inputs.nix-colors.homeManagerModules.default
-    inputs.hyprland.homeManagerModules.default
+    inputs.impermanence.nixosModules.home-manager.impermanence
+    # inputs.hyprland.homeManagerModules.default
 
     # You can also split up your configuration and import pieces of it here:
     # ./nvim.nix
-    ./features/tmux/default.nix
+    ./features/tmux
+    ./features/hyprland
   ];
 
   nixpkgs = {
@@ -49,37 +51,63 @@
     homeDirectory = "/home/unreal";
   };
 
+  home.persistence."/mnt/data/Shared" = {
+    directories = [
+      ".mozilla"
+      "dotfiles"
+    ];
+    allowOther = false;
+  };
+  home.persistence."/mnt/data" = {
+    directories = [
+      "Resources"
+      "Workspace"
+      "Downloads"
+    ];
+    allowOther = false;
+  };
+
+  gtk = {
+    enable = true;
+    theme = {
+      name = "Juno";
+      package = pkgs.juno-theme;
+    };
+    iconTheme = {
+      name = "Papirus-Dark";
+      package = pkgs.papirus-icon-theme;
+    };
+    cursorTheme = {
+      name = "Bibata-Modern-Amber";
+      package = pkgs.bibata-cursors;
+    };
+  };
+  i18n.inputMethod = {
+    enabled = "fcitx5";
+    fcitx5.addons = with pkgs; [
+      fcitx5-unikey
+    ];
+  };
+  home.sessionVariables = {
+    GTK_IM_MODULE = "fcitx";
+    QT_IM_MODULE = "fcitx";
+    XMODIFIERS = "@im=fcitx";
+  };
+  fonts.fontconfig.enable = true;
+
   programs.alacritty.enable = true;
   # Add stuff for your user as you see fit:
-  wayland.windowManager.hyprland = {
-    enable = true;
-    enableNvidiaPatches = false;
-    extraConfig = ''
-    $mod = SUPER
-
-    bind = $mod,t,exec,alacritty
-    bind = $mod,return,exec,alacritty
-    bind = $mod,d,exec,firefox
-    # workspaces
-    # binds $mod + [shift +] {1..9} to [move to] workspace {1..9}
-    ${builtins.concatStringsSep "\n" (builtins.genList (
-        x: let
-          ws = builtins.toString (x + 1);
-        in ''
-          bind = $mod, ${ws}, workspace, ${ws}
-          bind = $mod SHIFT, ${ws}, movetoworkspace, ${ws}
-        ''
-      )
-      9)}
-    '';
-  };
+  colorscheme = inputs.nix-colors.colorSchemes.dracula;
 
   programs.neovim.enable = true;
   programs.firefox = {
     enable = true;
     package = pkgs.firefox-wayland;
   };
-  home.packages = with pkgs; [ steam ];
+  home.packages = with pkgs; [ 
+    steam telegram-desktop slack
+    (nerdfonts.override { fonts = [ "FiraCode" "DroidSansMono" "JetBrainsMono" ]; })
+  ];
 
   # Enable home-manager and git
   programs.home-manager.enable = true;
