@@ -1,7 +1,11 @@
 [user]
   name = Unreal Hoang
   email = unrealhoang@gmail.com
-  signingkey = F66217BDC6F37CFA
+  signingkey = ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIDmRDJOAiOymGN+VSuyCpKHbVbBQF5/2Q6E2XdjIiIdm
+[gpg]
+  format = ssh
+[gpg "ssh"]
+  program = "op-ssh-sign"
 [core]
   autocrlf = input
   editor = nvim

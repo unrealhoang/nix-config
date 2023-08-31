@@ -11,7 +11,7 @@ let
 in
 {
   home.packages = with pkgs; [
-    wofi swaybg wlsunset wl-clipboard 
+    wofi swaybg wlsunset wl-clipboard
     xdg-desktop-portal-hyprland xdg-desktop-portal-gtk
   ];
   home.file.".config/wofi.css".source = ./wofi.css;
@@ -52,7 +52,7 @@ in
 	# apps
 	"SUPER,return,exec,alacritty"
 	"SUPERSHIFT,return,exec,firefox"
-      ] ++ 
+      ] ++
       (map (n:
         "SUPER,${n},workspace,name:${n}"
       ) workspaces) ++

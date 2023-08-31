@@ -125,6 +125,7 @@
   services.blueman.enable = true;
   hardware.bluetooth.enable = true;
 
+  programs.fuse.userAllowOther = true;
   programs.zsh.enable = true;
   programs.hyprland = {
     enable = true;
