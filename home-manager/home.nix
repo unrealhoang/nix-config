@@ -67,7 +67,7 @@
       "Workspace"
       "Downloads"
     ];
-    allowOther = false;
+    allowOther = true;
   };
 
   gtk = {

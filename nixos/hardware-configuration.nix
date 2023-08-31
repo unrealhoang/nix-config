@@ -29,11 +29,13 @@
   fileSystems."/mnt/data" =
     { device = "/dev/disk/by-uuid/0d518695-1f02-4ac8-81bc-43a33e6f9505";
       fsType = "ext4";
+      neededForBoot = true;
     };
 
   fileSystems."/mnt/data2" =
     { device = "/dev/disk/by-uuid/58117334-6c91-4525-95e3-3c87007e385e";
       fsType = "ext4";
+      neededForBoot = true;
     };
 
   swapDevices =
