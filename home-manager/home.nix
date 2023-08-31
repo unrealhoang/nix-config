@@ -19,6 +19,7 @@
     ./features/neovim
     ./features/slack
     ./features/tmux
+    ./features/zsh
   ];
 
   nixpkgs = {
