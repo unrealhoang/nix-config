@@ -13,6 +13,7 @@ in
   home.packages = with pkgs; [
     wofi swaybg wlsunset wl-clipboard
     xdg-desktop-portal-hyprland xdg-desktop-portal-gtk
+    polkit-kde-agent
   ];
   home.file.".config/wofi.css".source = ./wofi.css;
 
@@ -21,6 +22,9 @@ in
 
     enableNvidiaPatches = false;
     settings = {
+      exec-once = [
+        "${pkgs.polkit-kde-agent}/libexec/polkit-kde-authentication-agent-1"
+      ];
       monitor = [
         "DP-1,3840x2160@60,0x0,2"
         "DP-2,3840x2160@60,1920x0,2"
@@ -49,9 +53,9 @@ in
         "SUPER,apostrophe,changegroupactive,f"
         "SUPERSHIFT,apostrophe,changegroupactive,b"
 
-	# apps
-	"SUPER,return,exec,alacritty"
-	"SUPERSHIFT,return,exec,firefox"
+        # apps
+        "SUPER,return,exec,alacritty"
+        "SUPERSHIFT,return,exec,firefox"
       ] ++
       (map (n:
         "SUPER,${n},workspace,name:${n}"

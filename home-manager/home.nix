@@ -14,6 +14,7 @@
 
     # You can also split up your configuration and import pieces of it here:
     # ./nvim.nix
+    ./features/1password
     ./features/alacritty
     ./features/git
     ./features/hyprland

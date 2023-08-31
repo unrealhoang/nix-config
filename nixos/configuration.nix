@@ -115,6 +115,7 @@
   };
 
   # rtkit is optional but recommended
+  security.polkit.enable = true;
   security.rtkit.enable = true;
   services.pipewire = {
     enable = true;
@@ -130,11 +131,6 @@
   programs.hyprland = {
     enable = true;
     package = inputs.hyprland.packages.${pkgs.system}.hyprland;
-  };
-  programs._1password.enable = true;
-  programs._1password-gui = {
-    enable = true;
-    polkitPolicyOwners = [ "unreal" ];
   };
   programs.sway.enable = true;
 
