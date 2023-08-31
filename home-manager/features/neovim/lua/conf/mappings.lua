@@ -52,9 +52,6 @@ local function setup_mappings()
     ['<leader>g'] = "Git",
     ['<leader>t'] = "Treesitter",
   }
-  for keybind, desc in pairs(folders) do
-    require 'key-menu'.set('n', keybind, { desc = desc })
-  end
   local mappings = {
     n = {
       -- common navigation
@@ -122,7 +119,7 @@ local function setup_mappings()
       ['<cr>'] = { 'za', 'fold toggle current' },
 
       -- treesitter related
-      ['<leader>t.'] = { require'ts-node-action'.node_action, 'node action' },
+      -- ['<leader>t.'] = { require'ts-node-action'.node_action, 'node action' },
     },
     v = {
       ['<leader>.'] = { '<esc><cmd>lua vim.lsp.buf.range_code_action()<CR>', 'code range actions' },

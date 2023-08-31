@@ -7,6 +7,7 @@
     # If you want to use modules your own flake exports (from modules/nixos):
     # outputs.nixosModules.example
 
+    inputs.impermanence.nixosModules.impermanence
     # Or modules from other flakes (such as nixos-hardware):
     # inputs.hardware.nixosModules.common-cpu-amd
     # inputs.hardware.nixosModules.common-ssd
@@ -75,6 +76,16 @@
     };
   };
 
+  virtualisation.docker.enable = true;
+  environment.persistence."/mnt/data2/persist" = {
+    directories = [
+      "/var/lib/docker"
+      "/var/lib/bluetooth"
+      "/var/lib/systemd/coredump"
+      "/etc/NetworkManager/system-connections"
+    ];
+  };
+
   # TODO: Configure your system-wide user settings (groups, etc), add more users as needed.
   users.users = {
     unreal = {
@@ -84,7 +95,7 @@
         # TODO: Add your SSH public key(s) here, if you plan on using SSH to connect
       ];
       # TODO: Be sure to add any other groups you need (such as networkmanager, audio, docker, etc)
-      extraGroups = [ "wheel" ];
+      extraGroups = [ "wheel" "docker" ];
     };
   };
   environment.systemPackages = with pkgs; [
@@ -94,8 +105,6 @@
     helvum
   ];
 
-  # This setups a SSH server. Very important if you're setting up a headless system.
-  # Feel free to remove if you don't need it.
   services.openssh = {
     enable = true;
     # Forbid root login through SSH.

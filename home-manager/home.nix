@@ -14,6 +14,7 @@
 
     # You can also split up your configuration and import pieces of it here:
     # ./nvim.nix
+    ./features/alacritty
     ./features/hyprland
     ./features/neovim
     ./features/slack
@@ -98,7 +99,6 @@
   };
   fonts.fontconfig.enable = true;
 
-  programs.alacritty.enable = true;
   # Add stuff for your user as you see fit:
   colorscheme = inputs.nix-colors.colorSchemes.dracula;
 
@@ -106,9 +106,10 @@
     enable = true;
     package = pkgs.firefox-wayland;
   };
-  home.packages = with pkgs; [ 
+  home.packages = with pkgs; [
     steam telegram-desktop
     (nerdfonts.override { fonts = [ "FiraCode" "DroidSansMono" "JetBrainsMono" ]; })
+    gnumake
   ];
 
   # Enable home-manager and git

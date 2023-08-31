@@ -119,8 +119,6 @@ local function setup_treesitter()
       branch = "main"
     },
   }
-
-  require 'ts-node-action'.setup {}
 end
 
 local function setup_global_helpers()
@@ -215,20 +213,6 @@ local function bootstrap()
   require 'lspkind'.init()
   require 'trouble'.setup {}
   require 'bufferline'.setup {}
-
-  require 'neogit'.setup {}
-  require 'rest-nvim'.setup {
-    highlight = {
-      enabled = true,
-      timeout = 200,
-    },
-    result = {
-      -- toggle showing URL, HTTP info, headers at top the of result window
-      show_url = true,
-      show_http_info = true,
-      show_headers = true,
-    },
-  }
 
   require 'catppuccin'.setup {}
   require 'fidget'.setup {}
