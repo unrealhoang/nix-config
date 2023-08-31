@@ -15,6 +15,7 @@
     # You can also split up your configuration and import pieces of it here:
     # ./nvim.nix
     ./features/tmux
+    ./features/slack
     ./features/hyprland
   ];
 
@@ -92,6 +93,7 @@
     GTK_IM_MODULE = "fcitx";
     QT_IM_MODULE = "fcitx";
     XMODIFIERS = "@im=fcitx";
+    NIXOS_OZONE_WL = "1";
   };
   fonts.fontconfig.enable = true;
 
@@ -105,7 +107,7 @@
     package = pkgs.firefox-wayland;
   };
   home.packages = with pkgs; [ 
-    steam telegram-desktop slack
+    steam telegram-desktop
     (nerdfonts.override { fonts = [ "FiraCode" "DroidSansMono" "JetBrainsMono" ]; })
   ];
 
