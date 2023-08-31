@@ -96,6 +96,7 @@
       ];
       # TODO: Be sure to add any other groups you need (such as networkmanager, audio, docker, etc)
       extraGroups = [ "wheel" "docker" ];
+      shell = pkgs.zsh;
     };
   };
   environment.systemPackages = with pkgs; [
@@ -124,9 +125,15 @@
   services.blueman.enable = true;
   hardware.bluetooth.enable = true;
 
+  programs.zsh.enable = true;
   programs.hyprland = {
     enable = true;
     package = inputs.hyprland.packages.${pkgs.system}.hyprland;
+  };
+  programs._1password.enable = true;
+  programs._1password-gui = {
+    enable = true;
+    polkitPolicyOwners = [ "unreal" ];
   };
   programs.sway.enable = true;
 

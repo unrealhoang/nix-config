@@ -15,6 +15,7 @@
     # You can also split up your configuration and import pieces of it here:
     # ./nvim.nix
     ./features/alacritty
+    ./features/git
     ./features/hyprland
     ./features/neovim
     ./features/slack
@@ -109,6 +110,14 @@
   };
   home.packages = with pkgs; [
     steam telegram-desktop
+    noto-fonts
+    noto-fonts-cjk
+    noto-fonts-emoji
+    liberation_ttf
+    fira-code
+    fira-code-symbols
+    mplus-outline-fonts.githubRelease
+    proggyfonts
     (nerdfonts.override { fonts = [ "FiraCode" "DroidSansMono" "JetBrainsMono" ]; })
     gnumake
   ];

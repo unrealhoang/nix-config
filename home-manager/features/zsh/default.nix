@@ -4,12 +4,14 @@
     oh-my-zsh = {
       enable = true;
       plugins = [
-        git sudo fasd zsh-completions zsh-syntax-highlighting
+        "git"
+        "sudo"
+        "fasd"
       ];
     };
     syntaxHighlighting.enable = true;
     history = {
       size = 1000000;
     };
-  }
+  };
 }
