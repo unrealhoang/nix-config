@@ -13,9 +13,10 @@ in
   home.packages = with pkgs; [
     wofi swaybg wlsunset wl-clipboard
     xdg-desktop-portal-hyprland xdg-desktop-portal-gtk
-    polkit-kde-agent
+    polkit-kde-agent waybar
   ];
   home.file.".config/wofi.css".source = ./wofi.css;
+  home.file.".config/waybar".source = ./waybar;
 
   wayland.windowManager.hyprland = {
     enable = true;

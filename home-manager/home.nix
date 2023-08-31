@@ -14,7 +14,6 @@
 
     # You can also split up your configuration and import pieces of it here:
     # ./nvim.nix
-    ./features/1password
     ./features/alacritty
     ./features/git
     ./features/hyprland
@@ -71,6 +70,14 @@
       "Downloads"
     ];
     allowOther = true;
+  };
+  services.gnome-keyring = {
+    enable = true;
+    components = [
+      "pkcs11"
+      "secrets"
+      "ssh"
+    ];
   };
 
   gtk = {

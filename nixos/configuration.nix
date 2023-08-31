@@ -132,6 +132,12 @@
     enable = true;
     package = inputs.hyprland.packages.${pkgs.system}.hyprland;
   };
+
+  programs._1password.enable = true;
+  programs._1password-gui = {
+    enable = true;
+    polkitPolicyOwners = [ "unreal" ];
+  };
   programs.sway.enable = true;
 
   # https://nixos.wiki/wiki/FAQ/When_do_I_update_stateVersion
