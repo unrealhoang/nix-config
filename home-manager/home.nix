@@ -14,9 +14,10 @@
 
     # You can also split up your configuration and import pieces of it here:
     # ./nvim.nix
-    ./features/tmux
-    ./features/slack
     ./features/hyprland
+    ./features/neovim
+    ./features/slack
+    ./features/tmux
   ];
 
   nixpkgs = {
@@ -101,7 +102,6 @@
   # Add stuff for your user as you see fit:
   colorscheme = inputs.nix-colors.colorSchemes.dracula;
 
-  programs.neovim.enable = true;
   programs.firefox = {
     enable = true;
     package = pkgs.firefox-wayland;
