@@ -13,10 +13,11 @@ in
   home.packages = with pkgs; [
     wofi swaybg wlsunset wl-clipboard
     xdg-desktop-portal-hyprland xdg-desktop-portal-gtk
-    polkit-kde-agent waybar
+    polkit-kde-agent waybar dunst
   ];
   home.file.".config/wofi.css".source = ./wofi.css;
   home.file.".config/waybar".source = ./waybar;
+  home.file.".config/dunst".source = ./dunst;
 
   wayland.windowManager.hyprland = {
     enable = true;
@@ -25,6 +26,9 @@ in
     settings = {
       exec-once = [
         "${pkgs.polkit-kde-agent}/libexec/polkit-kde-authentication-agent-1"
+      ];
+      exec-once = [
+        "${pkgs.dunst}/bin/dunst"
       ];
       monitor = [
         "DP-1,3840x2160@60,0x0,2"
