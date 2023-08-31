@@ -8,6 +8,7 @@
   boot.kernelParams = [
     "video=DP-1:3840x2160@60"
     "video=DP-2:3840x2160@60"
+    "amdgpu.runpm=0"
   ];
   boot.extraModulePackages = [ ];
 
