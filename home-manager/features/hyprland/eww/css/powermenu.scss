@@ -1,0 +1,58 @@
+@use 'css/animations';
+@use 'css/colors';
+
+.w_powermenu {
+    background-color: transparent;
+    margin-right: 40px;
+
+    .layout-box {
+        @include animations.flyin("&", "right");
+        @include animations.fade("button:hover", colors.$primary, colors.$secondary);
+        button {
+            padding: 35px;
+            border-radius: 10px;
+            background-color: colors.$primary;
+
+
+            label {
+                color: colors.$accent;
+                font-size: 40px;
+            }
+        }
+
+        @each $selector in "power", "reboot", "logout", "hibernate" {
+            .#{$selector} .transition-text {
+                font-weight: bolder;
+                font-size: 16px;
+                padding-right: 20px;
+                color: transparent;
+            }
+
+            .#{$selector}:hover button {
+                transition: 100ms linear padding;
+                padding: 25px 35px;
+            }
+
+            .#{$selector}:not(:hover) button {
+                transition: 100ms linear padding;
+                padding: 35px 35px;
+            }
+
+            .#{$selector}:hover .transition-text {
+                @include animations.flyin("&", "right");
+                transition: 200ms linear color;
+                color: colors.$accent;
+            }
+
+            .#{$selector}:not(:hover) .transition-text {
+                transition: 200ms linear color;
+                color: transparent;
+            }
+        }
+
+        .power button label {
+            color: colors.$bad;
+            font-size: 45px;
+        }
+    }
+}
