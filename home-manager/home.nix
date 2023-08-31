@@ -126,7 +126,8 @@
     fira-code-symbols
     mplus-outline-fonts.githubRelease
     proggyfonts
-    (nerdfonts.override { fonts = [ "FiraCode" "DroidSansMono" "JetBrainsMono" ]; })
+    (nerdfonts.override { fonts = [ "FiraCode" "DroidSansMono" "JetBrainsMono" "Iosevka" ]; })
+    archcraft-font
     gnumake
   ];
 

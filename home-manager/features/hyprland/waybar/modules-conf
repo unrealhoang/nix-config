@@ -2,10 +2,10 @@
 //
 // Waybar modules configuration
 {
-    "sway/mode": {
+    "hyprland/submap": {
       "format": " {}"
     },
-    "sway/workspaces": {
+    "hyprland/workspaces": {
       "format": "{name}",
       "disable-scroll": true
     },

@@ -17,7 +17,7 @@
     "fixed-center": true, 			// Center modules position
     "ipc": true, 					// Control waybar with `swaymsg bar` commands
     // Choose the order of the modules
-    "modules-left": ["custom/menu", "tray", "sway/workspaces", "sway/mod" ],
+    "modules-left": ["custom/menu", "tray", "hyprland/workspaces", "hyprland/submap" ],
     "modules-center": [ "cpu", "cpu#2", "memory", "memory#2", "disk", "disk#2" ],
-    "modules-right": ["pulseaudio", "pulseaudio#2", "backlight", "backlight#2", "network", "network#2", "clock", "clock#2", "custom/vpn"],
+    "modules-right": ["pulseaudio", "pulseaudio#2", "backlight", "backlight#2", "network", "network#2", "clock", "clock#2"],
 }
