@@ -9,8 +9,8 @@
     (workspaces :halign "center" :vexpand true :hexpand false :orientation "v")
 
     (box :valign "end" :hexpand false :vexpand true :orientation "v" :space-evenly false
-      (battery)
-      (wifi)
+      ;;(battery)
+      ;; (wifi)
       (mem :thickness 4 :icon "")
       (cpu :thickness 4 :icon "")
       (disk :thickness 4 :icon "")
@@ -23,7 +23,7 @@
 (defpoll volume :interval "999h" :initial 0 `pamixer --get-volume`)
 (defpoll micvolume :interval "999h" :initial 0 `pamixer --get-volume --source 1`)
 (defwidget dashboard []
-  (box :orientation "v" 
+  (box :orientation "v"
     (box :class "info_box" :orientation "v" :space-evenly false
       (box :class "calendar_box"
         (calendar :width 200 :class "cal")
@@ -43,14 +43,14 @@
           (scale :min 1 :max 101 :width 315 :class "micvolume_slider" :value micvolume :onchange "pamixer --set-volume $(echo {} | sed 's/[.].*$//') --source 1")
         )
       )
-      (box :class "sysinfo_box" :orientation "h" :vexpand true :spacing 15 
+      (box :class "sysinfo_box" :orientation "h" :vexpand true :spacing 15
         (mem :thickness 12 :icon "")
         (cpu :thickness 12 :icon "")
         (disk :thickness 12 :icon "")
       )
     )
     (box :class "notification_box"
-    )     
+    )
   )
 )
 
@@ -111,30 +111,30 @@
 
 
 ;; ━━━ WIFI ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-(defvar wifi "{}")
-(defpoll wifi :interval "30s" "./scripts/wifi.sh")
-
-(defwidget wifi []
- (box :vexpand false :hexpand false :orientation "v"
-   (label :text {wifi.icon}
-          :limit-width 10
-          :tooltip {wifi.status}
-          :class "wifi"
-    )
-  )
-)
+;; (defvar wifi "{}")
+;; (defpoll wifi :interval "30s" "./scripts/wifi.sh")
+;;
+;; (defwidget wifi []
+;;  (box :vexpand false :hexpand false :orientation "v"
+;;    (label :text {wifi.icon}
+;;           :limit-width 10
+;;           :tooltip {wifi.status}
+;;           :class "wifi"
+;;     )
+;;   )
+;; )
 
 ;; ━━━ BATTERY ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-(defvar battery "{}")
-(defpoll battery :interval "60s" "./scripts/battery.sh")
-
-(defwidget battery []
-   (label :text {battery.icon}
-          :limit-width 10
-          :tooltip "${battery.status}: ${battery.percent}"
-          :class "battery"
-  )
-)
+;; (defvar battery "{}")
+;; (defpoll battery :interval "60s" "./scripts/battery.sh")
+;;
+;; (defwidget battery []
+;;    (label :text {battery.icon}
+;;           :limit-width 10
+;;           :tooltip "${battery.status}: ${battery.percent}"
+;;           :class "battery"
+;;   )
+;; )
 
 
 ;; ━━━ VOLUME ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
@@ -275,8 +275,8 @@
 
 (defwindow dashboard
   :monitor 0
-  :geometry (geometry 
-  :height "1080px" 
+  :geometry (geometry
+  :height "1080px"
   :width "350px"
   :x "48px"
   :y "0px"
@@ -287,7 +287,8 @@
 
 (defwindow bar
   :monitor 0
-  :exclusive false 
+  :exclusive true
+  :focusable true
   :geometry (geometry :height "1080px" :x "-4px" :y "0px"
   :width "52px"
   :anchor "top left")

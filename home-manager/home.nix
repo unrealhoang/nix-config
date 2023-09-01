@@ -98,7 +98,9 @@
   i18n.inputMethod = {
     enabled = "fcitx5";
     fcitx5.addons = with pkgs; [
+      fcitx5-gtk
       fcitx5-unikey
+      fcitx5-bamboo
     ];
   };
   home.sessionVariables = {
@@ -138,6 +140,9 @@
   # Enable home-manager and git
   programs.home-manager.enable = true;
   programs.git.enable = true;
+  programs.obs-studio.enable = true;
+  programs.chromium.enable = true;
+  nixpkgs.config.chromium.commandLineArgs = "--enable-features=UseOzonePlatform,WebRTCPipeWireCapturer --enable-wayland-ime --ozone-platform=wayland";
 
   # Nicely reload system units when changing configs
   systemd.user.startServices = "sd-switch";

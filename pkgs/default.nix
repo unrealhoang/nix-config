@@ -3,5 +3,6 @@
 
 { pkgs ? (import ../nixpkgs.nix) { } }: {
   # example = pkgs.callPackage ./example { };
-  archcraft-font = pkgs.callPackage ./archcraft-font { };
+  # archcraft-font = pkgs.callPackage ./archcraft-font { };
+  fcitx5-bamboo = pkgs.callPackage ./fcitx5-bamboo { };
 }

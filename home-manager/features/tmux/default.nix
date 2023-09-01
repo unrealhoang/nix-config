@@ -12,103 +12,103 @@
       set-option -g default-terminal "xterm-256color"
       set-option -sa terminal-overrides ",xterm-256color:Tc"
       set-option -g focus-events on
-      
+
       # increase scroll-back history
       set -g history-limit 10000
-      
+
       # use vim key bindings
       setw -g mode-keys vi
       set-option -g mouse on
-      
+
       # decrease command delay (increases vim responsiveness)
       set -sg escape-time 1
-      
+
       # increase repeat time for repeatable commands
       set -g repeat-time 1000
-      
+
       # start window index at 1
       set -g base-index 1
-      
+
       # start pane index at 1
       setw -g pane-base-index 1
-      
+
       # highlight window when it has new activity
       setw -g monitor-activity on
       set -g visual-activity on
-      
+
       ###########################
       #  Key Bindings
       ###########################
-      
+
       # tmux prefix
       unbind C-b
       set -g prefix C-j
-      
+
       # copy with 'enter' or 'y' and send to mac os clipboard: http://goo.gl/2Bfn8
-      
+
       # create 'v' alias for selecting text
       bind-key -Tcopy-mode-vi 'v' send -X begin-selection
       bind-key -Tcopy-mode-vi 'y' send -X copy-selection
       #bind-key -Tcopy-mode-vi 'y' send -X copy-pipe-and-cancel "reattach-to-user-namespace pbcopy"
       bind-key -Tcopy-mode-vi Escape send -X cancel
       bind-key -Tcopy-mode-vi V send -X rectangle-toggle
-      
+
       # paste
       unbind C-p
       bind C-p paste-buffer
-      
+
       # windows back
       unbind C-p
       unbind C-b
       bind Tab previous-window
-      
+
       # window splitting
       unbind %
       bind | split-window -h
       unbind '"'
       bind - split-window -v
-      
+
       # resize panes
       bind -r H resize-pane -L 5
       bind -r J resize-pane -D 5
       bind -r K resize-pane -U 5
       bind -r L resize-pane -R 5
-      
+
       # create 25% lower split
       unbind t
       bind t split-window -p 25
-      
+
       # quickly switch panes
       unbind ^J
       bind ^J select-pane -t :.+
-      
+
       # force a reload of the config file
       unbind r
       bind r source-file ~/.tmux.conf \; display "Reloaded!"
-      
+
       ###########################
       # Status Bar
       ###########################
-      
+
       # enable UTF-8 support in status bar
-      
+
       # set refresh interval for status bar
       set -g status-interval 30
-      
+
       # center the status bar
       set -g status-justify left
-      
+
       # show session, window, pane in left status bar
       set -g status-left-length 40
       set -g status-left '#[fg=green]#S#[fg=blue] #I:#P#[default]'
-      
+
       # show hostname, date, time, and battery in right status bar
       set-option -g status-right '#[fg=green]#H#[default] %m/%d/%y %I:%M\
        #[fg=red]#(battery discharging)#[default]#(battery charging)'
-      
+
       # clear screen
       bind -n C-k send-keys -R \;
-      
+
       # --> Catppuccin
       thm_bg="#1e1e28"
       thm_fg="#d7dae0"
@@ -123,9 +123,9 @@
       thm_blue="#a4b9ef"
       thm_orange="#f7c196"
       catppuccin12="#3e4058"
-      
+
       # ----------------------------=== Theme ===--------------------------
-      
+
       # status
       set -g status-position bottom
       set -g status "on"
@@ -133,29 +133,32 @@
       set -g status-justify "left"
       set -g status-left-length "100"
       set -g status-right-length "100"
-      
+
       # messages
       set -g message-style fg="''${thm_cyan}",bg="''${thm_gray}",align="centre"
       set -g message-command-style fg="''${thm_cyan}",bg="''${thm_gray}",align="centre"
-      
+
       # panes
       set -g pane-border-style fg="''${thm_gray}"
       set -g pane-active-border-style fg="''${thm_blue}"
-      
+
       # windows
       setw -g window-status-activity-style fg="''${thm_fg}",bg="''${thm_bg}",none
       setw -g window-status-separator ""
       setw -g window-status-style fg="''${thm_fg}",bg="''${thm_bg}",none
-      
+
       # --------=== Statusline
-      
+
       set -g status-left ""
-      set -g status-right "#[fg=$thm_pink,bg=$thm_bg,nobold,nounderscore,noitalics]#[fg=$thm_bg,bg=$thm_pink,nobold,nounderscore,noitalics] #[fg=$thm_fg,bg=$thm_gray] #W #{?client_prefix,#[fg=$thm_red],#[fg=$thm_green]}#[bg=$thm_gray]#{?client_prefix,#[bg=$thm_red],#[bg=$thm_green]}#[fg=$thm_bg] #[fg=$thm_fg,bg=$thm_gray] #S "
-      
+      set -g status-right "\
+      #[fg=$thm_pink,bg=$thm_bg,nobold,nounderscore,noitalics]#[fg=$thm_bg,bg=$thm_pink,nobold,nounderscore,noitalics] #[fg=$thm_fg,bg=$thm_gray] #W \
+      #{?client_prefix,#[fg=$thm_red],#[fg=$thm_green]}#[bg=$thm_gray]#{?client_prefix,#[bg=$thm_red],#[bg=$thm_green]}#[fg=$thm_bg] #[fg=$thm_fg,bg=$thm_gray] #S \
+      #[fg=green]#H#[default] %m/%d/%y %I:%M"
+
       # current_dir
       setw -g window-status-format "#[fg=$thm_bg,bg=$thm_blue] #I #[fg=$thm_fg,bg=$thm_gray] #W "
       setw -g window-status-current-format "#[fg=$thm_bg,bg=$thm_orange] #I #[fg=$thm_fg,bg=$thm_bg] #W "
-      
+
       # --------=== Modes
       setw -g clock-mode-colour "''${thm_blue}"
       setw -g mode-style "fg=''${thm_pink} bg=''${catppuccin12} bold"

@@ -19,32 +19,32 @@ in
   home.file.".config/waybar".source = ./waybar;
   home.file.".config/dunst".source = ./dunst;
   # eww configuration
-  home.file.".config/eww/eww.scss".source = ./eww.scss;
-  home.file.".config/eww/eww.yuck".source = ./eww.yuck;
+  home.file.".config/eww/eww.scss".source = ./eww/eww.scss;
+  home.file.".config/eww/eww.yuck".source = ./eww/eww.yuck;
 
   # scripts
   home.file.".config/eww/scripts/battery.sh" = {
-      source = ./scripts/battery.sh;
+      source = ./eww/scripts/battery.sh;
       executable = true;
   };
 
   home.file.".config/eww/scripts/wifi.sh" = {
-      source = ./scripts/wifi.sh;
+      source = ./eww/scripts/wifi.sh;
       executable = true;
   };
 
   home.file.".config/eww/scripts/brightness.sh" = {
-      source = ./scripts/brightness.sh;
+      source = ./eww/scripts/brightness.sh;
       executable = true;
   };
 
   home.file.".config/eww/scripts/workspaces.sh" = {
-      source = ./scripts/workspaces.sh;
+      source = ./eww/scripts/workspaces.sh;
       executable = true;
   };
 
   home.file.".config/eww/scripts/workspaces.lua" = {
-      source = ./scripts/workspaces.lua;
+      source = ./eww/scripts/workspaces.lua;
       executable = true;
   };
 
@@ -61,6 +61,9 @@ in
       monitor = [
         "DP-1,3840x2160@60,0x0,2"
         "DP-2,3840x2160@60,1920x0,2"
+      ];
+      windowrulev2 = [
+        "float,title:^.*PolicyKit1$"
       ];
       bindm = [
         "SUPER,mouse:272,movewindow"
