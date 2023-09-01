@@ -6,8 +6,7 @@
   boot.initrd.kernelModules = [ "amdgpu" ];
   boot.kernelModules = [ "kvm-amd" ];
   boot.kernelParams = [
-    "video=DP-1:3840x2160@60"
-    "video=DP-2:3840x2160@60"
+    "amdgpu.dc=1"
   ];
   boot.extraModulePackages = [ ];
 

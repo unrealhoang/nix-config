@@ -9,6 +9,7 @@
       };
     };
   };
+  programs.fzf.enable = true;
   programs.zsh = {
     enable = true;
     oh-my-zsh = {
@@ -17,6 +18,7 @@
         "git"
         "sudo"
         "fasd"
+        "fzf"
       ];
     };
     syntaxHighlighting.enable = true;

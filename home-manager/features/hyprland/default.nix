@@ -13,12 +13,40 @@ in
   home.packages = with pkgs; [
     wofi swaybg wlsunset wl-clipboard
     xdg-desktop-portal-hyprland xdg-desktop-portal-gtk
-    polkit-kde-agent waybar dunst python3 playerctl pamixer
+    polkit-kde-agent waybar dunst python3 playerctl pamixer eww-wayland
   ];
   home.file.".config/wofi.css".source = ./wofi.css;
   home.file.".config/waybar".source = ./waybar;
   home.file.".config/dunst".source = ./dunst;
-  home.file.".config/eww".source = ./eww;
+  # eww configuration
+  home.file.".config/eww/eww.scss".source = ./eww.scss;
+  home.file.".config/eww/eww.yuck".source = ./eww.yuck;
+
+  # scripts
+  home.file.".config/eww/scripts/battery.sh" = {
+      source = ./scripts/battery.sh;
+      executable = true;
+  };
+
+  home.file.".config/eww/scripts/wifi.sh" = {
+      source = ./scripts/wifi.sh;
+      executable = true;
+  };
+
+  home.file.".config/eww/scripts/brightness.sh" = {
+      source = ./scripts/brightness.sh;
+      executable = true;
+  };
+
+  home.file.".config/eww/scripts/workspaces.sh" = {
+      source = ./scripts/workspaces.sh;
+      executable = true;
+  };
+
+  home.file.".config/eww/scripts/workspaces.lua" = {
+      source = ./scripts/workspaces.lua;
+      executable = true;
+  };
 
   wayland.windowManager.hyprland = {
     enable = true;
@@ -28,6 +56,7 @@ in
       exec-once = [
         "${pkgs.polkit-kde-agent}/libexec/polkit-kde-authentication-agent-1"
         "${pkgs.dunst}/bin/dunst"
+        "hyprctl setcursor Bibata-Modern-Amber 24"
       ];
       monitor = [
         "DP-1,3840x2160@60,0x0,2"
@@ -80,9 +109,9 @@ in
       ) directions);
 
       general = {
-        gaps_in = 15;
-        gaps_out = 20;
-        border_size = 2.7;
+        gaps_in = 6;
+        gaps_out = 12;
+        border_size = 2;
         cursor_inactive_timeout = 4;
         "col.active_border" = "0xff${config.colorscheme.colors.base0C}";
         "col.inactive_border" = "0xff${config.colorscheme.colors.base02}";
@@ -135,9 +164,5 @@ in
     };
     extraConfig = ''
     '';
-  };
-  programs.eww = {
-    enable = true;
-    package = pkgs.eww-wayland;
   };
 }

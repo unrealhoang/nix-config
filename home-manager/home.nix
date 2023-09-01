@@ -103,7 +103,7 @@
   };
   home.sessionVariables = {
     GTK_IM_MODULE = "fcitx";
-    QT_IM_MODULE = "fcitx";
+    QT_IM_MODULE = lib.mkForce "wayland";
     XMODIFIERS = "@im=fcitx";
     NIXOS_OZONE_WL = "1";
   };
@@ -117,7 +117,7 @@
     package = pkgs.firefox-wayland;
   };
   home.packages = with pkgs; [
-    steam telegram-desktop
+    # fonts
     noto-fonts
     noto-fonts-cjk
     noto-fonts-emoji
@@ -129,7 +129,10 @@
     jetbrains-mono
     (nerdfonts.override { fonts = [ "FiraCode" "DroidSansMono" "JetBrainsMono" "Iosevka" ]; })
     archcraft-font
+
     gnumake
+    steam telegram-desktop
+    discord-canary
   ];
 
   # Enable home-manager and git

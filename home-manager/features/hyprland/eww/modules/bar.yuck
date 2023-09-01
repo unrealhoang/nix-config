@@ -15,7 +15,7 @@
         (w_bar_launcher)
         (w_bar_workspaces :active {workspaces?.active ?: []} :current {workspaces?.current})
         (w_bar_sysinfo)
-        (w_bar_tray)
+        ;;(w_bar_tray)
         )
     (box :class "middle" :halign "center" :spacing "10" :space-evenly false
         (w_bar_player)
@@ -73,12 +73,12 @@
     (label :text " ${round(EWW_CPU.avg, 1)}%")
 ))
 
-(defwidget w_bar_tray[] (revealer
-    :reveal r_bar_systray
-    :transition "slideleft"
-    (w_bar_widget :class "tray" :spacing 20 :space-evenly false
-        (systray :icon-size 18 :pack-direction "right"))
-))
+;; (defwidget w_bar_tray[] (revealer
+;;     :reveal r_bar_systray
+;;     :transition "slideleft"
+;;     (w_bar_widget :class "tray" :spacing 20 :space-evenly false
+;;         (systray :icon-size 18 :pack-direction "right"))
+;; ))
 
 (defwidget w_bar_player[] (w_bar_widget :class "player" :spacing 20 :space-evenly false
     :visible {player != "null" && player.alive != []}
