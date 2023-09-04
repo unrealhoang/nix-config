@@ -9,7 +9,11 @@
   # https://nixos.wiki/wiki/Overlays
   modifications = final: prev: {
     hyprland = prev.hyprland.overrideAttrs (finalAttrs: prevAttrs: {
-      src = fetchGit /mnt/data/Resource/Hyprland;
+      src = prev.fetchgit {
+        url = /mnt/data/Resources/Hyprland;
+        rev = "3d0b1283d2c28264370259606f4a88187faa754e";
+        sha256 = "";
+      };
     });
     # example = prev.example.overrideAttrs (oldAttrs: rec {
     # ...

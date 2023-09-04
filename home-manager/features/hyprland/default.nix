@@ -50,6 +50,7 @@ in
 
   wayland.windowManager.hyprland = {
     enable = true;
+    package = inputs.hyprland.packages.${pkgs.system}.hyprland;
 
     enableNvidiaPatches = false;
     settings = {
@@ -135,6 +136,7 @@ in
       "device:logitech-ergo-m575s" = {
         scroll_method = "on_button_down";
         scroll_button = 274;
+        scroll_button_lock = true;
       };
       decoration = {
         active_opacity = 0.94;

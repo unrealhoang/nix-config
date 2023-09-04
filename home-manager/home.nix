@@ -71,6 +71,7 @@
     ];
     allowOther = true;
   };
+
   services.gnome-keyring = {
     enable = true;
     components = [
