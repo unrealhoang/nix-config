@@ -42,7 +42,6 @@ end
 
 local function setup_mappings()
   vim.o.timeoutlen = 300
-  require 'which-key'.setup{}
   local folders = {
     ['<leader>l'] = "Lsp",
     ['<leader>lr'] = "Rust Tools",
@@ -51,6 +50,9 @@ local function setup_mappings()
     ['<leader>b'] = "Dap DeBbuger",
     ['<leader>g'] = "Git",
     ['<leader>t'] = "Treesitter",
+  }
+  require 'which-key'.setup{
+    key_labels = folders,
   }
   local mappings = {
     n = {

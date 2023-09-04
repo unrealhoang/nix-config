@@ -8,6 +8,9 @@
   # You can change versions, add patches, set compilation flags, anything really.
   # https://nixos.wiki/wiki/Overlays
   modifications = final: prev: {
+    hyprland = prev.hyprland.overrideAttrs (finalAttrs: prevAttrs: {
+      src = fetchGit /mnt/data/Resource/Hyprland;
+    });
     # example = prev.example.overrideAttrs (oldAttrs: rec {
     # ...
     # });

@@ -22,10 +22,10 @@
 
 #waybar {
   font-family: 'JetBrains Mono', sans-serif;
-  font-size: 1.2em;
+  font-size: 1.0em;
   font-weight: 400;
   color: @base04;
-  background: @base01;
+  background: alpha(@base01, 0.8);
 }
 
 #workspaces {
@@ -65,7 +65,7 @@
   border-left: none;
 }
 
-#mode, #battery, #cpu, #memory, #network, #pulseaudio, #idle_inhibitor, #backlight, #custom-storage, #custom-updates, #custom-weather, #custom-mail, #clock, #temperature {
+#mode, #battery, #cpu, #disk, #memory, #network, #pulseaudio, #idle_inhibitor, #backlight, #custom-storage, #custom-updates, #custom-weather, #custom-mail, #clock, #temperature {
   margin: 4px 2px;
   padding: 0 6px;
   background-color: @base02;
@@ -92,7 +92,7 @@
 }
 
 #window {
-  font-size: 0.9em;
+  font-size: 0.7em;
   font-weight: 400;
   font-family: sans-serif;
 }

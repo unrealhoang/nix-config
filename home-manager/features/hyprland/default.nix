@@ -122,9 +122,20 @@ in
         "col.group_border_active" = "0xff${config.colorscheme.colors.base0B}";
         "col.group_border" = "0xff${config.colorscheme.colors.base04}";
       };
+      xwayland = {
+        force_zero_scaling = true;
+      };
+      env = [
+        "GDK_SCALE,2"
+        "XCURSOR_SIZE,24"
+      ];
       dwindle.split_width_multiplier = 1.35;
       misc.vfr = "on";
 
+      "device:logitech-ergo-m575s" = {
+        scroll_method = "on_button_down";
+        scroll_button = 274;
+      };
       decoration = {
         active_opacity = 0.94;
         inactive_opacity = 0.84;

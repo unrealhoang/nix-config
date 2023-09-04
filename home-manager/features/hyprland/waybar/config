@@ -1,13 +1,12 @@
 {
     "layer": "top", // Waybar at top layer
     "position": "top", // Waybar position (top|bottom|left|right)
-    "height": 34, // Waybar height (to be removed for auto height)
     // "width": 1280, // Waybar width
     "spacing": 4, // Gaps between modules (4px)
     // Choose the order of the modules
     "modules-left": ["wlr/workspaces", "idle_inhibitor", "pulseaudio", "backlight", "network"],
     "modules-center": ["hyprland/window"],
-    "modules-right": ["cpu", "memory", "temperature", "tray", "clock"],
+    "modules-right": ["disk", "cpu", "memory", "temperature", "tray", "clock"],
     // Modules configuration
      "wlr/workspaces": {
          "disable-scroll": true,
@@ -91,6 +90,9 @@
     "clock": {
         "tooltip-format": "<big>{:%Y %B}</big>\n<tt><small>{calendar}</small></tt>",
         "format-alt": "{:%Y-%m-%d}"
+    },
+    "disk": {
+      "format": "{free} "
     },
     "cpu": {
         "format": "{usage}% ",

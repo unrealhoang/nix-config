@@ -30,6 +30,7 @@
       vim-fugitive
       vim-surround
       vim-nix
+      vim-sleuth
       undotree
       nvim-treesitter
       nvim-treesitter-textobjects
