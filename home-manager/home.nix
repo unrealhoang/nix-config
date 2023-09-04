@@ -71,6 +71,12 @@
     ];
     allowOther = true;
   };
+  home.persistence."/mnt/data2/homepersist" = {
+    directories = [
+      ".local/share/Steam"
+    ];
+    allowOther = true;
+  };
 
   services.gnome-keyring = {
     enable = true;
@@ -134,7 +140,7 @@
     archcraft-font
 
     gnumake
-    steam telegram-desktop
+    telegram-desktop
     discord-canary
   ];
 

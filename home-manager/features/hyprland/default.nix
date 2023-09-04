@@ -48,6 +48,11 @@ in
       executable = true;
   };
 
+  home.file.".config/hypr/game_mode.sh" = {
+    source = ./game_mode.sh;
+    executable = true;
+  };
+
   wayland.windowManager.hyprland = {
     enable = true;
     package = inputs.hyprland.packages.${pkgs.system}.hyprland;
@@ -72,6 +77,7 @@ in
         "SUPER,mouse:273,resizewindow"
       ];
       bind = [
+        "SUPER,F9,exec,~/.config/hypr/game_mode.sh"
         "SUPER,d,exec,wofi --show run --xoffset=1670 --yoffset=12 --width=230px --height=984 --style=$HOME/.config/wofi.css --term=footclient --prompt=Run"
         "SUPERSHIFT,q,killactive"
         "SUPERSHIFT,e,exit"
@@ -136,7 +142,7 @@ in
       "device:logitech-ergo-m575s" = {
         scroll_method = "on_button_down";
         scroll_button = 274;
-        scroll_button_lock = true;
+        # scroll_button_lock = true;
       };
       decoration = {
         active_opacity = 0.94;

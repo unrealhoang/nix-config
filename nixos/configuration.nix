@@ -24,6 +24,7 @@
     overlays = [
       # Add overlays your own flake exports (from overlays and pkgs dir):
       outputs.overlays.additions
+      outputs.overlays.customs
       outputs.overlays.modifications
       outputs.overlays.unstable-packages
 
@@ -104,7 +105,10 @@
     neovim
     zsh
     helvum
+    steam
+    steam-run
   ];
+  programs.steam.enable = true;
 
   services.openssh = {
     enable = true;
