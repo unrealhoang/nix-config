@@ -46,7 +46,9 @@ end
 
 local function setup_lsp_go(capabilities)
   local cmd
-  if vim.fn.getenv('GOPATH') ~= vim.NIL then
+  if vm.fn.executable('gopls') then
+    cmd = 'gopls'
+  elseif vim.fn.getenv('GOPATH') ~= vim.NIL then
     cmd = vim.fn.expand('$GOPATH/bin/gopls')
   else
     cmd = vim.fn.expand('$HOME/go/bin/gopls')

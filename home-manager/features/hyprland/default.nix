@@ -11,7 +11,7 @@ let
 in
 {
   home.packages = with pkgs; [
-    wofi swaybg wlsunset wl-clipboard
+    wofi swaybg wlsunset wl-clipboard pavucontrol
     xdg-desktop-portal-hyprland xdg-desktop-portal-gtk
     polkit-kde-agent waybar dunst python3 playerctl pamixer eww-wayland
   ];
@@ -57,13 +57,14 @@ in
         "${pkgs.polkit-kde-agent}/libexec/polkit-kde-authentication-agent-1"
         "${pkgs.dunst}/bin/dunst"
         "hyprctl setcursor Bibata-Modern-Amber 24"
+        "waybar"
       ];
       monitor = [
         "DP-1,3840x2160@60,0x0,2"
         "DP-2,3840x2160@60,1920x0,2"
       ];
       windowrulev2 = [
-        "float,title:^.*PolicyKit1$"
+        "float,class:org.kde.polkit-kde-authentication-agent-1"
       ];
       bindm = [
         "SUPER,mouse:272,movewindow"
@@ -112,8 +113,8 @@ in
       ) directions);
 
       general = {
-        gaps_in = 6;
-        gaps_out = 12;
+        gaps_in = 3;
+        gaps_out = 6;
         border_size = 2;
         cursor_inactive_timeout = 4;
         "col.active_border" = "0xff${config.colorscheme.colors.base0C}";

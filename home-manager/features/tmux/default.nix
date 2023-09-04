@@ -84,7 +84,7 @@
 
       # force a reload of the config file
       unbind r
-      bind r source-file ~/.tmux.conf \; display "Reloaded!"
+      bind r source-file ~/.conf/tmux/tmux.conf \; display "Reloaded!"
 
       ###########################
       # Status Bar
@@ -151,9 +151,15 @@
 
       set -g status-left ""
       set -g status-right "\
-      #[fg=$thm_pink,bg=$thm_bg,nobold,nounderscore,noitalics]#[fg=$thm_bg,bg=$thm_pink,nobold,nounderscore,noitalics] #[fg=$thm_fg,bg=$thm_gray] #W \
-      #{?client_prefix,#[fg=$thm_red],#[fg=$thm_green]}#[bg=$thm_gray]#{?client_prefix,#[bg=$thm_red],#[bg=$thm_green]}#[fg=$thm_bg] #[fg=$thm_fg,bg=$thm_gray] #S \
-      #[fg=green]#H#[default] %m/%d/%y %I:%M"
+      #[fg=$thm_pink,bg=$thm_bg,nobold,nounderscore,noitalics]\
+      #[fg=$thm_bg,bg=$thm_pink,nobold,nounderscore,noitalics] \
+      #[fg=$thm_fg,bg=$thm_gray] #W \
+      #{?client_prefix,#[fg=$thm_red],#[fg=$thm_green]}#[bg=$thm_gray]\
+      #{?client_prefix,#[bg=$thm_red],#[bg=$thm_green]}#[fg=$thm_bg] \
+      #[fg=$thm_fg,bg=$thm_gray] #S \
+      #[fg=$thm_blue,bg=$thm_gray]\
+      #[fg=$thm_bg,bg=$thm_blue] \
+      #[fg=$thm_fg,bg=$thm_gray] %m/%d/%y %I:%M "
 
       # current_dir
       setw -g window-status-format "#[fg=$thm_bg,bg=$thm_blue] #I #[fg=$thm_fg,bg=$thm_gray] #W "
