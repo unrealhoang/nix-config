@@ -39,6 +39,8 @@
       nvim-treesitter-parsers.go
       nvim-treesitter-parsers.sql
       nvim-treesitter-parsers.nix
+      nvim-treesitter-parsers.html
+      nvim-treesitter-parsers.css
 
       nvim-lspconfig
       popfix
@@ -65,6 +67,8 @@
 
       cmp_luasnip
       luasnip
+
+      oil-nvim
 
       which-key-nvim
     ];

@@ -21,7 +21,7 @@
     # everything match nicely? Try nix-colors!
     nix-colors.url = "github:misterio77/nix-colors";
 
-    hyprland.url = "github:hyprwm/Hyprland";
+    hyprland.url = "github:unrealhoang/Hyprland/scroll-button-lock";
   };
 
   outputs = { self, nixpkgs, home-manager, ... }@inputs:

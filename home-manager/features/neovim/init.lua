@@ -217,6 +217,8 @@ local function bootstrap()
   require 'catppuccin'.setup {}
   require 'fidget'.setup {}
   require 'crates'.setup {}
+
+  require 'oil'.setup {}
 end
 
 bootstrap()

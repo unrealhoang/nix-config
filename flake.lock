@@ -45,15 +45,16 @@
         "xdph": "xdph"
       },
       "locked": {
-        "lastModified": 1693754593,
-        "narHash": "sha256-Bn8MWftUY88BpZkXfdlyQtyDlO+N2MVgBc+cffhpib4=",
-        "owner": "hyprwm",
+        "lastModified": 1693961369,
+        "narHash": "sha256-zHpgbp7HfBdR5TkSy0m0LCH9I2HlToeOnI+G6leyh1I=",
+        "owner": "unrealhoang",
         "repo": "Hyprland",
-        "rev": "8fefb180b1f4bd62cd866f4c3d1d93ed3f019536",
+        "rev": "fa1e70ba6b176a95ba7b2c32f4950bbde58cbf66",
         "type": "github"
       },
       "original": {
-        "owner": "hyprwm",
+        "owner": "unrealhoang",
+        "ref": "scroll-button-lock",
         "repo": "Hyprland",
         "type": "github"
       }

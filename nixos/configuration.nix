@@ -143,6 +143,9 @@
     polkitPolicyOwners = [ "unreal" ];
   };
   programs.sway.enable = true;
+
+  programs.seahorse.enable = true;
+  services.gnome.gnome-keyring.enable = true;
   security.pam.services.login.enableGnomeKeyring = true;
 
   # https://nixos.wiki/wiki/FAQ/When_do_I_update_stateVersion
