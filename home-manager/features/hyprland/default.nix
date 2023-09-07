@@ -71,6 +71,7 @@ in
       ];
       windowrulev2 = [
         "float,class:org.kde.polkit-kde-authentication-agent-1"
+        "float,center (),class:(1Password),title:(1Password)"
       ];
       bindm = [
         "SUPER,mouse:272,movewindow"
