@@ -69,9 +69,15 @@ in
         "DP-1,3840x2160@60,0x0,2"
         "DP-2,3840x2160@60,1920x0,2"
       ];
+      workspace = [
+        "4,monitor:DP-1"
+        "5,monitor:DP-1,decorate:false"
+      ];
       windowrulev2 = [
         "float,class:org.kde.polkit-kde-authentication-agent-1"
         "move 0 0,class:(1Password),title:(1Password)"
+        "workspace 5,class:(dota2),title:(Dota 2)"
+        "workspace 4,class:(steam)"
       ];
       bindm = [
         "SUPER,mouse:272,movewindow"
