@@ -74,6 +74,8 @@
       efiSupport = true;
       device = "nodev";
       useOSProber = true;
+      memtest86.enable = true;
+      extraFiles = { "memtest.bin" = "${pkgs.memtest86plus}/memtest.bin"; };
     };
   };
 
