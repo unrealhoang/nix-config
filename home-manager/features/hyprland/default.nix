@@ -13,41 +13,13 @@ in
   home.packages = with pkgs; [
     wofi swaybg wlsunset wl-clipboard pavucontrol
     xdg-desktop-portal-hyprland xdg-desktop-portal-gtk
-    polkit-kde-agent waybar dunst python3 playerctl pamixer eww-wayland
+    polkit-kde-agent waybar dunst python3 playerctl pamixer
+    networkmanagerapplet
   ];
+
   home.file.".config/wofi.css".source = ./wofi.css;
   home.file.".config/waybar".source = ./waybar;
   home.file.".config/dunst".source = ./dunst;
-  # eww configuration
-  home.file.".config/eww/eww.scss".source = ./eww/eww.scss;
-  home.file.".config/eww/eww.yuck".source = ./eww/eww.yuck;
-
-  # scripts
-  home.file.".config/eww/scripts/battery.sh" = {
-      source = ./eww/scripts/battery.sh;
-      executable = true;
-  };
-
-  home.file.".config/eww/scripts/wifi.sh" = {
-      source = ./eww/scripts/wifi.sh;
-      executable = true;
-  };
-
-  home.file.".config/eww/scripts/brightness.sh" = {
-      source = ./eww/scripts/brightness.sh;
-      executable = true;
-  };
-
-  home.file.".config/eww/scripts/workspaces.sh" = {
-      source = ./eww/scripts/workspaces.sh;
-      executable = true;
-  };
-
-  home.file.".config/eww/scripts/workspaces.lua" = {
-      source = ./eww/scripts/workspaces.lua;
-      executable = true;
-  };
-
   home.file.".config/hypr/game_mode.sh" = {
     source = ./game_mode.sh;
     executable = true;
@@ -64,6 +36,7 @@ in
         "${pkgs.dunst}/bin/dunst"
         "hyprctl setcursor Bibata-Modern-Amber 24"
         "waybar"
+        "nm-applet --indicator"
       ];
       monitor = [
         "DP-1,3840x2160@60,0x0,2"
