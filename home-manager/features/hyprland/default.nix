@@ -48,7 +48,7 @@ in
       ];
       windowrulev2 = [
         "float,class:org.kde.polkit-kde-authentication-agent-1"
-        "move 0 0,class:(1Password),title:(1Password)"
+        "move 100 100,class:(1Password),title:(1Password)"
         "workspace 5,class:(dota2),title:(Dota 2)"
         "workspace 4,class:(steam)"
       ];
