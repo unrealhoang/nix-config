@@ -114,12 +114,11 @@
     GTK_IM_MODULE = "fcitx";
     QT_IM_MODULE = lib.mkForce "wayland";
     XMODIFIERS = "@im=fcitx";
-    NIXOS_OZONE_WL = "1";
   };
   fonts.fontconfig.enable = true;
 
   # Add stuff for your user as you see fit:
-  colorscheme = inputs.nix-colors.colorSchemes.dracula;
+  colorscheme = inputs.nix-colors.colorSchemes.ayu-dark;
 
   programs.firefox = {
     enable = true;

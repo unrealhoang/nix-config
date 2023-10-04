@@ -35,4 +35,4 @@
   ff = only
 
 [includeIf "gitdir:/mnt/data/Workspace/H2/"]
-  path = ~/Workspace/H2/.gitconfig
+  path = /mnt/data/Workspace/H2/.gitconfig

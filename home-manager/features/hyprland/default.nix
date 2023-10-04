@@ -74,8 +74,8 @@ in
         "SUPERSHIFT,equal,splitratio,0.3333333"
 
         "SUPER,g,togglegroup"
-        "SUPER,apostrophe,changegroupactive,f"
-        "SUPERSHIFT,apostrophe,changegroupactive,b"
+        "SUPER,tab,changegroupactive,f"
+        "SUPERSHIFT,tab,changegroupactive,b"
 
         # apps
         "SUPER,return,exec,alacritty"
@@ -92,7 +92,7 @@ in
       ) directions) ++
       # Swap windows
       (lib.mapAttrsToList (key: direction:
-        "SUPERSHIFT,${key},swapwindow,${direction}"
+        "SUPERSHIFT,${key},movewindoworgroup,${direction}"
       ) directions) ++
       # Move workspace to other monitor
       (lib.mapAttrsToList (key: direction:
@@ -106,11 +106,14 @@ in
         cursor_inactive_timeout = 4;
         "col.active_border" = "0xff${config.colorscheme.colors.base0C}";
         "col.inactive_border" = "0xff${config.colorscheme.colors.base02}";
-        "col.group_border_active" = "0xff${config.colorscheme.colors.base0B}";
-        "col.group_border" = "0xff${config.colorscheme.colors.base04}";
+        "col.group_border_active" = "0xff${config.colorscheme.colors.base0F}";
+        "col.group_border" = "0xff${config.colorscheme.colors.base0E}";
       };
       xwayland = {
         force_zero_scaling = true;
+      };
+      binds = {
+        workspace_back_and_forth = true;
       };
       env = [
         "GDK_SCALE,2"
@@ -120,6 +123,7 @@ in
       misc = {
         vfr = "on";
         focus_on_activate = true;
+        groupbar_gradients = false;
       };
 
       "device:logitech-ergo-m575s" = {
