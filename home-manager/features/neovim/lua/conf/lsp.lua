@@ -61,34 +61,42 @@ local function setup_lsp_go(capabilities)
 end
 
 local function setup_lsp_lua(capabilities)
-  local sumneko_binary = "lua-language-server"
-  local sumneko_main = "/usr/lib/lua-language-server/main.lua"
-  local lua_runtime_path = vim.split(package.path, ';', {})
-  table.insert(lua_runtime_path, "lua/?.lua")
-  table.insert(lua_runtime_path, "lua/?/init.lua")
-
-  require 'neodev'.setup {}
+  require 'neodev'.setup {
+    override = function(root_dir, library)
+      if root_dir:find("/home/unreal/Resource/nix-config", 1, true) == 1 then
+        library.enabled = true
+        library.plugins = true
+      end
+    end,
+  }
   require 'lspconfig'.lua_ls.setup({
-    cmd = { sumneko_binary, "-E", sumneko_main },
+    on_init = function(client)
+      local path = client.workspace_folders[1].name
+      if not vim.loop.fs_stat(path..'/.luarc.json') and not vim.loop.fs_stat(path..'/.luarc.jsonc') then
+        client.config.settings = vim.tbl_deep_extend('force', client.config.settings, {
+          Lua = {
+            runtime = {
+              version = 'LuaJIT'
+            },
+            diagnostics = {
+              globals = { 'vim' },
+            },
+            -- Make the server aware of Neovim runtime files
+            workspace = {
+              checkThirdParty = false,
+              library = {
+                vim.env.VIMRUNTIME
+              }
+            }
+          }
+        })
+
+        client.notify("workspace/didChangeConfiguration", { settings = client.config.settings })
+      end
+      return true
+    end,
     capabilities = capabilities,
     on_attach = on_lsp_attach,
-    settings = {
-      Lua = {
-        runtime = {
-          version = 'LuaJIT',
-          path = lua_runtime_path,
-        },
-        diagnostics = {
-          globals = { 'vim' },
-        },
-        workspace = {
-          library = vim.api.nvim_get_runtime_file("", true),
-        },
-        telemetry = {
-          enable = false,
-        }
-      }
-    }
   })
 end
 

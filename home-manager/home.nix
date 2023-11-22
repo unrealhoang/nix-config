@@ -140,14 +140,17 @@
 
     gnumake
     telegram-desktop
-    discord-canary
+    discord
   ];
 
   # Enable home-manager and git
   programs.home-manager.enable = true;
-  programs.git.enable = true;
   programs.obs-studio.enable = true;
   programs.chromium.enable = true;
+  programs.direnv = {
+    enable = true;
+    nix-direnv.enable = true;
+  };
   nixpkgs.config.chromium.commandLineArgs = "--enable-features=UseOzonePlatform,WebRTCPipeWireCapturer --enable-wayland-ime --ozone-platform=wayland";
 
   # Nicely reload system units when changing configs

@@ -1,4 +1,5 @@
 { lib, pkgs, ... }: {
+  home.packages = [ pkgs.lua-language-server ];
   programs.ripgrep.enable = true;
   programs.bat = {
     enable = true;

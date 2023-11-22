@@ -19,6 +19,7 @@
         "sudo"
         "fasd"
         "fzf"
+        "direnv"
       ];
     };
     syntaxHighlighting.enable = true;
