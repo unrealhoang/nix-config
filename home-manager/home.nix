@@ -138,6 +138,7 @@
     (nerdfonts.override { fonts = [ "FiraCode" "DroidSansMono" "JetBrainsMono" "Iosevka" ]; })
     archcraft-font
 
+    vscode
     gnumake
     telegram-desktop
     discord

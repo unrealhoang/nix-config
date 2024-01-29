@@ -6,6 +6,37 @@
       tmuxPlugins.resurrect
       tmuxPlugins.yank
       tmuxPlugins.better-mouse-mode
+      {
+        plugin = tmuxPlugins.catppuccin.overrideAttrs (prevAttrs: {
+          src = pkgs.fetchFromGitHub {
+            owner = "catppuccin";
+            repo = "tmux";
+            rev = "6ae90fe3fd7881f87dedd35615d70f9f29a238ae";
+            hash = "sha256-Mp2MxJ/WpCFPCucQxYxYMe7b/yXfPVhj+MSM2XLJ92o=";
+          };
+        });
+        extraConfig = ''
+          # frappe | latte | macchiato | mocha
+          set -g @catppuccin_flavour 'frappe' # or frappe, macchiato, mocha
+          ###########################
+          # Theme
+          ###########################
+          set -g @catppuccin_window_right_separator "█ "
+          set -g @catppuccin_window_number_position "right"
+          set -g @catppuccin_window_middle_separator " | "
+
+          set -g @catppuccin_window_default_fill "none"
+          set -g @catppuccin_window_default_text "#W"
+          set -g @catppuccin_window_current_fill "all"
+          set -g @catppuccin_window_current_text "#W"
+
+          set -g @catppuccin_status_modules_right "directory session date_time"
+          set -g @catppuccin_status_left_separator "█"
+          set -g @catppuccin_status_right_separator "█"
+
+          set -g @catppuccin_date_time_text "%Y-%m-%d %H:%M"
+        '';
+      }
     ];
     extraConfig = ''
       # use 256 term for pretty colors
@@ -84,90 +115,10 @@
 
       # force a reload of the config file
       unbind r
-      bind r source-file ~/.conf/tmux/tmux.conf \; display "Reloaded!"
-
-      ###########################
-      # Status Bar
-      ###########################
-
-      # enable UTF-8 support in status bar
-
-      # set refresh interval for status bar
-      set -g status-interval 30
-
-      # center the status bar
-      set -g status-justify left
-
-      # show session, window, pane in left status bar
-      set -g status-left-length 40
-      set -g status-left '#[fg=green]#S#[fg=blue] #I:#P#[default]'
-
-      # show hostname, date, time, and battery in right status bar
-      set-option -g status-right '#[fg=green]#H#[default] %m/%d/%y %I:%M\
-       #[fg=red]#(battery discharging)#[default]#(battery charging)'
+      bind r source-file ~/.config/tmux/tmux.conf \; display "Reloaded!"
 
       # clear screen
       bind -n C-k send-keys -R \;
-
-      # --> Catppuccin
-      thm_bg="#1e1e28"
-      thm_fg="#d7dae0"
-      thm_cyan="#c2e7f0"
-      thm_black="#15121c"
-      thm_gray="#2d293b"
-      thm_magenta="#c6aae8"
-      thm_pink="#f0afe1"
-      thm_red="#e28c8c"
-      thm_green="#b3e1a3"
-      thm_yellow="#eadda0"
-      thm_blue="#a4b9ef"
-      thm_orange="#f7c196"
-      catppuccin12="#3e4058"
-
-      # ----------------------------=== Theme ===--------------------------
-
-      # status
-      set -g status-position bottom
-      set -g status "on"
-      set -g status-bg "''${thm_bg}"
-      set -g status-justify "left"
-      set -g status-left-length "100"
-      set -g status-right-length "100"
-
-      # messages
-      set -g message-style fg="''${thm_cyan}",bg="''${thm_gray}",align="centre"
-      set -g message-command-style fg="''${thm_cyan}",bg="''${thm_gray}",align="centre"
-
-      # panes
-      set -g pane-border-style fg="''${thm_gray}"
-      set -g pane-active-border-style fg="''${thm_blue}"
-
-      # windows
-      setw -g window-status-activity-style fg="''${thm_fg}",bg="''${thm_bg}",none
-      setw -g window-status-separator ""
-      setw -g window-status-style fg="''${thm_fg}",bg="''${thm_bg}",none
-
-      # --------=== Statusline
-
-      set -g status-left ""
-      set -g status-right "\
-      #[fg=$thm_pink,bg=$thm_bg,nobold,nounderscore,noitalics]\
-      #[fg=$thm_bg,bg=$thm_pink,nobold,nounderscore,noitalics] \
-      #[fg=$thm_fg,bg=$thm_gray] #W \
-      #{?client_prefix,#[fg=$thm_red],#[fg=$thm_green]}#[bg=$thm_gray]\
-      #{?client_prefix,#[bg=$thm_red],#[bg=$thm_green]}#[fg=$thm_bg] \
-      #[fg=$thm_fg,bg=$thm_gray] #S \
-      #[fg=$thm_blue,bg=$thm_gray]\
-      #[fg=$thm_bg,bg=$thm_blue] \
-      #[fg=$thm_fg,bg=$thm_gray] %m/%d/%y %I:%M "
-
-      # current_dir
-      setw -g window-status-format "#[fg=$thm_bg,bg=$thm_blue] #I #[fg=$thm_fg,bg=$thm_gray] #W "
-      setw -g window-status-current-format "#[fg=$thm_bg,bg=$thm_orange] #I #[fg=$thm_fg,bg=$thm_bg] #W "
-
-      # --------=== Modes
-      setw -g clock-mode-colour "''${thm_blue}"
-      setw -g mode-style "fg=''${thm_pink} bg=''${catppuccin12} bold"
     '';
   };
 }

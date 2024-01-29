@@ -12,7 +12,7 @@ in
 {
   home.packages = with pkgs; [
     wofi swaybg wlsunset wl-clipboard pavucontrol
-    xdg-desktop-portal-hyprland xdg-desktop-portal-gtk
+    xdg-desktop-portal-hyprland xdg-desktop-portal-gtk xdg-utils
     polkit-kde-agent waybar dunst python3 playerctl pamixer
     networkmanagerapplet
   ];
