@@ -29,6 +29,9 @@
   userConf = {
     terminalFontSize = 12.0;
     gitGpgSSHSignProgram = "/Applications/1Password.app/Contents/MacOS/op-ssh-sign";
+    gitFolderConfigs = {
+      "/Users/unreal/Workspace/H2/" = "/Users/unreal/Workspace/H2/.gitconfig";
+    };
   };
 
   home.packages = with pkgs; [
