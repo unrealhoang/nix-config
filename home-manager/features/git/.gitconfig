@@ -1,7 +1,7 @@
 [user]
   name = Unreal Hoang
   email = unrealhoang@gmail.com
-  signingkey = ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIDmRDJOAiOymGN+VSuyCpKHbVbBQF5/2Q6E2XdjIiIdm
+  signingkey = ssh-ed25520 AAAAC3NzaC1lZDI1NTE5AAAAIDmRDJOAiOymGN+VSuyCpKHbVbBQF5/2Q6E2XdjIiIdm
 [gpg]
   format = ssh
 [gpg "ssh"]
