@@ -1,8 +1,5 @@
-{ config, ... }:
-{
-  imports = [
-    ../user-configurations
-  ];
+{ config, ... }: {
+  imports = [ ../user-configurations ];
   config = {
     programs.git = {
       enable = true;
@@ -18,7 +15,8 @@
         cp = "cherry-pick";
       };
       extraConfig = {
-        user.signingKey = "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIDmRDJOAiOymGN+VSuyCpKHbVbBQF5/2Q6E2XdjIiIdm";
+        user.signingKey =
+          "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIDmRDJOAiOymGN+VSuyCpKHbVbBQF5/2Q6E2XdjIiIdm";
         gpg = {
           format = "ssh";
           ssh.program = config.userConf.gitGpgSSHSignProgram;
@@ -39,14 +37,11 @@
 
         includeIf = let
           incConf = config.userConf.gitFolderConfigs;
-          confs = builtins.map
-            (ifPath: {
-              name = "gitdir:${ifPath}";
-              value = { path = incConf.${ifPath}; };
-            })
-            (builtins.attrNames incConf);
-        in
-          builtins.listToAttrs confs;
+          confs = builtins.map (ifPath: {
+            name = "gitdir:${ifPath}";
+            value = { path = incConf.${ifPath}; };
+          }) (builtins.attrNames incConf);
+        in builtins.listToAttrs confs;
       };
     };
   };

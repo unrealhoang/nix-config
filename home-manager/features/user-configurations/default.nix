@@ -1,7 +1,6 @@
 # Store all declaration of user configurations for feature modules
 { lib, ... }:
-with lib;
-{
+with lib; {
   options.userConf = {
     terminalFontSize = mkOption {
       type = types.float;

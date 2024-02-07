@@ -3,11 +3,10 @@ let
   font-family = "JetBrainsMono Nerd Font Mono";
   # frappe | latte | macchiato | mocha
   color-palette = "frappe";
-  color-config-loc = ".config/alacritty/catppuccin/catppuccin-${color-palette}.toml";
+  color-config-loc =
+    ".config/alacritty/catppuccin/catppuccin-${color-palette}.toml";
 in {
-  imports = [
-    ../user-configurations
-  ];
+  imports = [ ../user-configurations ];
   config = {
     home.file."${color-config-loc}".source = pkgs.fetchFromGitHub {
       owner = "catppuccin";
@@ -20,9 +19,7 @@ in {
       enable = true;
       settings = {
         import = [ config.home.file."${color-config-loc}".target ];
-        env = {
-          TERM = "xterm-256color";
-        };
+        env = { TERM = "xterm-256color"; };
         window = {
           opacity = 0.95;
           padding = {
@@ -47,9 +44,7 @@ in {
           };
           size = config.userConf.terminalFontSize;
         };
-        colors = {
-          draw_bold_text_with_bright_colors = true;
-        };
+        colors = { draw_bold_text_with_bright_colors = true; };
       };
     };
     programs.kitty.enable = true;
