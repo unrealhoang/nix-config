@@ -28,22 +28,19 @@
   programs.home-manager.enable = true;
   userConf = {
     terminalFontSize = 12.0;
-    gitGpgSSHSignProgram = "/Applications/1Password.app/Contents/MacOS/op-ssh-sign";
+    gitGpgSSHSignProgram =
+      "/Applications/1Password.app/Contents/MacOS/op-ssh-sign";
     gitFolderConfigs = {
       "/Users/unreal/Workspace/H2/" = "/Users/unreal/Workspace/H2/.gitconfig";
     };
   };
 
-  home.packages = with pkgs; [
-    (nerdfonts.override {
-      fonts = [
-        "FiraCode"
-        "DroidSansMono"
-        "JetBrainsMono"
-        "Iosevka"
-      ];
-    })
-  ];
+  home.packages = with pkgs;
+    [
+      (nerdfonts.override {
+        fonts = [ "FiraCode" "DroidSansMono" "JetBrainsMono" "Iosevka" ];
+      })
+    ];
 
   home.stateVersion = "23.05";
 }

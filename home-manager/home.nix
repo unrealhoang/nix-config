@@ -58,37 +58,25 @@
   userConf = {
     gitFolderConfigs = {
       "/mnt/data/Workspace/H2/" = "/mnt/data/Workspace/H2/.gitconfig";
+    };
   };
 
   home.persistence."/mnt/data/Shared" = {
-    directories = [
-      ".mozilla"
-      "dotfiles"
-    ];
+    directories = [ ".mozilla" "dotfiles" ];
     allowOther = false;
   };
   home.persistence."/mnt/data" = {
-    directories = [
-      "Resources"
-      "Workspace"
-      "Downloads"
-    ];
+    directories = [ "Resources" "Workspace" "Downloads" ];
     allowOther = true;
   };
   home.persistence."/mnt/data2/homepersist" = {
-    directories = [
-      ".local/share/Steam"
-    ];
+    directories = [ ".local/share/Steam" ];
     allowOther = true;
   };
 
   services.gnome-keyring = {
     enable = true;
-    components = [
-      "pkcs11"
-      "secrets"
-      "ssh"
-    ];
+    components = [ "pkcs11" "secrets" "ssh" ];
   };
 
   gtk = {
@@ -108,11 +96,7 @@
   };
   i18n.inputMethod = {
     enabled = "fcitx5";
-    fcitx5.addons = with pkgs; [
-      fcitx5-gtk
-      fcitx5-unikey
-      fcitx5-bamboo
-    ];
+    fcitx5.addons = with pkgs; [ fcitx5-gtk fcitx5-unikey fcitx5-bamboo ];
   };
   home.sessionVariables = {
     GTK_IM_MODULE = "fcitx";
@@ -139,7 +123,9 @@
     mplus-outline-fonts.githubRelease
     proggyfonts
     jetbrains-mono
-    (nerdfonts.override { fonts = [ "FiraCode" "DroidSansMono" "JetBrainsMono" "Iosevka" ]; })
+    (nerdfonts.override {
+      fonts = [ "FiraCode" "DroidSansMono" "JetBrainsMono" "Iosevka" ];
+    })
     archcraft-font
 
     vscode
@@ -156,7 +142,8 @@
     enable = true;
     nix-direnv.enable = true;
   };
-  nixpkgs.config.chromium.commandLineArgs = "--enable-features=UseOzonePlatform,WebRTCPipeWireCapturer --enable-wayland-ime --ozone-platform=wayland";
+  nixpkgs.config.chromium.commandLineArgs =
+    "--enable-features=UseOzonePlatform,WebRTCPipeWireCapturer --enable-wayland-ime --ozone-platform=wayland";
 
   # Nicely reload system units when changing configs
   systemd.user.startServices = "sd-switch";

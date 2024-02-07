@@ -4,8 +4,7 @@ let
   owner = "archcraft-os";
   repo = "archcraft-packages";
   rev = "501a1f62691f507f4b141b1228ec4d56fb785db3";
-in
-stdenv.mkDerivation {
+in stdenv.mkDerivation {
   name = "archcraft-font";
   src = fetchFromGitHub {
     owner = "archcraft-os";

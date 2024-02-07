@@ -1,19 +1,34 @@
 { inputs, pkgs, lib, config, ... }:
 
 let
-  workspaces =
-    (map toString (lib.range 0 9));
+  workspaces = (map toString (lib.range 0 9));
   # Map keys to hyprland directions
   directions = rec {
-    left = "l"; right = "r"; up = "u"; down = "d";
-    h = left; l = right; k = up; j = down;
+    left = "l";
+    right = "r";
+    up = "u";
+    down = "d";
+    h = left;
+    l = right;
+    k = up;
+    j = down;
   };
-in
-{
+in {
   home.packages = with pkgs; [
-    wofi swaybg wlsunset wl-clipboard pavucontrol
-    xdg-desktop-portal-hyprland xdg-desktop-portal-gtk xdg-utils
-    polkit-kde-agent waybar dunst python3 playerctl pamixer
+    wofi
+    swaybg
+    wlsunset
+    wl-clipboard
+    pavucontrol
+    xdg-desktop-portal-hyprland
+    xdg-desktop-portal-gtk
+    xdg-utils
+    polkit-kde-agent
+    waybar
+    dunst
+    python3
+    playerctl
+    pamixer
     networkmanagerapplet
   ];
 
@@ -38,24 +53,15 @@ in
         "waybar"
         "nm-applet --indicator"
       ];
-      monitor = [
-        "DP-1,3840x2160@60,0x0,2"
-        "DP-2,3840x2160@60,1920x0,2"
-      ];
-      workspace = [
-        "4,monitor:DP-1"
-        "5,monitor:DP-1,decorate:false"
-      ];
+      monitor = [ "DP-1,3840x2160@60,0x0,2" "DP-2,3840x2160@60,1920x0,2" ];
+      workspace = [ "4,monitor:DP-1" "5,monitor:DP-1,decorate:false" ];
       windowrulev2 = [
         "float,class:org.kde.polkit-kde-authentication-agent-1"
         "move 100 100,class:(1Password),title:(1Password)"
         "workspace 5,class:(dota2),title:(Dota 2)"
         "workspace 4,class:(steam)"
       ];
-      bindm = [
-        "SUPER,mouse:272,movewindow"
-        "SUPER,mouse:273,resizewindow"
-      ];
+      bindm = [ "SUPER,mouse:272,movewindow" "SUPER,mouse:273,resizewindow" ];
       bind = [
         "SUPER,f9,exec,~/.config/hypr/game_mode.sh"
         "SUPER,d,exec,wofi --show run --xoffset=1670 --yoffset=12 --width=230px --height=984 --style=$HOME/.config/wofi.css --term=footclient --prompt=Run"
@@ -80,24 +86,18 @@ in
         # apps
         "SUPER,return,exec,alacritty"
         "SUPERSHIFT,return,exec,firefox"
-      ] ++
-      (map (n:
-        "SUPER,${n},workspace,name:${n}"
-      ) workspaces) ++
-      (map (n:
-        "SUPERSHIFT,${n},movetoworkspace,name:${n}"
-      ) workspaces) ++
-      (lib.mapAttrsToList (key: direction:
-        "SUPER,${key},movefocus,${direction}"
-      ) directions) ++
-      # Swap windows
-      (lib.mapAttrsToList (key: direction:
-        "SUPERSHIFT,${key},movewindoworgroup,${direction}"
-      ) directions) ++
-      # Move workspace to other monitor
-      (lib.mapAttrsToList (key: direction:
-        "SUPERALT,${key},movecurrentworkspacetomonitor,${direction}"
-      ) directions);
+      ] ++ (map (n: "SUPER,${n},workspace,name:${n}") workspaces)
+        ++ (map (n: "SUPERSHIFT,${n},movetoworkspace,name:${n}") workspaces)
+        ++ (lib.mapAttrsToList
+          (key: direction: "SUPER,${key},movefocus,${direction}") directions) ++
+        # Swap windows
+        (lib.mapAttrsToList
+          (key: direction: "SUPERSHIFT,${key},movewindoworgroup,${direction}")
+          directions) ++
+        # Move workspace to other monitor
+        (lib.mapAttrsToList (key: direction:
+          "SUPERALT,${key},movecurrentworkspacetomonitor,${direction}")
+          directions);
 
       general = {
         gaps_in = 3;
@@ -107,16 +107,9 @@ in
         "col.active_border" = "0xff${config.colorscheme.colors.base0C}";
         "col.inactive_border" = "0xff${config.colorscheme.colors.base02}";
       };
-      xwayland = {
-        force_zero_scaling = true;
-      };
-      binds = {
-        workspace_back_and_forth = true;
-      };
-      env = [
-        "GDK_SCALE,2"
-        "XCURSOR_SIZE,24"
-      ];
+      xwayland = { force_zero_scaling = true; };
+      binds = { workspace_back_and_forth = true; };
+      env = [ "GDK_SCALE,2" "XCURSOR_SIZE,24" ];
       dwindle.split_width_multiplier = 1.35;
       misc = {
         vfr = "on";
@@ -169,7 +162,6 @@ in
         ];
       };
     };
-    extraConfig = ''
-    '';
+    extraConfig = "";
   };
 }

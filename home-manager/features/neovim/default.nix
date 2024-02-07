@@ -14,9 +14,7 @@
         file = "Catppuccin-mocha.tmTheme";
       };
     };
-    config = {
-      theme = "Catppuccin-mocha";
-    };
+    config = { theme = "Catppuccin-mocha"; };
   };
   programs.neovim = {
     enable = true;

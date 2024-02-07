@@ -1,11 +1,4 @@
-{ lib
-, stdenv
-, fetchFromGitHub
-, cmake
-, extra-cmake-modules
-, fcitx5
-, go
-, gettext
+{ lib, stdenv, fetchFromGitHub, cmake, extra-cmake-modules, fcitx5, go, gettext
 }:
 stdenv.mkDerivation rec {
   pname = "fcitx5-bamboo";
