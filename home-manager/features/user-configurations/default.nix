@@ -13,5 +13,9 @@ with lib;
       description = "program to gpg sign";
       default = "op-ssh-sign";
     };
+    gitFolderConfigs = mkOption {
+      type = types.attrsOf types.str;
+      description = "custom per folder configuration for git ";
+    };
   };
 }

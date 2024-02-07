@@ -55,6 +55,10 @@
     username = "unreal";
     homeDirectory = "/home/unreal";
   };
+  userConf = {
+    gitFolderConfigs = {
+      "/mnt/data/Workspace/H2/" = "/mnt/data/Workspace/H2/.gitconfig";
+  };
 
   home.persistence."/mnt/data/Shared" = {
     directories = [
