@@ -34,15 +34,13 @@
           renames = true;
         };
         merge.conflictstyle = "diff3";
-
-        includeIf = let
-          incConf = config.userConf.gitFolderConfigs;
-          confs = builtins.map (ifPath: {
-            name = "gitdir:${ifPath}";
-            value = { path = incConf.${ifPath}; };
-          }) (builtins.attrNames incConf);
-        in builtins.listToAttrs confs;
       };
+      includes = let
+        incConf = config.userConf.gitFolderConfigs;
+      in builtins.map (ifPath: {
+        condition = "gitdir:${ifPath}";
+        path = incConf.${ifPath};
+      }) (builtins.attrNames incConf);
     };
   };
 }
