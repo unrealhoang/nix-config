@@ -13,6 +13,7 @@ let
     k = up;
     j = down;
   };
+  grimblast = inputs.hyprland-contrib.packages.${pkgs.system}.grimblast;
 in {
   home.packages = with pkgs; [
     wofi
@@ -30,6 +31,8 @@ in {
     playerctl
     pamixer
     networkmanagerapplet
+    hyprpicker
+    grimblast
   ];
 
   home.file.".config/wofi.css".source = ./wofi.css;
@@ -46,10 +49,15 @@ in {
 
     enableNvidiaPatches = false;
     settings = {
+      env = [
+        "XCURSOR_THEME,Bibata-Modern-Amber"
+        "XCURSOR_SIZE,24"
+        "GDK_SCALE,2"
+      ];
       exec-once = [
         "${pkgs.polkit-kde-agent}/libexec/polkit-kde-authentication-agent-1"
         "${pkgs.dunst}/bin/dunst"
-        "hyprctl setcursor Bibata-Modern-Amber 24"
+        # "hyprctl setcursor Bibata-Modern-Amber 24"
         "waybar"
         "nm-applet --indicator"
       ];
@@ -86,6 +94,10 @@ in {
         # apps
         "SUPER,return,exec,alacritty"
         "SUPERSHIFT,return,exec,firefox"
+
+        # screenshot
+        "SUPERSHIFT,v,exec,grimblast save output ~/Pictures/Screenshots/ss-$(date +%Y-%m-%d_%T).png"
+        "SUPERSHIFT,b,exec,grimblast save area ~/Pictures/Screenshots/ss-$(date +%Y-%m-%d_%T).png"
       ] ++ (map (n: "SUPER,${n},workspace,name:${n}") workspaces)
         ++ (map (n: "SUPERSHIFT,${n},movetoworkspace,name:${n}") workspaces)
         ++ (lib.mapAttrsToList
@@ -109,14 +121,14 @@ in {
       };
       xwayland = { force_zero_scaling = true; };
       binds = { workspace_back_and_forth = true; };
-      env = [ "GDK_SCALE,2" "XCURSOR_SIZE,24" ];
       dwindle.split_width_multiplier = 1.35;
       misc = {
         vfr = "on";
         focus_on_activate = true;
       };
 
-      "device:logitech-ergo-m575s" = {
+      device = {
+        name = "logitech-ergo-m575s";
         scroll_method = "on_button_down";
         scroll_button = 274;
         scroll_button_lock = true;

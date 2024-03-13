@@ -132,6 +132,9 @@
     gnumake
     telegram-desktop
     discord
+    xfce.thunar
+    xfce.ristretto
+    xfce.tumbler
   ];
 
   # Enable home-manager and git
