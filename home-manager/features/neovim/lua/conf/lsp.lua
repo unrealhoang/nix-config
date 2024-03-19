@@ -100,6 +100,13 @@ local function setup_lsp_lua(capabilities)
   })
 end
 
+local function setup_lsp_nix(capabilities)
+  require 'lspconfig'.nil_ls.setup {
+    on_attach = on_lsp_attach,
+    capabilities = capabilities,
+  }
+end
+
 local function setup_lsp()
   local capabilities = require('cmp_nvim_lsp').default_capabilities()
 
@@ -114,6 +121,7 @@ local function setup_lsp()
   setup_lsp_rust(capabilities)
   setup_lsp_go(capabilities)
   setup_lsp_lua(capabilities)
+  setup_lsp_nix(capabilities)
 
   vim.lsp.handlers['textDocument/codeAction'] = require 'lsputil.codeAction'.code_action_handler
   vim.lsp.handlers['textDocument/references'] = require 'lsputil.locations'.references_handler

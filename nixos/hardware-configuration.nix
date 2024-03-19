@@ -5,7 +5,11 @@
   boot.initrd.availableKernelModules = [ "xhci_pci" "ahci" "usbhid" "sd_mod" ];
   boot.initrd.kernelModules = [ "amdgpu" ];
   boot.kernelModules = [ "kvm-amd" ];
-  boot.kernelParams = [ "amdgpu.dc=1" ];
+  boot.kernelParams = [
+    "amdgpu.dc=1"
+    "video=DP-1:3840x2160@60"
+    "video=DP-2:3840x2160@60"
+  ];
   boot.extraModulePackages = [ ];
 
   fileSystems."/" = {
@@ -45,6 +49,9 @@
   powerManagement.cpuFreqGovernor = lib.mkDefault "ondemand";
   hardware.cpu.amd.updateMicrocode =
     lib.mkDefault config.hardware.enableRedistributableFirmware;
-  hardware.opengl.driSupport = true;
+  hardware.opengl = {
+    extraPackages = with pkgs; [ rocmPackages.clr.icd ];
+    driSupport = true;
+  };
   hardware.enableRedistributableFirmware = true;
 }

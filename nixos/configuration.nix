@@ -116,6 +116,7 @@
     helvum
     steam
     steam-run
+    clinfo
   ];
   programs.steam.enable = true;
 
@@ -123,6 +124,15 @@
     enable = true;
     # Forbid root login through SSH.
     settings = { PermitRootLogin = "no"; };
+  };
+  services.printing = {
+    enable = true;
+    drivers = [ pkgs.hplip ];
+  };
+  services.avahi = {
+    enable = true;
+    nssmdns4 = true;
+    openFirewall = true;
   };
 
   # rtkit is optional but recommended
@@ -133,23 +143,21 @@
     alsa.enable = true;
     alsa.support32Bit = true;
     pulse.enable = true;
+    wireplumber.configPackages = [
+      (pkgs.writeTextDir "share/wireplumber/bluetooth.lua.d/51-bluez-config.lua" /* lua */ ''
+        bluez_monitor.rules = {
+          matches = {
+            { { "device.name", "matches", "bluez_card.*" }, },
+          },
+          apply_properties = {
+             ["bluez5.auto-connect"]  = "[ a2dp_sink ]",
+          },
+        }
+      '')
+    ];
   };
   services.blueman.enable = true;
   hardware.bluetooth.enable = true;
-  # environment.etc = {
-  #   "wireplumber/bluetooth.lua.d/51-bluez-config.lua".text = ''
-  #     bluez_monitor.rules = {
-  #       matches = {
-  #         {
-  #           { "device.name", "matches", "bluez_card.*" },
-  #         },
-  #       },
-  #       apply_properties = {
-  #          ["bluez5.auto-connect"]  = "[ a2dp_sink ]"
-  #       }
-  #     }
-  #   '';
-  # };
 
   programs.fuse.userAllowOther = true;
   programs.zsh.enable = true;

@@ -1,5 +1,5 @@
-{ lib, pkgs, ... }: {
-  home.packages = [ pkgs.lua-language-server ];
+{ pkgs, ... }: {
+  home.packages = [ pkgs.lua-language-server pkgs.nil ];
   programs.ripgrep.enable = true;
   programs.bat = {
     enable = true;

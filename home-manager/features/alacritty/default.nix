@@ -1,4 +1,4 @@
-{ lib, pkgs, config, ... }:
+{ pkgs, config, ... }:
 let
   font-family = "JetBrainsMono Nerd Font Mono";
   # frappe | latte | macchiato | mocha
