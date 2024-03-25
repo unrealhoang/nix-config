@@ -1,4 +1,4 @@
-{ lib, pkgs, ... }: {
+{ pkgs, ... }: {
   programs.starship = {
     enable = true;
     settings = {
@@ -12,6 +12,9 @@
   programs.fzf.enable = true;
   programs.zsh = {
     enable = true;
+    envExtra = ''
+    . ${pkgs.nix}/etc/profile.d/nix-daemon.sh
+    '';
     oh-my-zsh = {
       enable = true;
       plugins = [ "git" "sudo" "fasd" "fzf" "direnv" ];

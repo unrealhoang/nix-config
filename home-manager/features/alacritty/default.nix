@@ -2,7 +2,7 @@
 let
   font-family = "JetBrainsMono Nerd Font Mono";
   # frappe | latte | macchiato | mocha
-  color-palette = "frappe";
+  color-palette = config.userConf.catppuccinPalette;
   color-config-loc =
     ".config/alacritty/catppuccin/catppuccin-${color-palette}.toml";
 in {
@@ -18,6 +18,10 @@ in {
     programs.alacritty = {
       enable = true;
       settings = {
+        shell = {
+          program = config.userConf.shellProgram;
+          args = [ "--login" ];
+        };
         import = [ config.home.file."${color-config-loc}".target ];
         env = { TERM = "xterm-256color"; };
         window = {

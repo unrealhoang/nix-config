@@ -1,5 +1,5 @@
 # Store all declaration of user configurations for feature modules
-{ lib, ... }:
+{ lib, pkgs, ... }:
 with lib; {
   options.userConf = {
     terminalFontSize = mkOption {
@@ -15,6 +15,17 @@ with lib; {
     gitFolderConfigs = mkOption {
       type = types.attrsOf types.str;
       description = "custom per folder configuration for git ";
+    };
+    shellProgram = mkOption {
+      type = types.str;
+      description = "path to shell program";
+      default = "${pkgs.zsh}/bin/zsh";
+    };
+    catppuccinPalette = mkOption {
+      type = types.str;
+      description = "Catppuccin palette";
+      # frappe | latte | macchiato | mocha
+      default = "mocha";
     };
   };
 }
