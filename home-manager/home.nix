@@ -21,6 +21,7 @@
     ./features/slack
     ./features/tmux
     ./features/zsh
+    ./features/user-configurations
   ];
 
   nixpkgs = {
@@ -54,25 +55,35 @@
   home = {
     username = "unreal";
     homeDirectory = "/home/unreal";
+
+    persistence = {
+      "/mnt/data/Shared" = {
+        directories = [ ".mozilla" "dotfiles" ];
+        allowOther = false;
+      };
+      "/mnt/data" = {
+        directories = [ "Resources" "Workspace" "Downloads" ];
+        allowOther = true;
+      };
+      "/mnt/data2/homepersist" = {
+        directories = [ ".local/share/Steam" ];
+        allowOther = true;
+      };
+    };
+
+    sessionVariables = {
+      GTK_IM_MODULE = "fcitx";
+      QT_IM_MODULE = lib.mkForce "wayland";
+      XMODIFIERS = "@im=fcitx";
+    };
   };
   userConf = {
     gitFolderConfigs = {
       "/mnt/data/Workspace/H2/" = "/mnt/data/Workspace/H2/.gitconfig";
     };
+    catppuccinPalette = "mocha";
   };
 
-  home.persistence."/mnt/data/Shared" = {
-    directories = [ ".mozilla" "dotfiles" ];
-    allowOther = false;
-  };
-  home.persistence."/mnt/data" = {
-    directories = [ "Resources" "Workspace" "Downloads" ];
-    allowOther = true;
-  };
-  home.persistence."/mnt/data2/homepersist" = {
-    directories = [ ".local/share/Steam" ];
-    allowOther = true;
-  };
 
   services.gnome-keyring = {
     enable = true;
@@ -97,11 +108,6 @@
   i18n.inputMethod = {
     enabled = "fcitx5";
     fcitx5.addons = with pkgs; [ fcitx5-gtk fcitx5-unikey fcitx5-bamboo ];
-  };
-  home.sessionVariables = {
-    GTK_IM_MODULE = "fcitx";
-    QT_IM_MODULE = lib.mkForce "wayland";
-    XMODIFIERS = "@im=fcitx";
   };
   fonts.fontconfig.enable = true;
 

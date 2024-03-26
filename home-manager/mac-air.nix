@@ -6,6 +6,7 @@
     ./features/neovim
     ./features/tmux
     ./features/zsh
+    ./features/user-configurations
   ];
 
   nixpkgs = {

@@ -22,9 +22,8 @@ with lib; {
       default = "${pkgs.zsh}/bin/zsh";
     };
     catppuccinPalette = mkOption {
-      type = types.str;
+      type = types.enum [ "frappe" "latte" "macchiato" "mocha" ];
       description = "Catppuccin palette";
-      # frappe | latte | macchiato | mocha
       default = "mocha";
     };
   };

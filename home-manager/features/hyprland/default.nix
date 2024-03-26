@@ -116,8 +116,8 @@ in {
         gaps_out = 6;
         border_size = 2;
         cursor_inactive_timeout = 4;
-        "col.active_border" = "0xff${config.colorscheme.colors.base0C}";
-        "col.inactive_border" = "0xff${config.colorscheme.colors.base02}";
+        "col.active_border" = "0xff${config.colorscheme.palette.base0C}";
+        "col.inactive_border" = "0xff${config.colorscheme.palette.base02}";
       };
       xwayland = { force_zero_scaling = true; };
       binds = { workspace_back_and_forth = true; };
