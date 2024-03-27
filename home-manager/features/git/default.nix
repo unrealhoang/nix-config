@@ -35,8 +35,7 @@
         };
         merge.conflictstyle = "diff3";
       };
-      includes = let
-        incConf = config.userConf.gitFolderConfigs;
+      includes = let incConf = config.userConf.gitFolderConfigs;
       in builtins.map (ifPath: {
         condition = "gitdir:${ifPath}";
         path = incConf.${ifPath};

@@ -13,7 +13,7 @@
   programs.zsh = {
     enable = true;
     envExtra = ''
-    . ${pkgs.nix}/etc/profile.d/nix-daemon.sh
+      . ${pkgs.nix}/etc/profile.d/nix-daemon.sh
     '';
     oh-my-zsh = {
       enable = true;

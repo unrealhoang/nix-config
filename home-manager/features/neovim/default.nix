@@ -1,5 +1,5 @@
-{ pkgs, config, ... }: let
-    palette = config.userConf.catppuccinPalette;
+{ pkgs, config, ... }:
+let palette = config.userConf.catppuccinPalette;
 in {
   imports = [ ../user-configurations ];
   home.packages = [ pkgs.lua-language-server pkgs.nil ];
@@ -80,7 +80,7 @@ in {
     defaultEditor = true;
   };
   home.file.".config/nvim/init.lua".text = ''
-  vim.g.catppuccin_flavour = "${palette}"
+    vim.g.catppuccin_flavour = "${palette}"
   '' + (builtins.readFile ./init.lua);
   home.file.".config/nvim/lua".source = ./lua;
 }

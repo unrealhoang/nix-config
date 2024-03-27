@@ -144,16 +144,18 @@
     alsa.support32Bit = true;
     pulse.enable = true;
     wireplumber.configPackages = [
-      (pkgs.writeTextDir "share/wireplumber/bluetooth.lua.d/51-bluez-config.lua" /* lua */ ''
-        bluez_monitor.rules = {
-          matches = {
-            { { "device.name", "matches", "bluez_card.*" }, },
-          },
-          apply_properties = {
-             ["bluez5.auto-connect"]  = "[ a2dp_sink ]",
-          },
-        }
-      '')
+      (pkgs.writeTextDir
+        "share/wireplumber/bluetooth.lua.d/51-bluez-config.lua" # lua
+        ''
+          bluez_monitor.rules = {
+            matches = {
+              { { "device.name", "matches", "bluez_card.*" }, },
+            },
+            apply_properties = {
+               ["bluez5.auto-connect"]  = "[ a2dp_sink ]",
+            },
+          }
+        '')
     ];
   };
   services.blueman.enable = true;

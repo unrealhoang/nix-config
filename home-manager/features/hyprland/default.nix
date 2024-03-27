@@ -49,11 +49,8 @@ in {
 
     enableNvidiaPatches = false;
     settings = {
-      env = [
-        "XCURSOR_THEME,Bibata-Modern-Amber"
-        "XCURSOR_SIZE,24"
-        "GDK_SCALE,2"
-      ];
+      env =
+        [ "XCURSOR_THEME,Bibata-Modern-Amber" "XCURSOR_SIZE,24" "GDK_SCALE,2" ];
       exec-once = [
         "${pkgs.polkit-kde-agent}/libexec/polkit-kde-authentication-agent-1"
         "${pkgs.dunst}/bin/dunst"
