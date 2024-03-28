@@ -10,6 +10,11 @@
     # Also see the 'unstable-packages' overlay at 'overlays/default.nix'.
     impermanence = { url = "github:nix-community/impermanence"; };
 
+    nixinate = {
+      url = "github:matthewcroughan/nixinate";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
+
     # Home manager
     home-manager = {
       url = "github:nix-community/home-manager";
@@ -44,6 +49,7 @@
         "x86_64-darwin"
       ];
     in rec {
+      apps = forAllSystems (system: inputs.nixinate.nixinate.${system} self);
       # Your custom packages
       # Acessible through 'nix build', 'nix shell', etc
       packages = forAllSystems (system:
@@ -76,6 +82,24 @@
             home-manager.nixosModules.home-manager
             # > Our main nixos configuration file <
             ./nixos/configuration.nix
+          ];
+        };
+        hanode = nixpkgs.lib.nixosSystem {
+          specialArgs = { inherit inputs outputs; };
+          modules = [
+            home-manager.nixosModules.home-manager
+            # > Our main nixos configuration file <
+            ./hanode/configuration.nix
+            {
+              _module.args.nixinate = {
+                host = "192.168.68.56";
+                sshUser = "bing";
+                buildOn = "remote";
+                substituteOnTarget = true; # if buildOn is "local" then it will substitute on the target, "-s"
+                hermetic = true;
+                nixOptions = [ "--show-trace" ];
+              };
+            }
           ];
         };
       };
