@@ -125,6 +125,14 @@
     };
   };
 
+  services.nginx = {
+    enable = true;
+  };
+  services.grafana = {
+    enable = true;
+    port = 2345;
+    addr = "127.0.0.1";
+  };
   services.coredns = {
     enable = true;
     config =

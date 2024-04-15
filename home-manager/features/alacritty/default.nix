@@ -1,28 +1,17 @@
-{ pkgs, config, ... }:
+{ config, ... }:
 let
   font-family = "JetBrainsMono Nerd Font Mono";
-  # frappe | latte | macchiato | mocha
-  color-palette = config.userConf.catppuccinPalette;
-  color-config-loc =
-    ".config/alacritty/catppuccin/catppuccin-${color-palette}.toml";
 in {
   imports = [ ../user-configurations ];
   config = {
-    home.file."${color-config-loc}".source = pkgs.fetchFromGitHub {
-      owner = "catppuccin";
-      repo = "alacritty";
-      rev = "f2da554ee63690712274971dd9ce0217895f5ee0";
-      sha256 = "sha256-ypYaxlsDjI++6YNcE+TxBSnlUXKKuAMmLQ4H74T/eLw=";
-    } + "/catppuccin-${color-palette}.toml";
-
     programs.alacritty = {
+      catppuccin.enable = true;
       enable = true;
       settings = {
         shell = {
           program = config.userConf.shellProgram;
           args = [ "--login" ];
         };
-        import = [ config.home.file."${color-config-loc}".target ];
         env = { TERM = "xterm-256color"; };
         window = {
           opacity = 0.95;

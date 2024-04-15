@@ -1,41 +1,40 @@
-{ pkgs, lib, config, ... }: {
+{ pkgs, ... }: {
   programs.tmux = {
+    catppuccin.enable = true;
     enable = true;
     plugins = with pkgs; [
       tmuxPlugins.resurrect
       tmuxPlugins.yank
       tmuxPlugins.better-mouse-mode
-      {
-        plugin = tmuxPlugins.catppuccin.overrideAttrs (prevAttrs: {
-          src = pkgs.fetchFromGitHub {
-            owner = "catppuccin";
-            repo = "tmux";
-            rev = "6ae90fe3fd7881f87dedd35615d70f9f29a238ae";
-            hash = "sha256-Mp2MxJ/WpCFPCucQxYxYMe7b/yXfPVhj+MSM2XLJ92o=";
-          };
-        });
-        extraConfig = ''
-          # frappe | latte | macchiato | mocha
-          set -g @catppuccin_flavour 'frappe' # or frappe, macchiato, mocha
-          ###########################
-          # Theme
-          ###########################
-          set -g @catppuccin_window_right_separator "█ "
-          set -g @catppuccin_window_number_position "right"
-          set -g @catppuccin_window_middle_separator " | "
+      # {
+      #   plugin = tmuxPlugins.catppuccin.overrideAttrs (prevAttrs: {
+      #     src = pkgs.fetchFromGitHub {
+      #       owner = "catppuccin";
+      #       repo = "tmux";
+      #       rev = "6ae90fe3fd7881f87dedd35615d70f9f29a238ae";
+      #       hash = "sha256-Mp2MxJ/WpCFPCucQxYxYMe7b/yXfPVhj+MSM2XLJ92o=";
+      #     };
+      #   });
+      #   extraConfig = ''
+      #     ###########################
+      #     # Theme
+      #     ###########################
+      #     set -g @catppuccin_window_right_separator "█ "
+      #     set -g @catppuccin_window_number_position "right"
+      #     set -g @catppuccin_window_middle_separator " | "
 
-          set -g @catppuccin_window_default_fill "none"
-          set -g @catppuccin_window_default_text "#W"
-          set -g @catppuccin_window_current_fill "all"
-          set -g @catppuccin_window_current_text "#W"
+      #     set -g @catppuccin_window_default_fill "none"
+      #     set -g @catppuccin_window_default_text "#W"
+      #     set -g @catppuccin_window_current_fill "all"
+      #     set -g @catppuccin_window_current_text "#W"
 
-          set -g @catppuccin_status_modules_right "directory session date_time"
-          set -g @catppuccin_status_left_separator "█"
-          set -g @catppuccin_status_right_separator "█"
+      #     set -g @catppuccin_status_modules_right "directory session date_time"
+      #     set -g @catppuccin_status_left_separator "█"
+      #     set -g @catppuccin_status_right_separator "█"
 
-          set -g @catppuccin_date_time_text "%Y-%m-%d %H:%M"
-        '';
-      }
+      #     set -g @catppuccin_date_time_text "%Y-%m-%d %H:%M"
+      #   '';
+      # }
     ];
     extraConfig = ''
       # use 256 term for pretty colors

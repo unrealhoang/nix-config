@@ -1,4 +1,4 @@
-{ inputs, pkgs, lib, config, ... }:
+{ inputs, pkgs, lib, ... }:
 
 let
   workspaces = (map toString (lib.range 0 9));
@@ -14,7 +14,13 @@ let
     j = down;
   };
   grimblast = inputs.hyprland-contrib.packages.${pkgs.system}.grimblast;
+  pkgs-hyprland = inputs.hyprland.packages.${pkgs.system}.hyprland;
+  pkgs-hyprlock = inputs.hyprlock.packages.${pkgs.system}.hyprlock;
 in {
+  imports = [
+    inputs.hyprlock.homeManagerModules.hyprlock
+    inputs.hypridle.homeManagerModules.hypridle
+  ];
   home.packages = with pkgs; [
     wofi
     swaybg
@@ -43,9 +49,79 @@ in {
     executable = true;
   };
 
-  wayland.windowManager.hyprland = {
+  programs.hyprlock = {
     enable = true;
-    package = inputs.hyprland.packages.${pkgs.system}.hyprland;
+    backgrounds = [{
+      monitor = "";
+      path = "~/Pictures/Wallpapers/fuji.png";
+      blur_passes = 1;
+      contrast = 0.8916;
+      brightness = 0.8172;
+      vibrancy = 0.1696;
+      vibrancy_darkness = 0.0;
+    }];
+    input-fields = [{
+      monitor = "";
+      size = { width = 250; height = 60; };
+      outline_thickness = 2;
+      dots_size = 0.2; # Scale of input-field height, 0.2 - 0.8
+      dots_spacing = 0.2; # Scale of dots' absolute size, 0.0 - 1.0
+      dots_center = true;
+      outer_color = "rgba(0, 0, 0, 0)";
+      inner_color = "rgba(0, 0, 0, 0.5)";
+      font_color = "rgb(200, 200, 200)";
+      fade_on_empty = false;
+      placeholder_text = "<i><span foreground=\"##cdd6f4\">Input Password...</span></i>";
+      hide_input = false;
+      position = { x = 0; y = -120; };
+      halign = "center";
+      valign = "center";
+    }];
+    labels = [{
+      monitor = "";
+      text = "cmd[update:1000] echo \"$(date +\"%-I:%M%p\")\"";
+      color = "rgba(255, 255, 255, 0.6)";
+      font_size = 120;
+      font_family = "JetBrains Mono Nerd Font Mono ExtraBold";
+      position = { x = 0; y = -300; };
+      halign = "center";
+      valign = "top";
+    }
+    {
+      monitor = "";
+      text = "Hi there, $USER";
+      color = "rgba(255, 255, 255, 0.6)";
+      font_size = 25;
+      font_family = "JetBrains Mono Nerd Font Mono";
+      position = { x = 0; y = -40; };
+      halign = "center";
+      valign = "center";
+    }];
+  };
+  services.hypridle = let
+    hyprlock = "${pkgs-hyprlock}/bin/hyprlock";
+    hyprctl = "${pkgs-hyprland}/bin/hyprctl";
+  in {
+    enable = true;
+    lockCmd = "pidof ${hyprlock} || ${hyprlock}";
+    beforeSleepCmd = "loginctl lock-session";
+    afterSleepCmd = "${hyprctl} dispatch dpms on";
+    listeners = [{
+      timeout = 300;
+      onTimeout = "${hyprlock}";
+      onResume = "notify-send \"Welcome back!\"";
+    }
+    {
+      timeout = 360;
+      onTimeout = "${hyprctl} dispatch dpms off";
+      onResume = "${hyprctl} dispatch dpms on";
+    }];
+  };
+
+  wayland.windowManager.hyprland = {
+    catppuccin.enable = true;
+    enable = true;
+    package = pkgs-hyprland;
 
     enableNvidiaPatches = false;
     settings = {
@@ -113,8 +189,16 @@ in {
         gaps_out = 6;
         border_size = 2;
         cursor_inactive_timeout = 4;
-        "col.active_border" = "0xff${config.colorscheme.palette.base0C}";
-        "col.inactive_border" = "0xff${config.colorscheme.palette.base02}";
+
+        "col.active_border" = "$lavender";
+        "col.inactive_border" = "$overlay0";
+      };
+      group = {
+        "col.border_active" = "$lavender";
+        "col.border_inactive" = "$overlay0";
+        groupbar = {
+          text_color = "$rosewater";
+        };
       };
       xwayland = { force_zero_scaling = true; };
       binds = { workspace_back_and_forth = true; };

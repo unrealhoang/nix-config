@@ -72,12 +72,14 @@
   networking.hostName = "unrealPc";
   networking.networkmanager.enable = true;
 
+  catppuccin.flavour = "mocha";
   boot.loader = {
     efi = {
       canTouchEfiVariables = true;
       efiSysMountPoint = "/boot/efi";
     };
     grub = {
+      catppuccin.enable = true;
       efiSupport = true;
       device = "nodev";
       useOSProber = true;
@@ -117,6 +119,7 @@
     steam
     steam-run
     clinfo
+    inputs.hyprlock.packages.${pkgs.system}.hyprlock
   ];
   programs.steam.enable = true;
 
@@ -177,7 +180,10 @@
 
   programs.seahorse.enable = true;
   services.gnome.gnome-keyring.enable = true;
-  security.pam.services.login.enableGnomeKeyring = true;
+  security.pam.services = {
+    hyprlock = {};
+    login.enableGnomeKeyring = true;
+  };
   services.ratbagd.enable = true;
 
   # https://nixos.wiki/wiki/FAQ/When_do_I_update_stateVersion

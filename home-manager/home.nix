@@ -81,12 +81,18 @@
     gitFolderConfigs = {
       "/mnt/data/Workspace/H2/" = "/mnt/data/Workspace/H2/.gitconfig";
     };
-    catppuccinPalette = "mocha";
   };
+  catppuccin.flavour = "mocha";
 
   services.gnome-keyring = {
     enable = true;
     components = [ "pkcs11" "secrets" "ssh" ];
+  };
+
+  xdg.enable = true;
+  programs.btop = {
+    catppuccin.enable = true;
+    enable = true;
   };
 
   gtk = {

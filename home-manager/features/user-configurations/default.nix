@@ -21,10 +21,5 @@ with lib; {
       description = "path to shell program";
       default = "${pkgs.zsh}/bin/zsh";
     };
-    catppuccinPalette = mkOption {
-      type = types.enum [ "frappe" "latte" "macchiato" "mocha" ];
-      description = "Catppuccin palette";
-      default = "mocha";
-    };
   };
 }

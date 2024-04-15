@@ -9,6 +9,7 @@
     nixpkgs-unstable.url = "github:nixos/nixpkgs/nixos-unstable";
     # Also see the 'unstable-packages' overlay at 'overlays/default.nix'.
     impermanence = { url = "github:nix-community/impermanence"; };
+    catppuccin.url = "github:catppuccin/nix";
 
     nixinate = {
       url = "github:matthewcroughan/nixinate";
@@ -32,13 +33,21 @@
       url = "github:hyprwm/Hyprland";
       inputs.nixpkgs.follows = "nixpkgs";
     };
+    hyprlock = {
+      url = "github:hyprwm/hyprlock";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
+    hypridle = {
+      url = "github:hyprwm/hypridle";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
     hyprland-contrib = {
       url = "github:hyprwm/contrib";
       inputs.nixpkgs.follows = "nixpkgs";
     };
   };
 
-  outputs = { self, nixpkgs, home-manager, ... }@inputs:
+  outputs = { self, nixpkgs, home-manager, catppuccin, ... }@inputs:
     let
       inherit (self) outputs;
       forAllSystems = nixpkgs.lib.genAttrs [
@@ -79,6 +88,7 @@
         unrealPc = nixpkgs.lib.nixosSystem {
           specialArgs = { inherit inputs outputs; };
           modules = [
+            catppuccin.nixosModules.catppuccin
             home-manager.nixosModules.home-manager
             # > Our main nixos configuration file <
             ./nixos/configuration.nix
@@ -113,6 +123,7 @@
             nixpkgs.legacyPackages.x86_64-linux; # Home-manager requires 'pkgs' instance
           extraSpecialArgs = { inherit inputs outputs; };
           modules = [
+            catppuccin.homeManagerModules.catppuccin
             # > Our main home-manager configuration file <
             ./home-manager/home.nix
           ];
@@ -122,6 +133,7 @@
             nixpkgs.legacyPackages.aarch64-darwin; # Home-manager requires 'pkgs' instance
           extraSpecialArgs = { inherit inputs outputs; };
           modules = [
+            catppuccin.homeManagerModules.catppuccin
             homeManagerModules.darwin-trampoline-apps
             # > Our main home-manager configuration file <
             ./home-manager/mac-air.nix
