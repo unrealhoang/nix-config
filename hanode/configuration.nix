@@ -1,4 +1,4 @@
-{ pkgs, ... }@args:
+{ pkgs, config, ... }@args:
 
 {
   imports =
@@ -7,8 +7,11 @@
     ];
 
   # Bootloader.
-  boot.loader.systemd-boot.enable = true;
-  boot.loader.efi.canTouchEfiVariables = true;
+  boot.loader = {
+    systemd-boot.enable = true;
+    efi.canTouchEfiVariables = true;
+    timeout = 2;
+  };
 
   networking.hostName = "hanixos"; # Define your hostname.
   # networking.wireless.enable = true;  # Enables wireless support via wpa_supplicant.
@@ -18,7 +21,7 @@
   # networking.proxy.noProxy = "127.0.0.1,localhost,internal.domain";
 
   # Enable networking
-  networking.networkmanager.enable = true;
+  # networking.networkmanager.enable = true;
 
   # Set your time zone.
   time.timeZone = "Asia/Tokyo";
@@ -37,13 +40,6 @@
     LC_TELEPHONE = "en_US.UTF-8";
     LC_TIME = "en_US.UTF-8";
   };
-
-  # Enable the X11 windowing system.
-  services.xserver.enable = false;
-
-  # Enable the GNOME Desktop Environment.
-  services.xserver.displayManager.gdm.enable = false;
-  services.xserver.desktopManager.gnome.enable = false;
 
   # Configure keymap in X11
   services.xserver.xkb = {
@@ -74,12 +70,10 @@
   home-manager.users.bing = import ../home-manager/hanode-bing.nix args;
 
   # Enable automatic login for the user.
-  services.xserver.displayManager.autoLogin.enable = true;
-  services.xserver.displayManager.autoLogin.user = "bing";
-
-  # Workaround for GNOME autologin: https://github.com/NixOS/nixpkgs/issues/103746#issuecomment-945091229
-  systemd.services."getty@tty1".enable = false;
-  systemd.services."autovt@tty1".enable = false;
+  services.displayManager.autoLogin = {
+    enable = true;
+    user = "bing";
+  };
 
   systemd.targets.sleep.enable = false;
   systemd.targets.suspend.enable = false;
@@ -127,18 +121,88 @@
 
   services.nginx = {
     enable = true;
+    recommendedProxySettings = true;
+    virtualHosts = let
+      grafConf = config.services.grafana.settings.server;
+    in {
+      "${grafConf.domain}" = {
+        locations."/" = {
+          proxyPass = let
+            addr = grafConf.http_addr;
+            port = builtins.toString grafConf.http_port;
+          in "http://${addr}:${port}";
+          proxyWebsockets = true;
+        };
+      };
+      "jellyfin.hanode.me" = {
+        locations."/" = {
+          proxyPass = "http://localhost:8096";
+          proxyWebsockets = true;
+        };
+      };
+      "ha.hanode.me" = {
+        locations."/" = {
+          proxyPass = "http://localhost:8123";
+          proxyWebsockets = true;
+        };
+      };
+    };
+  };
+
+  services.prometheus = let
+    promConf = config.services.prometheus;
+  in {
+    enable = true;
+    port = 9001;
+
+    exporters = {
+      node = {
+        enable = true;
+        enabledCollectors = [ "systemd" ];
+        port = 9002;
+      };
+    };
+
+    scrapeConfigs = [
+      {
+        job_name = "node";
+        static_configs = [{
+          targets = ["localhost:${toString promConf.exporters.node.port}"];
+        }];
+      }
+      {
+        job_name = "coredns";
+        static_configs = [{
+          targets = ["localhost:9153"];
+        }];
+      }
+    ];
   };
   services.grafana = {
     enable = true;
-    port = 2345;
-    addr = "127.0.0.1";
+    settings = {
+      server = {
+        domain = "grafana.hanode.me";
+        http_port = 2345;
+        http_addr = "127.0.0.1";
+      };
+    };
   };
   services.coredns = {
     enable = true;
     config =
     ''
+      hanode.me {
+        prometheus localhost:9153
+        hosts {
+          192.168.68.56 hanode.me
+          192.168.68.56 grafana.hanode.me
+          192.168.68.56 jellyfin.hanode.me
+          192.168.68.56 ha.hanode.me
+        }
+      }
       . {
-        prometheus
+        prometheus localhost:9153
         reload 10s
         hosts /var/blocklist.hosts {
           fallthrough
@@ -156,11 +220,15 @@
   # Open ports in the firewall.
   networking.firewall.allowedTCPPorts = [
       8123
-      9153
       21
       53
+      80
   ];
-  networking.firewall.allowedUDPPorts = [ 53 ];
+  networking.firewall.allowedUDPPorts = [
+    53
+    1900
+    7359
+  ];
   # Or disable the firewall altogether.
   # networking.firewall.enable = false;
 
@@ -184,4 +252,22 @@
       ];
     };
   };
+
+  # 1. enable vaapi on OS-level
+  nixpkgs.config.packageOverrides = pkgs: {
+    vaapiIntel = pkgs.vaapiIntel.override { enableHybridCodec = true; };
+  };
+  hardware.opengl = {
+    enable = true;
+    extraPackages = with pkgs; [
+      intel-media-driver
+      vaapiIntel
+      vaapiVdpau
+      libvdpau-va-gl
+      intel-compute-runtime # OpenCL filter support (hardware tonemapping and subtitle burn-in)
+    ];
+  };
+
+  # 2. do not forget to enable jellyfin
+  services.jellyfin.enable = true;
 }

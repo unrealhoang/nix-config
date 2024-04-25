@@ -5,6 +5,7 @@
     ./features/tmux
     ./features/zsh
     ./features/user-configurations
+    inputs.catppuccin.homeManagerModules.catppuccin
   ];
   nixpkgs = {
     overlays = [

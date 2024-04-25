@@ -101,15 +101,18 @@ in {
   services.hypridle = let
     hyprlock = "${pkgs-hyprlock}/bin/hyprlock";
     hyprctl = "${pkgs-hyprland}/bin/hyprctl";
+    notifysend = "${pkgs.libnotify}/bin/notify-send";
+    loginctl = "${pkgs.systemd}/bin/loginctl";
+    pidof = "${pkgs.procps}/bin/pidof";
   in {
     enable = true;
-    lockCmd = "pidof ${hyprlock} || ${hyprlock}";
-    beforeSleepCmd = "loginctl lock-session";
+    lockCmd = "${pidof} ${hyprlock} || ${hyprlock}";
+    beforeSleepCmd = "${loginctl} lock-session";
     afterSleepCmd = "${hyprctl} dispatch dpms on";
     listeners = [{
       timeout = 300;
       onTimeout = "${hyprlock}";
-      onResume = "notify-send \"Welcome back!\"";
+      onResume = "${notifysend} \"Welcome back!\"";
     }
     {
       timeout = 360;
@@ -123,7 +126,6 @@ in {
     enable = true;
     package = pkgs-hyprland;
 
-    enableNvidiaPatches = false;
     settings = {
       env =
         [ "XCURSOR_THEME,Bibata-Modern-Amber" "XCURSOR_SIZE,24" "GDK_SCALE,2" ];
