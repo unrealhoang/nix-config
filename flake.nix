@@ -88,8 +88,13 @@
         unrealPc = nixpkgs.lib.nixosSystem {
           specialArgs = { inherit inputs outputs; };
           modules = [
-            catppuccin.nixosModules.catppuccin
             home-manager.nixosModules.home-manager
+            {
+              home-manager.users.unreal = { ... }: {
+                imports= [ ./home-manager/home.nix ];
+              };
+              home-manager.extraSpecialArgs = { inherit inputs outputs; };
+            }
             # > Our main nixos configuration file <
             ./nixos/configuration.nix
           ];
@@ -98,6 +103,10 @@
           specialArgs = { inherit inputs outputs; };
           modules = [
             home-manager.nixosModules.home-manager
+            {
+              home-manager.users.bing = import ./home-manager/hanode-bing.nix;
+              home-manager.extraSpecialArgs = { inherit inputs outputs; };
+            }
             # > Our main nixos configuration file <
             ./hanode/configuration.nix
             {
@@ -123,8 +132,6 @@
             nixpkgs.legacyPackages.x86_64-linux; # Home-manager requires 'pkgs' instance
           extraSpecialArgs = { inherit inputs outputs; };
           modules = [
-            catppuccin.homeManagerModules.catppuccin
-            # > Our main home-manager configuration file <
             ./home-manager/home.nix
           ];
         };

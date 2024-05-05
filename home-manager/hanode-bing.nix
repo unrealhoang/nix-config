@@ -1,10 +1,9 @@
-{ inputs, outputs, lib, config, pkgs, ... }: {
+{ inputs, outputs, ... }: {
   # You can import other home-manager modules here
   imports = [
     ./features/neovim
     ./features/tmux
     ./features/zsh
-    ./features/user-configurations
     inputs.catppuccin.homeManagerModules.catppuccin
   ];
   nixpkgs = {
@@ -25,9 +24,6 @@
     homeDirectory = "/home/bing";
   };
   programs.home-manager.enable = true;
-  userConf = {
-    terminalFontSize = 12.0;
-  };
 
   home.stateVersion = "23.05";
 }

@@ -1,4 +1,4 @@
-{ pkgs, config, ... }@args:
+{ pkgs, config, ... }:
 
 {
   imports =
@@ -66,8 +66,6 @@
     extraGroups = [ "networkmanager" "wheel" ];
     shell = pkgs.zsh;
   };
-  home-manager.useUserPackages = true;
-  home-manager.users.bing = import ../home-manager/hanode-bing.nix args;
 
   # Enable automatic login for the user.
   services.displayManager.autoLogin = {
@@ -146,6 +144,18 @@
           proxyWebsockets = true;
         };
       };
+      "aria.hanode.me" = {
+        root = "${pkgs.ariang}/share/ariang";
+        locations."/" = { };
+      };
+      "ariarpc.hanode.me" = {
+        locations."/" = {
+          proxyPass = let
+            port = config.services.aria2.rpcListenPort;
+          in "http://localhost:${builtins.toString port}";
+          proxyWebsockets = true;
+        };
+      };
     };
   };
 
@@ -188,6 +198,12 @@
       };
     };
   };
+  services.aria2 = {
+    enable = true;
+    openPorts = true;
+    rpcSecretFile = "/etc/aria2/secret";
+    extraArguments = "--rpc-allow-origin-all";
+  };
   services.coredns = {
     enable = true;
     config =
@@ -199,6 +215,8 @@
           192.168.68.56 grafana.hanode.me
           192.168.68.56 jellyfin.hanode.me
           192.168.68.56 ha.hanode.me
+          192.168.68.56 aria.hanode.me
+          192.168.68.56 ariarpc.hanode.me
         }
       }
       . {

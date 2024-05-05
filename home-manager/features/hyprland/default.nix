@@ -17,6 +17,9 @@ let
   pkgs-hyprland = inputs.hyprland.packages.${pkgs.system}.hyprland;
   pkgs-hyprlock = inputs.hyprlock.packages.${pkgs.system}.hyprlock;
 in {
+  disabledModules = [
+    "services/hypridle.nix"
+  ];
   imports = [
     inputs.hyprlock.homeManagerModules.hyprlock
     inputs.hypridle.homeManagerModules.hypridle
@@ -217,7 +220,7 @@ in {
         scroll_button_lock = true;
       };
       decoration = {
-        active_opacity = 0.94;
+        active_opacity = 1;
         inactive_opacity = 0.84;
         fullscreen_opacity = 1.0;
         rounding = 5;

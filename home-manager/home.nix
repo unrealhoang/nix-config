@@ -10,10 +10,10 @@
     # Or modules exported from other flakes (such as nix-colors):
     inputs.nix-colors.homeManagerModules.default
     inputs.impermanence.nixosModules.home-manager.impermanence
+    inputs.catppuccin.homeManagerModules.catppuccin
     # inputs.hyprland.homeManagerModules.default
 
     # You can also split up your configuration and import pieces of it here:
-    # ./nvim.nix
     ./features/alacritty
     ./features/git
     ./features/hyprland
