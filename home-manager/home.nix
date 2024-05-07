@@ -151,7 +151,6 @@
   # Enable home-manager and git
   programs.home-manager.enable = true;
   programs.obs-studio.enable = true;
-  programs.chromium.enable = true;
   programs.direnv = {
     enable = true;
     nix-direnv.enable = true;
@@ -163,5 +162,5 @@
   systemd.user.startServices = "sd-switch";
 
   # https://nixos.wiki/wiki/FAQ/When_do_I_update_stateVersion
-  home.stateVersion = "23.05";
+  home.stateVersion = "24.05";
 }

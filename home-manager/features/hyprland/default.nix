@@ -16,6 +16,7 @@ let
   grimblast = inputs.hyprland-contrib.packages.${pkgs.system}.grimblast;
   pkgs-hyprland = inputs.hyprland.packages.${pkgs.system}.hyprland;
   pkgs-hyprlock = inputs.hyprlock.packages.${pkgs.system}.hyprlock;
+  pkgs-waybar = inputs.waybar.packages.${pkgs.system}.waybar;
 in {
   disabledModules = [
     "services/hypridle.nix"
@@ -34,7 +35,7 @@ in {
     xdg-desktop-portal-gtk
     xdg-utils
     polkit-kde-agent
-    waybar
+    pkgs-waybar
     dunst
     python3
     playerctl
