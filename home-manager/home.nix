@@ -146,6 +146,7 @@
     xfce.thunar
     xfce.ristretto
     xfce.tumbler
+    remmina
   ];
 
   # Enable home-manager and git

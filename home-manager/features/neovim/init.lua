@@ -61,6 +61,9 @@ local function setup_treesitter()
       disable = { "sql" },
       enable = true, -- false will disable the whole extension
     },
+    indent = {
+      enable = true,
+    },
     refactor = {
       highlight_definitions = { enable = true },
     },

@@ -105,6 +105,14 @@
   # };
 
   # List services that you want to enable:
+  security.acme = {
+    acceptTerms = true;
+    defaults = {
+      email = "unrealhoang+acme@gmail.com";
+      dnsProvider = "cloudflare";
+      environmentFile = "/var/lib/secrets/certs.secret";
+    };
+  };
 
   #### COREDNS ####
 
@@ -130,6 +138,7 @@
   services.nginx = {
     enable = true;
     recommendedProxySettings = true;
+    recommendedTlsSettings = true;
     virtualHosts = let
       grafConf = config.services.grafana.settings.server;
     in {
@@ -142,7 +151,10 @@
           proxyWebsockets = true;
         };
       };
-      "jellyfin.hanode.me" = {
+      "jellyfin.binginu.homes" = {
+        enableACME = true;
+        forceSSL = true;
+        acmeRoot = null;
         locations."/" = {
           proxyPass = "http://localhost:8096";
           proxyWebsockets = true;
@@ -154,11 +166,17 @@
           proxyWebsockets = true;
         };
       };
-      "aria.hanode.me" = {
+      "aria.binginu.homes" = {
+        enableACME = true;
+        forceSSL = true;
+        acmeRoot = null;
         root = "${pkgs.ariang}/share/ariang";
         locations."/" = { };
       };
-      "ariarpc.hanode.me" = {
+      "ariarpc.binginu.homes" = {
+        enableACME = true;
+        forceSSL = true;
+        acmeRoot = null;
         locations."/" = {
           proxyPass = let
             port = config.services.aria2.rpcListenPort;
@@ -219,17 +237,6 @@
     enable = true;
     config =
     ''
-      hanode.me {
-        prometheus localhost:9153
-        hosts {
-          192.168.68.56 hanode.me
-          192.168.68.56 grafana.hanode.me
-          192.168.68.56 jellyfin.hanode.me
-          192.168.68.56 ha.hanode.me
-          192.168.68.56 aria.hanode.me
-          192.168.68.56 ariarpc.hanode.me
-        }
-      }
       . {
         prometheus localhost:9153
         reload 10s
@@ -252,6 +259,7 @@
       21
       53
       80
+      443
   ];
   networking.firewall.allowedUDPPorts = [
     53
