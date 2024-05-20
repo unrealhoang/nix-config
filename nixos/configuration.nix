@@ -46,6 +46,7 @@
   };
 
   nix = {
+    package = pkgs.nixVersions.latest;
     # This will add each flake input as a registry
     # To make nix3 commands consistent with your flake
     registry = lib.mapAttrs (_: value: { flake = value; }) inputs;
@@ -60,6 +61,7 @@
       experimental-features = "nix-command flakes";
       # Deduplicate and optimize nix store
       auto-optimise-store = true;
+      trusted-users = [ "unreal" ];
     };
     gc = {
       automatic = true;

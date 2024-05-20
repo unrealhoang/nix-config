@@ -72,6 +72,7 @@
       # tmux prefix
       unbind C-b
       set -g prefix C-j
+      bind-key j send-prefix
 
       # copy with 'enter' or 'y' and send to mac os clipboard: http://goo.gl/2Bfn8
 

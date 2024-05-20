@@ -20,6 +20,7 @@ let
 in {
   disabledModules = [
     "services/hypridle.nix"
+    "programs/hyprlock.nix"
   ];
   imports = [
     inputs.hyprlock.homeManagerModules.hyprlock
@@ -194,10 +195,11 @@ in {
         gaps_in = 3;
         gaps_out = 6;
         border_size = 2;
-        cursor_inactive_timeout = 4;
-
         "col.active_border" = "$lavender";
         "col.inactive_border" = "$overlay0";
+      };
+      cursor = {
+        inactive_timeout = 4;
       };
       group = {
         "col.border_active" = "$lavender";

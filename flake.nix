@@ -117,7 +117,7 @@
               _module.args.nixinate = {
                 host = "192.168.68.56";
                 sshUser = "bing";
-                buildOn = "remote";
+                buildOn = "local";
                 substituteOnTarget = true; # if buildOn is "local" then it will substitute on the target, "-s"
                 hermetic = true;
                 nixOptions = [ "--show-trace" ];

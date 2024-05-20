@@ -21,7 +21,6 @@ in {
       nerdtree
       nvim-treesitter-endwise
       vim-fugitive
-      vim-surround
       vim-nix
       vim-sleuth
       undotree
