@@ -18,14 +18,6 @@ let
   pkgs-hyprlock = inputs.hyprlock.packages.${pkgs.system}.hyprlock;
   pkgs-waybar = inputs.waybar.packages.${pkgs.system}.waybar;
 in {
-  disabledModules = [
-    "services/hypridle.nix"
-    "programs/hyprlock.nix"
-  ];
-  imports = [
-    inputs.hyprlock.homeManagerModules.hyprlock
-    inputs.hypridle.homeManagerModules.hypridle
-  ];
   home.packages = with pkgs; [
     wofi
     swaybg
@@ -56,52 +48,54 @@ in {
 
   programs.hyprlock = {
     enable = true;
-    backgrounds = [{
-      monitor = "";
-      path = "~/Pictures/Wallpapers/fuji.png";
-      blur_passes = 1;
-      contrast = 0.8916;
-      brightness = 0.8172;
-      vibrancy = 0.1696;
-      vibrancy_darkness = 0.0;
-    }];
-    input-fields = [{
-      monitor = "";
-      size = { width = 250; height = 60; };
-      outline_thickness = 2;
-      dots_size = 0.2; # Scale of input-field height, 0.2 - 0.8
-      dots_spacing = 0.2; # Scale of dots' absolute size, 0.0 - 1.0
-      dots_center = true;
-      outer_color = "rgba(0, 0, 0, 0)";
-      inner_color = "rgba(0, 0, 0, 0.5)";
-      font_color = "rgb(200, 200, 200)";
-      fade_on_empty = false;
-      placeholder_text = "<i><span foreground=\"##cdd6f4\">Input Password...</span></i>";
-      hide_input = false;
-      position = { x = 0; y = -120; };
-      halign = "center";
-      valign = "center";
-    }];
-    labels = [{
-      monitor = "";
-      text = "cmd[update:1000] echo \"$(date +\"%-I:%M%p\")\"";
-      color = "rgba(255, 255, 255, 0.6)";
-      font_size = 120;
-      font_family = "JetBrains Mono Nerd Font Mono ExtraBold";
-      position = { x = 0; y = -300; };
-      halign = "center";
-      valign = "top";
-    }
-    {
-      monitor = "";
-      text = "Hi there, $USER";
-      color = "rgba(255, 255, 255, 0.6)";
-      font_size = 25;
-      font_family = "JetBrains Mono Nerd Font Mono";
-      position = { x = 0; y = -40; };
-      halign = "center";
-      valign = "center";
-    }];
+    settings = {
+      background = [{
+        monitor = "";
+        path = "~/Pictures/Wallpapers/fuji.png";
+        blur_passes = 1;
+        contrast = 0.8916;
+        brightness = 0.8172;
+        vibrancy = 0.1696;
+        vibrancy_darkness = 0.0;
+      }];
+      input-field = [{
+        monitor = "";
+        size = { width = 250; height = 60; };
+        outline_thickness = 2;
+        dots_size = 0.2; # Scale of input-field height, 0.2 - 0.8
+        dots_spacing = 0.2; # Scale of dots' absolute size, 0.0 - 1.0
+        dots_center = true;
+        outer_color = "rgba(0, 0, 0, 0)";
+        inner_color = "rgba(0, 0, 0, 0.5)";
+        font_color = "rgb(200, 200, 200)";
+        fade_on_empty = false;
+        placeholder_text = "<i><span foreground=\"##cdd6f4\">Input Password...</span></i>";
+        hide_input = false;
+        position = { x = 0; y = -120; };
+        halign = "center";
+        valign = "center";
+      }];
+      label = [{
+        monitor = "";
+        text = "cmd[update:1000] echo \"$(date +\"%-I:%M%p\")\"";
+        color = "rgba(255, 255, 255, 0.6)";
+        font_size = 120;
+        font_family = "JetBrains Mono Nerd Font Mono ExtraBold";
+        position = { x = 0; y = -300; };
+        halign = "center";
+        valign = "top";
+      }
+      {
+        monitor = "";
+        text = "Hi there, $USER";
+        color = "rgba(255, 255, 255, 0.6)";
+        font_size = 25;
+        font_family = "JetBrains Mono Nerd Font Mono";
+        position = { x = 0; y = -40; };
+        halign = "center";
+        valign = "center";
+      }];
+    };
   };
   services.hypridle = let
     hyprlock = "${pkgs-hyprlock}/bin/hyprlock";
@@ -111,19 +105,18 @@ in {
     pidof = "${pkgs.procps}/bin/pidof";
   in {
     enable = true;
-    lockCmd = "${pidof} ${hyprlock} || ${hyprlock}";
-    beforeSleepCmd = "${loginctl} lock-session";
-    afterSleepCmd = "${hyprctl} dispatch dpms on";
-    listeners = [{
-      timeout = 300;
-      onTimeout = "${hyprlock}";
-      onResume = "${notifysend} \"Welcome back!\"";
-    }
-    {
-      timeout = 360;
-      onTimeout = "${hyprctl} dispatch dpms off";
-      onResume = "${hyprctl} dispatch dpms on";
-    }];
+    settings = {
+      general = {
+        lock_cmd = "${pidof} ${hyprlock} || ${hyprlock}";
+        before_sleep_cmd = "${loginctl} lock-session";
+        after_sleep_cmd = "${hyprctl} dispatch dpms on";
+      };
+      listener = [{
+        timeout = 300;
+        on-timeout = "${hyprlock}";
+        on-resume = "${notifysend} \"Welcome back!\"";
+      }];
+    };
   };
 
   wayland.windowManager.hyprland = {
@@ -198,9 +191,9 @@ in {
         "col.active_border" = "$lavender";
         "col.inactive_border" = "$overlay0";
       };
-      cursor = {
-        inactive_timeout = 4;
-      };
+      # cursor = {
+      #   inactive_timeout = 4;
+      # };
       group = {
         "col.border_active" = "$lavender";
         "col.border_inactive" = "$overlay0";

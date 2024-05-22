@@ -82,7 +82,7 @@
       "/mnt/data/Workspace/H2/" = "/mnt/data/Workspace/H2/.gitconfig";
     };
   };
-  catppuccin.flavour = "mocha";
+  catppuccin.flavor = "mocha";
 
   services.gnome-keyring = {
     enable = true;

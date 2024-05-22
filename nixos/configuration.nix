@@ -74,7 +74,7 @@
   networking.hostName = "unrealPc";
   networking.networkmanager.enable = true;
 
-  catppuccin.flavour = "mocha";
+  catppuccin.flavor = "mocha";
   boot.loader = {
     efi = {
       canTouchEfiVariables = true;

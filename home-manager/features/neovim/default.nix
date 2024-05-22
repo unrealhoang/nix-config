@@ -1,5 +1,5 @@
 { pkgs, config, ... }:
-let palette = config.catppuccin.flavour;
+let palette = config.catppuccin.flavor;
 in {
   imports = [ ../user-configurations ];
   home.packages = [ pkgs.lua-language-server pkgs.nil ];

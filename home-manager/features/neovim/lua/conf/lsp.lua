@@ -1,8 +1,3 @@
-local function on_lsp_attach(_, bufnr)
-  vim.b.omnifunc = "v:lua.vim.lsp.omnifunc"
-  vim.api.nvim_buf_set_option(bufnr, 'omnifunc', 'v:lua.vim.lsp.omnifunc')
-end
-
 local function setup_lsp_rust(capabilities)
   local util = require 'lspconfig/util'
   local extension_path = vim.fn.expand("$HOME/.vscode-oss/extensions/vadimcn.vscode-lldb-1.7.0/", nil, nil)
@@ -16,7 +11,6 @@ local function setup_lsp_rust(capabilities)
       auto_focus = true,
     },
     server = {
-      on_attach = on_lsp_attach,
       standalone = false,
       root_dir = util.root_pattern("Cargo.lock", "rust-project.json"),
       init_options = {
@@ -54,8 +48,8 @@ local function setup_lsp_go(capabilities)
     cmd = vim.fn.expand('$HOME/go/bin/gopls')
   end
   require 'lspconfig'.gopls.setup {
+    inlay_hints = { enable = true },
     cmd = { cmd },
-    on_attach = on_lsp_attach,
     capabilities = capabilities,
   }
 end
@@ -96,13 +90,11 @@ local function setup_lsp_lua(capabilities)
       return true
     end,
     capabilities = capabilities,
-    on_attach = on_lsp_attach,
   })
 end
 
 local function setup_lsp_nix(capabilities)
   require 'lspconfig'.nil_ls.setup {
-    on_attach = on_lsp_attach,
     capabilities = capabilities,
   }
 end

@@ -40,6 +40,11 @@ local function install_autocmd_mappings(autocmd_mappings)
   end
 end
 
+local function inlay_toggle()
+  local filter = { bufnr = 0 }
+  vim.lsp.inlay_hint.enable(not vim.lsp.inlay_hint.is_enabled(filter), filter)
+end
+
 local function setup_mappings()
   vim.o.timeoutlen = 300
   local folders = {
@@ -73,6 +78,7 @@ local function setup_mappings()
       ['<leader>lS'] = { require 'telescope.builtin'.lsp_workspace_symbols, 'workspace symbols' },
       ['<leader>lf'] = { vim.lsp.buf.format, 'code formatting' },
       ['<leader>ln'] = { vim.lsp.buf.rename, 'rename' },
+      ['<leader>li'] = { inlay_toggle, 'toggle inlay hints' },
 
       -- Rust tools
       ['<leader>lre'] = { require 'rust-tools.expand_macro'.expand_macro, 'Expand Rust Macro' },

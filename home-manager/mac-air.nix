@@ -35,7 +35,7 @@
       "/Users/unreal/Workspace/H2/" = "/Users/unreal/Workspace/H2/.gitconfig";
     };
   };
-  catppuccin.flavour = "mocha";
+  catppuccin.flavor = "mocha";
 
   home.packages = with pkgs;
     [
