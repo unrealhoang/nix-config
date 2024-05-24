@@ -151,49 +151,28 @@
       recommendedTlsSettings = true;
       virtualHosts = let
         grafConf = config.services.grafana.settings.server;
+        base = locations: {
+          inherit locations;
+
+          forceSSL = true;
+          enableACME = true;
+          acmeRoot = null;
+        };
+        proxy = { port, ws ? true, host ? "localhost" }: base {
+          "/" = {
+            proxyPass = "http://${host}:" + builtins.toString(port) + "/";
+            proxyWebsockets = ws;
+          };
+        };
       in {
-        "${grafConf.domain}" = {
-          locations."/" = {
-            proxyPass = let
-              addr = grafConf.http_addr;
-              port = builtins.toString grafConf.http_port;
-            in "http://${addr}:${port}";
-            proxyWebsockets = true;
-          };
-        };
-        "jellyfin.binginu.homes" = {
-          enableACME = true;
-          forceSSL = true;
-          acmeRoot = null;
-          locations."/" = {
-            proxyPass = "http://localhost:8096";
-            proxyWebsockets = true;
-          };
-        };
-        "ha.hanode.me" = {
-          locations."/" = {
-            proxyPass = "http://localhost:8123";
-            proxyWebsockets = true;
-          };
-        };
-        "aria.binginu.homes" = {
-          enableACME = true;
-          forceSSL = true;
-          acmeRoot = null;
-          root = "${pkgs.ariang}/share/ariang";
-          locations."/" = { };
-        };
-        "ariarpc.binginu.homes" = {
-          enableACME = true;
-          forceSSL = true;
-          acmeRoot = null;
-          locations."/" = {
-            proxyPass = let
-              port = config.services.aria2.rpcListenPort;
-            in "http://localhost:${builtins.toString port}";
-            proxyWebsockets = true;
-          };
-        };
+        "${grafConf.domain}" = proxy { host = grafConf.http_addr; port = grafConf.http_port; };
+        "ha.binginu.homes" = proxy { port = 8123; };
+        "jellyfin.binginu.homes" = proxy { port = 8096; };
+        "seer.binginu.homes" = proxy { port = config.services.jellyseerr.port; };
+        "aria.binginu.homes" = base {"/" = {};} // { root = "${pkgs.ariang}/share/ariang"; };
+        "ariarpc.binginu.homes" = proxy { port = config.services.aria2.rpcListenPort; };
+        "radarr.binginu.homes" = proxy { port = 7878; };
+        "sonarr.binginu.homes" = proxy { port = 8989; };
       };
     };
 
@@ -230,7 +209,7 @@
       enable = true;
       settings = {
         server = {
-          domain = "grafana.hanode.me";
+          domain = "grafana.binginu.homes";
           http_port = 2345;
           http_addr = "127.0.0.1";
         };
@@ -338,6 +317,15 @@
     };
     services.jellyfin = {
       enable = true;
+    };
+    services.jellyseerr.enable = true;
+    services.radarr = {
+      enable = true;
+      group = "media";
+    };
+    services.sonarr = {
+      enable = true;
+      group = "media";
     };
 
     # This value determines the NixOS release from which the default

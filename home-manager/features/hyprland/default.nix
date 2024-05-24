@@ -60,7 +60,7 @@ in {
       }];
       input-field = [{
         monitor = "";
-        size = { width = 250; height = 60; };
+        size = "250, 60";
         outline_thickness = 2;
         dots_size = 0.2; # Scale of input-field height, 0.2 - 0.8
         dots_spacing = 0.2; # Scale of dots' absolute size, 0.0 - 1.0
@@ -71,7 +71,7 @@ in {
         fade_on_empty = false;
         placeholder_text = "<i><span foreground=\"##cdd6f4\">Input Password...</span></i>";
         hide_input = false;
-        position = { x = 0; y = -120; };
+        position = "0, -120";
         halign = "center";
         valign = "center";
       }];
@@ -81,7 +81,7 @@ in {
         color = "rgba(255, 255, 255, 0.6)";
         font_size = 120;
         font_family = "JetBrains Mono Nerd Font Mono ExtraBold";
-        position = { x = 0; y = -300; };
+        position = "0, -300";
         halign = "center";
         valign = "top";
       }
@@ -91,7 +91,7 @@ in {
         color = "rgba(255, 255, 255, 0.6)";
         font_size = 25;
         font_family = "JetBrains Mono Nerd Font Mono";
-        position = { x = 0; y = -40; };
+        position = "0, -40";
         halign = "center";
         valign = "center";
       }];
@@ -125,6 +125,9 @@ in {
     package = pkgs-hyprland;
 
     settings = {
+      debug = {
+        disable_logs = false;
+      };
       env =
         [ "XCURSOR_THEME,Bibata-Modern-Amber" "XCURSOR_SIZE,24" "GDK_SCALE,2" ];
       exec-once = [
