@@ -327,6 +327,11 @@
       enable = true;
       group = "media";
     };
+    services.cloudflare-dyndns = {
+      enable = true;
+      apiTokenFile = "/var/lib/secrets/cf_token.secret";
+      domains = ["home.binginu.homes"];
+    };
 
     # This value determines the NixOS release from which the default
     # settings for stateful data, like file locations and database versions

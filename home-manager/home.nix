@@ -147,6 +147,7 @@
     xfce.ristretto
     xfce.tumbler
     remmina
+    chromium
   ];
 
   # Enable home-manager and git
