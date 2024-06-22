@@ -17,6 +17,13 @@ let
   pkgs-hyprland = inputs.hyprland.packages.${pkgs.system}.hyprland;
   pkgs-hyprlock = inputs.hyprlock.packages.${pkgs.system}.hyprlock;
   pkgs-waybar = inputs.waybar.packages.${pkgs.system}.waybar;
+  pkgs-xdph = inputs.hyprland.packages.${pkgs.system}.xdg-desktop-portal-hyprland;
+
+  hyprlock = "${pkgs-hyprlock}/bin/hyprlock";
+  hyprctl = "${pkgs-hyprland}/bin/hyprctl";
+  notifysend = "${pkgs.libnotify}/bin/notify-send";
+  loginctl = "${pkgs.systemd}/bin/loginctl";
+  pidof = "${pkgs.procps}/bin/pidof";
 in {
   home.packages = with pkgs; [
     wofi
@@ -24,7 +31,7 @@ in {
     wlsunset
     wl-clipboard
     pavucontrol
-    xdg-desktop-portal-hyprland
+    pkgs-xdph
     xdg-desktop-portal-gtk
     xdg-utils
     polkit-kde-agent
@@ -36,10 +43,21 @@ in {
     networkmanagerapplet
     hyprpicker
     grimblast
+    dualsensectl
+    notify-desktop
   ];
 
   home.file.".config/wofi.css".source = ./wofi.css;
-  home.file.".config/waybar".source = ./waybar;
+  home.file.".config/waybar/config".source = ./waybar/config;
+  home.file.".config/waybar/style.css".source = ./waybar/style.css;
+  home.file.".config/waybar/dualsense-notifier.sh".source = (pkgs.concatScript
+    "dualsense-notifier.sh"
+    [
+      (pkgs.writeText "icon-path" ''
+        icon_path="${pkgs.papirus-icon-theme}/share/icons/Papirus-Dark/24x24@2x/apps/preferences-desktop-gaming.svg"
+      '')
+      ./waybar/dualsense-notifier.sh
+    ]);
   home.file.".config/dunst".source = ./dunst;
   home.file.".config/hypr/game_mode.sh" = {
     source = ./game_mode.sh;
@@ -97,13 +115,7 @@ in {
       }];
     };
   };
-  services.hypridle = let
-    hyprlock = "${pkgs-hyprlock}/bin/hyprlock";
-    hyprctl = "${pkgs-hyprland}/bin/hyprctl";
-    notifysend = "${pkgs.libnotify}/bin/notify-send";
-    loginctl = "${pkgs.systemd}/bin/loginctl";
-    pidof = "${pkgs.procps}/bin/pidof";
-  in {
+  services.hypridle = {
     enable = true;
     settings = {
       general = {

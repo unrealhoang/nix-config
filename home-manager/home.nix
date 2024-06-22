@@ -148,6 +148,7 @@
     xfce.tumbler
     remmina
     chromium
+    chiaki
   ];
 
   # Enable home-manager and git

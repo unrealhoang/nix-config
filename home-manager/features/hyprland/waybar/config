@@ -6,7 +6,7 @@
     // Choose the order of the modules
     "modules-left": ["hyprland/workspaces", "idle_inhibitor", "pulseaudio", "backlight", "network"],
     "modules-center": ["hyprland/window"],
-    "modules-right": ["disk", "cpu", "memory", "temperature", "tray", "clock"],
+    "modules-right": ["custom/dualsense", "disk", "cpu", "memory", "temperature", "tray", "clock"],
     // Modules configuration
      "hyprland/workspaces": {
          "disable-scroll": true,
@@ -40,15 +40,11 @@
         "max-length": 50,
         "separate-outputs": true
     },
-    "sway/mode": {
-        "format": "<span style=\"italic\">{}</span>"
-    },
-    "sway/scratchpad": {
-        "format": "{icon} {count}",
-        "show-empty": false,
-        "format-icons": ["", ""],
-        "tooltip": true,
-        "tooltip-format": "{app}: {title}"
+    "custom/dualsense": {
+        "tooltip": false,
+        "return-type": "json",
+        "exec": "$HOME/.config/waybar/dualsense-notifier.sh",
+        "on-click": "dualsensectl power-off",
     },
     "mpd": {
         "format": "{stateIcon} {consumeIcon}{randomIcon}{repeatIcon}{singleIcon}{artist} - {album} - {title} ({elapsedTime:%M:%S}/{totalTime:%M:%S}) ⸨{songPosition}|{queueLength}⸩ {volume}% ",
