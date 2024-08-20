@@ -93,6 +93,7 @@
   virtualisation.docker.enable = true;
   environment.persistence."/mnt/data2/persist" = {
     directories = [
+      "/var/lib/nixos"
       "/var/lib/docker"
       "/var/lib/bluetooth"
       "/var/lib/systemd/coredump"
@@ -124,7 +125,11 @@
     clinfo
     inputs.hyprlock.packages.${pkgs.system}.hyprlock
   ];
-  programs.steam.enable = true;
+  programs.steam = {
+    enable = true;
+    remotePlay.openFirewall = true;
+    dedicatedServer.openFirewall = true;
+  };
 
   services.openssh = {
     enable = true;
@@ -182,12 +187,12 @@
   };
 
   programs.seahorse.enable = true;
-  services.gnome.gnome-keyring.enable = true;
   security.pam.services = {
     hyprlock = {};
     login.enableGnomeKeyring = true;
   };
   services.ratbagd.enable = true;
+  services.tailscale.enable = true;
 
   # https://nixos.wiki/wiki/FAQ/When_do_I_update_stateVersion
   system.stateVersion = "24.05";

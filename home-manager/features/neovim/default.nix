@@ -62,6 +62,7 @@ in {
 
       oil-nvim
 
+      mini-nvim
       which-key-nvim
     ];
     defaultEditor = true;

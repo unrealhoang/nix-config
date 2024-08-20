@@ -48,17 +48,18 @@ end
 local function setup_mappings()
   vim.o.timeoutlen = 300
   local folders = {
-    ['<leader>l']  = { name = "Lsp" },
-    ['<leader>lr'] = { name = "Rust Tools" },
-    ['<leader>d']  = { name = "Diagnostics" },
-    ['<leader>p']  = { name = "Project Navigation" },
-    ['<leader>b']  = { name = "Dap DeBbuger" },
-    ['<leader>g']  = { name = "Git" },
-    ['<leader>t']  = { name = "Treesitter" },
+    { "<leader>b", group = "Dap DeBbuger" },
+    { "<leader>d", group = "Diagnostics" },
+    { "<leader>g", group = "Git" },
+    { "<leader>l", group = "Lsp" },
+    { "<leader>lr", group = "Rust Tools" },
+    { "<leader>p", group = "Project Navigation" },
+    { "<leader>t", group = "Treesitter" },
+    { "<leader>f", group = "Files/Formatting" },
   }
   local wk = require 'which-key'
   wk.setup{}
-  wk.register(folders)
+  wk.add(folders)
   local mappings = {
     n = {
       -- common navigation

@@ -51,6 +51,7 @@
     };
   };
 
+  nix.gc.automatic = true;
   # TODO: Set your username
   home = {
     username = "unreal";
@@ -63,10 +64,6 @@
       };
       "/mnt/data" = {
         directories = [ "Resources" "Workspace" "Downloads" ];
-        allowOther = true;
-      };
-      "/mnt/data2/homepersist" = {
-        directories = [ ".local/share/Steam" ];
         allowOther = true;
       };
     };
@@ -149,6 +146,10 @@
     remmina
     chromium
     chiaki
+    antimicrox
+    pnpm
+    protontricks
+    jq
   ];
 
   # Enable home-manager and git
