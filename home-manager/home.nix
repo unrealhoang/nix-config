@@ -150,6 +150,7 @@
     pnpm
     protontricks
     jq
+    awscli2
   ];
 
   # Enable home-manager and git

@@ -16,7 +16,7 @@ let
   grimblast = inputs.hyprland-contrib.packages.${pkgs.system}.grimblast;
   pkgs-hyprland = inputs.hyprland.packages.${pkgs.system}.hyprland;
   pkgs-hyprlock = inputs.hyprlock.packages.${pkgs.system}.hyprlock;
-  pkgs-waybar = inputs.waybar.packages.${pkgs.system}.waybar;
+  # pkgs-waybar = inputs.waybar.packages.${pkgs.system}.waybar;
   pkgs-xdph = inputs.hyprland.packages.${pkgs.system}.xdg-desktop-portal-hyprland;
 
   hyprlock = "${pkgs-hyprlock}/bin/hyprlock";
@@ -35,7 +35,7 @@ in {
     xdg-desktop-portal-gtk
     xdg-utils
     polkit-kde-agent
-    pkgs-waybar
+    waybar
     dunst
     python3
     playerctl
@@ -140,8 +140,12 @@ in {
       debug = {
         disable_logs = false;
       };
-      env =
-        [ "XCURSOR_THEME,Bibata-Modern-Amber" "XCURSOR_SIZE,24" "GDK_SCALE,2" ];
+      env = [
+        "XCURSOR_THEME,Bibata-Modern-Amber"
+        "XCURSOR_SIZE,24"
+        "GDK_SCALE,2"
+        "XDG_CURRENT_DESKTOP,Hyprland"
+      ];
       exec-once = [
         "${pkgs.polkit-kde-agent}/libexec/polkit-kde-authentication-agent-1"
         "${pkgs.dunst}/bin/dunst"
@@ -149,7 +153,7 @@ in {
         "waybar"
         "nm-applet --indicator"
       ];
-      monitor = [ "DP-1,3840x2160@60,0x0,2" "DP-2,3840x2160@60,1920x0,2" ];
+      monitor = [ "DP-1,3840x2160@60,0x0,2,bitdepth,8" "DP-2,3840x2160@60,1920x0,2,bitdepth,8" ];
       workspace = [ "4,monitor:DP-1" "5,monitor:DP-1,decorate:false" ];
       windowrulev2 = [
         "float,class:org.kde.polkit-kde-authentication-agent-1"
