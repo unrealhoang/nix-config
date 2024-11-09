@@ -95,7 +95,7 @@
             home-manager.nixosModules.home-manager
             {
               home-manager.users.unreal = { ... }: {
-                imports= [ ./home-manager/home.nix ];
+                imports = [ ./home-manager/home.nix ];
               };
               home-manager.extraSpecialArgs = { inherit inputs outputs; };
             }
@@ -118,7 +118,8 @@
                 host = "192.168.68.56";
                 sshUser = "bing";
                 buildOn = "local";
-                substituteOnTarget = true; # if buildOn is "local" then it will substitute on the target, "-s"
+                substituteOnTarget =
+                  true; # if buildOn is "local" then it will substitute on the target, "-s"
                 hermetic = true;
                 nixOptions = [ "--show-trace" ];
               };
@@ -135,9 +136,7 @@
           pkgs =
             nixpkgs.legacyPackages.x86_64-linux; # Home-manager requires 'pkgs' instance
           extraSpecialArgs = { inherit inputs outputs; };
-          modules = [
-            ./home-manager/home.nix
-          ];
+          modules = [ ./home-manager/home.nix ];
         };
         "unreal@macAir" = home-manager.lib.homeManagerConfiguration {
           pkgs =

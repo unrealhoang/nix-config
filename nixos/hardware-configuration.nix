@@ -46,8 +46,6 @@
   powerManagement.cpuFreqGovernor = lib.mkDefault "ondemand";
   hardware.cpu.amd.updateMicrocode =
     lib.mkDefault config.hardware.enableRedistributableFirmware;
-  hardware.graphics = {
-    extraPackages = with pkgs; [ rocmPackages.clr.icd ];
-  };
+  hardware.graphics = { extraPackages = with pkgs; [ rocmPackages.clr.icd ]; };
   hardware.enableRedistributableFirmware = true;
 }

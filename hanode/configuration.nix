@@ -8,11 +8,10 @@
       description = "Path to media store, accessible by the media services";
     };
   };
- imports =
-   [ # Include the results of the hardware scan.
-     ./hardware-configuration.nix
-     inputs.impermanence.nixosModules.impermanence
-   ];
+  imports = [ # Include the results of the hardware scan.
+    ./hardware-configuration.nix
+    inputs.impermanence.nixosModules.impermanence
+  ];
 
   config = {
     nix = {
@@ -74,9 +73,7 @@
     sound.enable = true;
     hardware.pulseaudio.enable = false;
     security.rtkit.enable = true;
-    services.pipewire = {
-      enable = false;
-    };
+    services.pipewire = { enable = false; };
 
     # Define a user account. Don't forget to set a password with ‘passwd’.
     programs.zsh.enable = true;
@@ -130,13 +127,15 @@
       description = "Update blocklist";
       serviceConfig = {
         Type = "oneshot";
-        ExecStartPre = "${pkgs.curl}/bin/curl -Lo /var/blocklist.hosts https://raw.githubusercontent.com/StevenBlack/hosts/master/hosts";
-        ExecStart = "${pkgs.gnused}/bin/sed -i '/^0\.0\.0\.0/!d' /var/blocklist.hosts";
+        ExecStartPre =
+          "${pkgs.curl}/bin/curl -Lo /var/blocklist.hosts https://raw.githubusercontent.com/StevenBlack/hosts/master/hosts";
+        ExecStart =
+          "${pkgs.gnused}/bin/sed -i '/^0.0.0.0/!d' /var/blocklist.hosts";
       };
       wantedBy = [ "multi-user.target" ];
     };
 
-      # run this service once a day
+    # run this service once a day
     systemd.timers.updateBlocklist = {
       wantedBy = [ "timers.target" ];
       timerConfig = {
@@ -158,26 +157,33 @@
           enableACME = true;
           acmeRoot = null;
         };
-        proxy = { port, ws ? true, host ? "localhost" }: base {
-          "/" = {
-            proxyPass = "http://${host}:" + builtins.toString(port) + "/";
-            proxyWebsockets = ws;
+        proxy = { port, ws ? true, host ? "localhost" }:
+          base {
+            "/" = {
+              proxyPass = "http://${host}:" + builtins.toString (port) + "/";
+              proxyWebsockets = ws;
+            };
           };
-        };
       in {
-        "${grafConf.domain}" = proxy { host = grafConf.http_addr; port = grafConf.http_port; };
+        "${grafConf.domain}" = proxy {
+          host = grafConf.http_addr;
+          port = grafConf.http_port;
+        };
         "ha.binginu.homes" = proxy { port = 8123; };
         "jellyfin.binginu.homes" = proxy { port = 8096; };
-        "seer.binginu.homes" = proxy { port = config.services.jellyseerr.port; };
-        "aria.binginu.homes" = base {"/" = {};} // { root = "${pkgs.ariang}/share/ariang"; };
-        "ariarpc.binginu.homes" = proxy { port = config.services.aria2.rpcListenPort; };
+        "seer.binginu.homes" =
+          proxy { port = config.services.jellyseerr.port; };
+        "aria.binginu.homes" = base { "/" = { }; } // {
+          root = "${pkgs.ariang}/share/ariang";
+        };
+        "ariarpc.binginu.homes" =
+          proxy { port = config.services.aria2.rpcListenPort; };
         "radarr.binginu.homes" = proxy { port = 7878; };
         "sonarr.binginu.homes" = proxy { port = 8989; };
       };
     };
 
-    services.prometheus = let
-      promConf = config.services.prometheus;
+    services.prometheus = let promConf = config.services.prometheus;
     in {
       enable = true;
       port = 9001;
@@ -194,14 +200,12 @@
         {
           job_name = "node";
           static_configs = [{
-            targets = ["localhost:${toString promConf.exporters.node.port}"];
+            targets = [ "localhost:${toString promConf.exporters.node.port}" ];
           }];
         }
         {
           job_name = "coredns";
-          static_configs = [{
-            targets = ["localhost:9153"];
-          }];
+          static_configs = [{ targets = [ "localhost:9153" ]; }];
         }
       ];
     };
@@ -215,13 +219,14 @@
         };
       };
     };
-    users.groups.media = {
-      members = [ "bing" "aria2" "jellyfin" ];
-    };
+    users.groups.media = { members = [ "bing" "aria2" "jellyfin" ]; };
     environment.persistence."/mnt/data/persist" = {
-      directories = [
-        { directory = config.my-settings.mediaDir; user = "bing"; group = "media"; mode = "0770"; }
-      ];
+      directories = [{
+        directory = config.my-settings.mediaDir;
+        user = "bing";
+        group = "media";
+        mode = "0770";
+      }];
     };
     my-settings.mediaDir = "/mnt/data/Downloads/Videos";
     services.aria2 = {
@@ -231,16 +236,14 @@
       rpcSecretFile = "/etc/aria2/secret";
       extraArguments = "--rpc-allow-origin-all";
     };
-    systemd.tmpfiles.rules = [
-      "d '${config.my-settings.mediaDir}' 0770 aria2 media - -"
-    ];
+    systemd.tmpfiles.rules =
+      [ "d '${config.my-settings.mediaDir}' 0770 aria2 media - -" ];
 
     systemd.services.aria2.serviceConfig.Group = lib.mkForce "media";
 
     services.coredns = {
       enable = true;
-      config =
-      ''
+      config = ''
         . {
           prometheus localhost:9153
           reload 10s
@@ -258,18 +261,8 @@
     services.openssh.enable = true;
 
     # Open ports in the firewall.
-    networking.firewall.allowedTCPPorts = [
-        8123
-        21
-        53
-        80
-        443
-    ];
-    networking.firewall.allowedUDPPorts = [
-      53
-      1900
-      7359
-    ];
+    networking.firewall.allowedTCPPorts = [ 8123 21 53 80 443 ];
+    networking.firewall.allowedUDPPorts = [ 53 1900 7359 ];
     # Or disable the firewall altogether.
     # networking.firewall.enable = false;
 
@@ -278,10 +271,11 @@
       containers.homeassistant = {
         volumes = [ "home-assistant:/config" ];
         environment.TZ = "Asia/Tokyo";
-        image = "ghcr.io/home-assistant/home-assistant:stable"; # Warning: if the tag does not change, the image will not be updated
+        image =
+          "ghcr.io/home-assistant/home-assistant:stable"; # Warning: if the tag does not change, the image will not be updated
         extraOptions = [
           "--network=host"
-          "--device=/dev/ttyACM0:/dev/ttyACM0"  # Example, change this to match your own hardware
+          "--device=/dev/ttyACM0:/dev/ttyACM0" # Example, change this to match your own hardware
         ];
       };
     };
@@ -315,9 +309,7 @@
       NEOReadDebugKeys = "1";
       OverrideGpuAddressSpace = "48";
     };
-    services.jellyfin = {
-      enable = true;
-    };
+    services.jellyfin = { enable = true; };
     services.jellyseerr.enable = true;
     services.radarr = {
       enable = true;
@@ -330,7 +322,7 @@
     services.cloudflare-dyndns = {
       enable = true;
       apiTokenFile = "/var/lib/secrets/cf_token.secret";
-      domains = ["home.binginu.homes"];
+      domains = [ "home.binginu.homes" ];
     };
 
     # This value determines the NixOS release from which the default

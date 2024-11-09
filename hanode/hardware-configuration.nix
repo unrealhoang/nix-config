@@ -4,27 +4,28 @@
 { pkgs, lib, config, ... }:
 
 {
-  boot.initrd.availableKernelModules = [ "xhci_pci" "ahci" "usbhid" "usb_storage" "sd_mod" "sdhci_pci" ];
+  boot.initrd.availableKernelModules =
+    [ "xhci_pci" "ahci" "usbhid" "usb_storage" "sd_mod" "sdhci_pci" ];
   boot.initrd.kernelModules = [ ];
   boot.kernelModules = [ "kvm-intel" ];
   boot.kernelParams = [ "i915.enable_guc=2" ];
   boot.extraModulePackages = [ ];
   boot.kernelPackages = pkgs.linuxPackages_latest;
 
-  fileSystems."/" =
-    { device = "/dev/disk/by-uuid/5d293df4-7d36-4747-a332-19c3028a4e55";
-      fsType = "ext4";
-    };
+  fileSystems."/" = {
+    device = "/dev/disk/by-uuid/5d293df4-7d36-4747-a332-19c3028a4e55";
+    fsType = "ext4";
+  };
 
-  fileSystems."/mnt/data" =
-    { device = "/dev/disk/by-uuid/ac9a656c-8428-4133-b860-15df7d6d02bc";
-      fsType = "ext4";
-    };
+  fileSystems."/mnt/data" = {
+    device = "/dev/disk/by-uuid/ac9a656c-8428-4133-b860-15df7d6d02bc";
+    fsType = "ext4";
+  };
 
-  fileSystems."/boot" =
-    { device = "/dev/disk/by-uuid/E298-ADA3";
-      fsType = "vfat";
-    };
+  fileSystems."/boot" = {
+    device = "/dev/disk/by-uuid/E298-ADA3";
+    fsType = "vfat";
+  };
 
   swapDevices = [ ];
 
@@ -38,5 +39,6 @@
 
   nixpkgs.hostPlatform = lib.mkDefault "x86_64-linux";
   powerManagement.cpuFreqGovernor = lib.mkDefault "powersave";
-  hardware.cpu.intel.updateMicrocode = lib.mkDefault config.hardware.enableRedistributableFirmware;
+  hardware.cpu.intel.updateMicrocode =
+    lib.mkDefault config.hardware.enableRedistributableFirmware;
 }

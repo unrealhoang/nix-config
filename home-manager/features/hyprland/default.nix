@@ -17,7 +17,8 @@ let
   pkgs-hyprland = inputs.hyprland.packages.${pkgs.system}.hyprland;
   pkgs-hyprlock = inputs.hyprlock.packages.${pkgs.system}.hyprlock;
   # pkgs-waybar = inputs.waybar.packages.${pkgs.system}.waybar;
-  pkgs-xdph = inputs.hyprland.packages.${pkgs.system}.xdg-desktop-portal-hyprland;
+  pkgs-xdph =
+    inputs.hyprland.packages.${pkgs.system}.xdg-desktop-portal-hyprland;
 
   hyprlock = "${pkgs-hyprlock}/bin/hyprlock";
   hyprctl = "${pkgs-hyprland}/bin/hyprctl";
@@ -50,9 +51,8 @@ in {
   home.file.".config/wofi.css".source = ./wofi.css;
   home.file.".config/waybar/config".source = ./waybar/config;
   home.file.".config/waybar/style.css".source = ./waybar/style.css;
-  home.file.".config/waybar/dualsense-notifier.sh".source = (pkgs.concatScript
-    "dualsense-notifier.sh"
-    [
+  home.file.".config/waybar/dualsense-notifier.sh".source =
+    (pkgs.concatScript "dualsense-notifier.sh" [
       (pkgs.writeText "icon-path" ''
         icon_path="${pkgs.papirus-icon-theme}/share/icons/Papirus-Dark/24x24@2x/apps/preferences-desktop-gaming.svg"
       '')
@@ -87,32 +87,35 @@ in {
         inner_color = "rgba(0, 0, 0, 0.5)";
         font_color = "rgb(200, 200, 200)";
         fade_on_empty = false;
-        placeholder_text = "<i><span foreground=\"##cdd6f4\">Input Password...</span></i>";
+        placeholder_text =
+          ''<i><span foreground="##cdd6f4">Input Password...</span></i>'';
         hide_input = false;
         position = "0, -120";
         halign = "center";
         valign = "center";
       }];
-      label = [{
-        monitor = "";
-        text = "cmd[update:1000] echo \"$(date +\"%-I:%M%p\")\"";
-        color = "rgba(255, 255, 255, 0.6)";
-        font_size = 120;
-        font_family = "JetBrains Mono Nerd Font Mono ExtraBold";
-        position = "0, -300";
-        halign = "center";
-        valign = "top";
-      }
-      {
-        monitor = "";
-        text = "Hi there, $USER";
-        color = "rgba(255, 255, 255, 0.6)";
-        font_size = 25;
-        font_family = "JetBrains Mono Nerd Font Mono";
-        position = "0, -40";
-        halign = "center";
-        valign = "center";
-      }];
+      label = [
+        {
+          monitor = "";
+          text = ''cmd[update:1000] echo "$(date +"%-I:%M%p")"'';
+          color = "rgba(255, 255, 255, 0.6)";
+          font_size = 120;
+          font_family = "JetBrains Mono Nerd Font Mono ExtraBold";
+          position = "0, -300";
+          halign = "center";
+          valign = "top";
+        }
+        {
+          monitor = "";
+          text = "Hi there, $USER";
+          color = "rgba(255, 255, 255, 0.6)";
+          font_size = 25;
+          font_family = "JetBrains Mono Nerd Font Mono";
+          position = "0, -40";
+          halign = "center";
+          valign = "center";
+        }
+      ];
     };
   };
   services.hypridle = {
@@ -126,7 +129,7 @@ in {
       listener = [{
         timeout = 300;
         on-timeout = "${hyprlock}";
-        on-resume = "${notifysend} \"Welcome back!\"";
+        on-resume = ''${notifysend} "Welcome back!"'';
       }];
     };
   };
@@ -137,9 +140,7 @@ in {
     package = pkgs-hyprland;
 
     settings = {
-      debug = {
-        disable_logs = false;
-      };
+      debug = { disable_logs = false; };
       env = [
         "XCURSOR_THEME,Bibata-Modern-Amber"
         "XCURSOR_SIZE,24"
@@ -153,7 +154,10 @@ in {
         "waybar"
         "nm-applet --indicator"
       ];
-      monitor = [ "DP-1,3840x2160@60,0x0,2,bitdepth,8" "DP-2,3840x2160@60,1920x0,2,bitdepth,8" ];
+      monitor = [
+        "DP-1,3840x2160@60,0x0,2,bitdepth,8"
+        "DP-2,3840x2160@60,1920x0,2,bitdepth,8"
+      ];
       workspace = [ "4,monitor:DP-1" "5,monitor:DP-1,decorate:false" ];
       windowrulev2 = [
         "float,class:org.kde.polkit-kde-authentication-agent-1"
@@ -217,9 +221,7 @@ in {
       group = {
         "col.border_active" = "$lavender";
         "col.border_inactive" = "$overlay0";
-        groupbar = {
-          text_color = "$rosewater";
-        };
+        groupbar = { text_color = "$rosewater"; };
       };
       xwayland = { force_zero_scaling = true; };
       binds = { workspace_back_and_forth = true; };

@@ -1,6 +1,5 @@
 { config, ... }:
-let
-  font-family = "JetBrainsMono Nerd Font Mono";
+let font-family = "JetBrainsMono Nerd Font Mono";
 in {
   imports = [ ../user-configurations ];
   config = {
