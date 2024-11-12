@@ -26,7 +26,7 @@ local function setup_lsp_rust(capabilities)
           procMacro = {
             -- enable = true,
             ignored = {
-              ['async-trait'] = { 'async_trait' },
+              -- ['async-trait'] = { 'async_trait' },
             },
           },
         },
