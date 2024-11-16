@@ -70,7 +70,7 @@
 
     sessionVariables = {
       GTK_IM_MODULE = "fcitx";
-      QT_IM_MODULE = lib.mkForce "wayland";
+      QT_IM_MODULE = lib.mkForce "fcitx";
       XMODIFIERS = "@im=fcitx";
     };
   };
@@ -123,7 +123,7 @@
   home.packages = with pkgs; [
     # fonts
     noto-fonts
-    noto-fonts-cjk
+    noto-fonts-cjk-sans
     noto-fonts-emoji
     liberation_ttf
     fira-code
@@ -151,6 +151,7 @@
     protontricks
     jq
     awscli2
+    thunderbird
   ];
 
   # Enable home-manager and git

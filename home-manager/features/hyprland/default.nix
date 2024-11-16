@@ -160,6 +160,7 @@ in {
         "move 100 100,class:(1Password),title:(1Password)"
         "workspace 5,class:(dota2),title:(Dota 2)"
         "workspace 4,class:(steam)"
+        "workspace 5,class:(thunderbird)"
       ];
       bindm = [ "SUPER,mouse:272,movewindow" "SUPER,mouse:273,resizewindow" ];
       bind = [
@@ -246,11 +247,13 @@ in {
           new_optimizations = true;
           ignore_opacity = true;
         };
-        drop_shadow = true;
-        shadow_range = 12;
-        shadow_offset = "3 3";
-        "col.shadow" = "0x44000000";
-        "col.shadow_inactive" = "0x66000000";
+        shadow = {
+          enabled = true;
+          color = "0x44000000";
+          color_inactive = "0x66000000";
+          offset = "3 3";
+          range = 6;
+        };
       };
       animations = {
         enabled = true;

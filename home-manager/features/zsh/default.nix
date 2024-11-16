@@ -23,8 +23,4 @@
     syntaxHighlighting.enable = true;
     history = { size = 1000000; };
   };
-  programs.yazi = {
-    enable = true;
-    enableZshIntegration = true;
-  };
 }

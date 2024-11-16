@@ -8,9 +8,11 @@ in {
       catppuccin.enable = true;
       enable = true;
       settings = {
-        shell = {
-          program = config.userConf.shellProgram;
-          args = [ "--login" ];
+        terminal = {
+          shell = {
+            program = config.userConf.shellProgram;
+            args = [ "--login" ];
+          };
         };
         env = { TERM = "xterm-256color"; };
         window = {
@@ -21,7 +23,9 @@ in {
           };
           startup_mode = "Maximized";
         };
-        live_config_reload = true;
+        general = {
+          live_config_reload = true;
+        };
         font = {
           normal = {
             family = font-family;
