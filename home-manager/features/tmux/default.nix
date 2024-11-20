@@ -37,6 +37,7 @@
       # }
     ];
     extraConfig = ''
+      set-option -g default-command "${pkgs.zsh}/bin/zsh"
       # use 256 term for pretty colors
       set-option -g default-terminal "xterm-256color"
       set-option -sa terminal-overrides ",xterm-256color:Tc"
