@@ -6,6 +6,7 @@
     ./features/neovim
     ./features/tmux
     ./features/zsh
+    ./features/nushell
     ./features/user-configurations
   ];
 
@@ -34,7 +35,9 @@
     gitFolderConfigs = {
       "/Users/unreal/Workspace/H2/" = "/Users/unreal/Workspace/H2/.gitconfig";
     };
+    shellProgram = "${pkgs.nushell}/bin/nu";
   };
+  tmuxOpts.shell = config.userConf.shellProgram;
   catppuccin.flavor = "mocha";
 
   home.packages = with pkgs;
@@ -42,6 +45,8 @@
       (nerdfonts.override {
         fonts = [ "FiraCode" "DroidSansMono" "JetBrainsMono" "Iosevka" ];
       })
+      docker-client
+      nushell
     ];
 
   programs.direnv = {
