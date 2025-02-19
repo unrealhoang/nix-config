@@ -35,19 +35,32 @@
     gitFolderConfigs = {
       "/Users/unreal/Workspace/H2/" = "/Users/unreal/Workspace/H2/.gitconfig";
     };
-    shellProgram = "${pkgs.nushell}/bin/nu";
+    shellProgram = "${pkgs.zsh}/bin/zsh";
   };
   tmuxOpts.shell = config.userConf.shellProgram;
-  catppuccin.flavor = "mocha";
+
+  catppuccin = {
+    flavor = "mocha";
+    tmux.enable = true;
+    starship.enable = true;
+    alacritty.enable = true;
+  };
 
   home.packages = with pkgs;
     [
-      (nerdfonts.override {
-        fonts = [ "FiraCode" "DroidSansMono" "JetBrainsMono" "Iosevka" ];
-      })
+      nerd-fonts.fira-code
+      nerd-fonts.droid-sans-mono
+      nerd-fonts.jetbrains-mono
+      nerd-fonts.iosevka
+
       docker-client
       nushell
+      lima
+      uv
+      awscli2
     ];
+
+  fonts.fontconfig.enable = true;
 
   programs.direnv = {
     enable = true;

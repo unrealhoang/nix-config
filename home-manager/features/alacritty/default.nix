@@ -4,7 +4,6 @@ in {
   imports = [ ../user-configurations ];
   config = {
     programs.alacritty = {
-      catppuccin.enable = true;
       enable = true;
       settings = {
         terminal = {

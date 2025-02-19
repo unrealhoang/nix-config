@@ -10,7 +10,6 @@
   };
   config = {
     programs.tmux = {
-      catppuccin.enable = true;
       enable = true;
       plugins = with pkgs; [
         tmuxPlugins.resurrect
@@ -47,6 +46,9 @@
         # }
       ];
       extraConfig = ''
+        set -g @catppuccin_window_current_text "#W"
+        set -g @catppuccin_window_default_text "#W"
+
         set-option -g default-command "${config.tmuxOpts.shell}"
         # use 256 term for pretty colors
         set-option -g default-terminal "xterm-256color"

@@ -1,6 +1,5 @@
 { pkgs, ... }: {
   programs.starship = {
-    catppuccin.enable = true;
     enable = true;
     settings = {
       git_status = {

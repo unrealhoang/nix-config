@@ -8,4 +8,7 @@
   programs.atuin = {
     enable = true;
   };
+  programs.carapace = {
+    enable = true;
+  };
 }

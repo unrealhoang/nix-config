@@ -15,7 +15,7 @@
 
   config = {
     nix = {
-      package = pkgs.nixFlakes;
+      package = pkgs.nixVersions.stable;
       settings = {
         # Enable flakes and new 'nix' command
         experimental-features = "nix-command flakes";
@@ -70,8 +70,7 @@
     services.printing.enable = true;
 
     # Enable sound with pipewire.
-    sound.enable = true;
-    hardware.pulseaudio.enable = false;
+    services.pulseaudio.enable = false;
     security.rtkit.enable = true;
     services.pipewire = { enable = false; };
 
@@ -170,16 +169,6 @@
           port = grafConf.http_port;
         };
         "ha.binginu.homes" = proxy { port = 8123; };
-        "jellyfin.binginu.homes" = proxy { port = 8096; };
-        "seer.binginu.homes" =
-          proxy { port = config.services.jellyseerr.port; };
-        "aria.binginu.homes" = base { "/" = { }; } // {
-          root = "${pkgs.ariang}/share/ariang";
-        };
-        "ariarpc.binginu.homes" =
-          proxy { port = config.services.aria2.rpcListenPort; };
-        "radarr.binginu.homes" = proxy { port = 7878; };
-        "sonarr.binginu.homes" = proxy { port = 8989; };
       };
     };
 
@@ -219,27 +208,6 @@
         };
       };
     };
-    users.groups.media = { members = [ "bing" "aria2" "jellyfin" ]; };
-    environment.persistence."/mnt/data/persist" = {
-      directories = [{
-        directory = config.my-settings.mediaDir;
-        user = "bing";
-        group = "media";
-        mode = "0770";
-      }];
-    };
-    my-settings.mediaDir = "/mnt/data/Downloads/Videos";
-    services.aria2 = {
-      enable = true;
-      openPorts = true;
-      downloadDir = config.my-settings.mediaDir;
-      rpcSecretFile = "/etc/aria2/secret";
-      extraArguments = "--rpc-allow-origin-all";
-    };
-    systemd.tmpfiles.rules =
-      [ "d '${config.my-settings.mediaDir}' 0770 aria2 media - -" ];
-
-    systemd.services.aria2.serviceConfig.Group = lib.mkForce "media";
 
     services.coredns = {
       enable = true;
@@ -258,13 +226,65 @@
     };
 
     # Enable the OpenSSH daemon.
-    services.openssh.enable = true;
+    services.openssh = {
+      enable = true;
+      ports = [ 22 ];
+      settings = {
+        UseDns = true;
+      };
+    };
 
     # Open ports in the firewall.
-    networking.firewall.allowedTCPPorts = [ 8123 21 53 80 443 ];
-    networking.firewall.allowedUDPPorts = [ 53 1900 7359 ];
-    # Or disable the firewall altogether.
-    # networking.firewall.enable = false;
+    networking = {
+      nat = {
+        enable = true;
+        externalInterface = "eth0";
+        internalInterfaces = [ "wg0" ];
+      };
+      firewall = {
+        allowedTCPPorts = [ 22 21 53 80 443 ];
+        allowedUDPPorts = [ 53 51820 ];
+      };
+      wireguard = {
+        enable = true;
+        interfaces = {
+          wg0 = {
+      # Determines the IP address and subnet of the server's end of the tunnel interface.
+            ips = [ "10.100.0.1/24" ];
+
+            # The port that WireGuard listens to. Must be accessible by the client.
+            listenPort = 51820;
+
+            # This allows the wireguard server to route your traffic to the internet and hence be like a VPN
+            # For this to work you have to set the dnsserver IP of your router (or dnsserver of choice) in your clients
+            postSetup = ''
+              ${pkgs.iptables}/bin/iptables -t nat -A POSTROUTING -s 10.100.0.0/24 -o eth0 -j MASQUERADE
+            '';
+
+            # This undoes the above command
+            postShutdown = ''
+              ${pkgs.iptables}/bin/iptables -t nat -D POSTROUTING -s 10.100.0.0/24 -o eth0 -j MASQUERADE
+            '';
+
+            # Path to the private key file.
+            #
+            # Note: The private key can also be included inline via the privateKey option,
+            # but this makes the private key world-readable; thus, using privateKeyFile is
+            # recommended.
+            privateKey = "cBmXmNDWAkmrIbAXC+38t/pxRvzdTYpeCLw+wLdJG04=";
+            peers = [
+              # List of allowed peers.
+              { # Feel free to give a meaning full name
+                # Public key of the peer (not a file path).
+                publicKey = "MZPri8Fwy2ljIxSpqIEkTxGfZNL4svZpP4pJGDvURlk=";
+                # List of IPs assigned to this peer within the tunnel subnet. Used to configure routing.
+                allowedIPs = [ "10.100.0.2/32" ];
+              }
+            ];
+          };
+        };
+      };
+    };
 
     virtualisation.oci-containers = {
       backend = "podman";
@@ -280,45 +300,16 @@
       };
     };
 
-    # 1. enable vaapi on OS-level
-    nixpkgs.config.packageOverrides = pkgs: {
-      jellyfin-ffmpeg = pkgs.jellyfin-ffmpeg.override {
-        ffmpeg_6-full = pkgs.ffmpeg_6-full.override {
-          withMfx = false;
-          withVpl = true;
-        };
-      };
-    };
-
-    hardware.opengl = {
+    hardware.graphics = {
       enable = true;
       extraPackages = with pkgs; [
         intel-media-driver
         intel-compute-runtime
-        onevpl-intel-gpu
+        vpl-gpu-rt
         libvdpau-va-gl
       ];
     };
 
-    # 2. do not forget to enable jellyfin
-    environment.variables = {
-      NEOReadDebugKeys = "1";
-      OverrideGpuAddressSpace = "48";
-    };
-    systemd.services."jellyfin".environment = {
-      NEOReadDebugKeys = "1";
-      OverrideGpuAddressSpace = "48";
-    };
-    services.jellyfin = { enable = true; };
-    services.jellyseerr.enable = true;
-    services.radarr = {
-      enable = true;
-      group = "media";
-    };
-    services.sonarr = {
-      enable = true;
-      group = "media";
-    };
     services.cloudflare-dyndns = {
       enable = true;
       apiTokenFile = "/var/lib/secrets/cf_token.secret";
