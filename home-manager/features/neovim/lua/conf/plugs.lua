@@ -60,7 +60,7 @@ local function setup_plugs()
   Plug 'nvim-lua/telescope.nvim'
   Plug 'onsails/lspkind-nvim'
   Plug 'folke/lsp-colors.nvim'
-  Plug 'simrat39/rust-tools.nvim'
+  Plug 'mrcjkb/rustaceanvim'
   Plug 'saecki/crates.nvim'
 
   -- dap-related

@@ -121,7 +121,7 @@
             ./hanode/configuration.nix
             {
               _module.args.nixinate = {
-                host = "192.168.68.56";
+                host = "home.binginu.homes";
                 sshUser = "bing";
                 buildOn = "local";
                 substituteOnTarget =
@@ -149,7 +149,7 @@
             nixpkgs.legacyPackages.aarch64-darwin; # Home-manager requires 'pkgs' instance
           extraSpecialArgs = { inherit inputs outputs; };
           modules = [
-            catppuccin.homeManagerModules.catppuccin
+            catppuccin.homeModules.catppuccin
             homeManagerModules.darwin-trampoline-apps
             # > Our main home-manager configuration file <
             ./home-manager/mac-air.nix

@@ -1,8 +1,6 @@
 { inputs, outputs, ... }: {
   # You can import other home-manager modules here
   imports = [
-    ./features/neovim
-    ./features/tmux
     ./features/zsh
     inputs.catppuccin.homeManagerModules.catppuccin
   ];

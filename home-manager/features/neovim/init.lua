@@ -194,14 +194,25 @@ end
 
 local function bootstrap()
   require 'conf/options'.setup()
+  require 'crates'.setup {
+    completion = {
+      cmp = {
+        enabled = true,
+      },
+    },
+  }
   setup_cmp()
   require 'dapui'.setup {}
   require 'conf/lsp'.setup()
+
+  vim.diagnostic.config({
+    -- Use the default configuration
+    virtual_lines = true
+  })
   setup_treesitter()
   setup_global_helpers()
   require 'conf/autocommands'.setup()
   require 'conf/user_commands'.setup()
-  require 'conf/mappings'.setup()
 
   require 'telescope'.setup {
     defaults = {
@@ -219,9 +230,34 @@ local function bootstrap()
 
   require 'catppuccin'.setup {}
   require 'fidget'.setup {}
-  require 'crates'.setup {}
+  require 'treesj'.setup {}
 
   require 'oil'.setup {}
+
+  require'snacks'.setup()
+  require 'nvim_aider'.setup({
+    aider_cmd = "/Users/unreal/.local/bin/aider",
+    args = {
+      "--no-gitignore",
+      "--pretty",
+      "--stream",
+    },
+    picker_cfg = {
+      preset = "vscode",
+    },
+    -- Other snacks.terminal.Opts options
+    config = {
+      os = { editPreset = "nvim-remote" },
+      gui = { nerdFontsVersion = "3" },
+    },
+    win = {
+      wo = { winbar = "Aider" },
+      style = "nvim_aider",
+      position = "right",
+    },
+  })
+
+  require 'conf/mappings'.setup()
 end
 
 bootstrap()

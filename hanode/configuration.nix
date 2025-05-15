@@ -120,55 +120,51 @@
       };
     };
 
-    #### COREDNS ####
-
-    systemd.services.updateBlocklist = {
-      description = "Update blocklist";
-      serviceConfig = {
-        Type = "oneshot";
-        ExecStartPre =
-          "${pkgs.curl}/bin/curl -Lo /var/blocklist.hosts https://raw.githubusercontent.com/StevenBlack/hosts/master/hosts";
-        ExecStart =
-          "${pkgs.gnused}/bin/sed -i '/^0.0.0.0/!d' /var/blocklist.hosts";
-      };
-      wantedBy = [ "multi-user.target" ];
+    services.immich = {
+      enable = true;
+      mediaLocation = "/mnt/data/immich";
     };
 
-    # run this service once a day
-    systemd.timers.updateBlocklist = {
-      wantedBy = [ "timers.target" ];
-      timerConfig = {
-        OnCalendar = "daily";
-        Unit = "updateBlocklist.service";
-      };
-    };
-
+    #### Services ####
     services.nginx = {
       enable = true;
       recommendedProxySettings = true;
       recommendedTlsSettings = true;
       virtualHosts = let
         grafConf = config.services.grafana.settings.server;
-        base = locations: {
+        base = locations: vhostConf: vhostConf // {
           inherit locations;
 
           forceSSL = true;
           enableACME = true;
           acmeRoot = null;
         };
-        proxy = { port, ws ? true, host ? "localhost" }:
+        proxy = { port, ws ? true, host ? "localhost", vhostConf ? {} }:
           base {
             "/" = {
               proxyPass = "http://${host}:" + builtins.toString (port) + "/";
               proxyWebsockets = ws;
             };
-          };
+          } vhostConf;
       in {
         "${grafConf.domain}" = proxy {
           host = grafConf.http_addr;
           port = grafConf.http_port;
         };
         "ha.binginu.homes" = proxy { port = 8123; };
+        "pihole.binginu.homes" = proxy { port = 1333; };
+        "immich.binginu.homes" = proxy {
+          port = config.services.immich.port;
+          vhostConf = {
+            extraConfig = ''
+              client_max_body_size 50000M;
+
+              proxy_read_timeout 600s;
+              proxy_send_timeout 600s;
+              send_timeout       600s;
+            '';
+          };
+        };
       };
     };
 
@@ -192,10 +188,6 @@
             targets = [ "localhost:${toString promConf.exporters.node.port}" ];
           }];
         }
-        {
-          job_name = "coredns";
-          static_configs = [{ targets = [ "localhost:9153" ]; }];
-        }
       ];
     };
     services.grafana = {
@@ -207,22 +199,6 @@
           http_addr = "127.0.0.1";
         };
       };
-    };
-
-    services.coredns = {
-      enable = true;
-      config = ''
-        . {
-          prometheus localhost:9153
-          reload 10s
-          hosts /var/blocklist.hosts {
-            fallthrough
-          }
-          # Cloudflare Forwarding
-          forward . 1.1.1.1 1.0.0.1
-          cache
-        }
-      '';
     };
 
     # Enable the OpenSSH daemon.
@@ -298,6 +274,22 @@
           "--device=/dev/ttyACM0:/dev/ttyACM0" # Example, change this to match your own hardware
         ];
       };
+
+      containers.pihole = {
+        volumes = [ "pihole:/etc/pihole" ];
+        image = "pihole/pihole:2025.02.0";
+        ports = [
+          "53:53/tcp"
+          "53:53/udp"
+          "1333:80/tcp"
+          "1334:443/tcp"
+        ];
+        environment = {
+          TZ = "Asia/Tokyo";
+          FTLCONF_webserver_api_password = "pihole password";
+          FTLCONF_dns_listeningMode = "all";
+        };
+      };
     };
 
     hardware.graphics = {
@@ -313,7 +305,7 @@
     services.cloudflare-dyndns = {
       enable = true;
       apiTokenFile = "/var/lib/secrets/cf_token.secret";
-      domains = [ "home.binginu.homes" ];
+      domains = [ "home.binginu.homes" "immich.binginu.homes" ];
     };
 
     # This value determines the NixOS release from which the default

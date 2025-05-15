@@ -1,5 +1,17 @@
 { pkgs, config, ... }:
-let palette = config.catppuccin.flavor;
+let
+  palette = config.catppuccin.flavor;
+  nvim-aider = pkgs.vimUtils.buildVimPlugin {
+    pname = "nvim-aider";
+    version = "2025-04-09";
+    src = pkgs.fetchFromGitHub {
+      owner = "GeorgesAlkhouri";
+      repo = "nvim-aider";
+      rev = "a9a707b24f2987b3c73a3589f02c838a572298a4";
+      sha256 = "ipwYJon55rFu6gkOdaI3nw05mp4bJaJvGek/hEQTnXI=";
+    };
+    meta.homepage = "https://github.com/GeorgesAlkhouri/nvim-aider";
+  };
 in {
   imports = [ ../user-configurations ];
   home.packages = [ pkgs.lua-language-server pkgs.nil ];
@@ -40,8 +52,9 @@ in {
       telescope-nvim
       lspkind-nvim
       lsp-colors-nvim
-      rust-tools-nvim
+      rustaceanvim
       crates-nvim
+      treesj
 
       nvim-dap
       nvim-dap-ui
@@ -62,6 +75,9 @@ in {
 
       mini-nvim
       which-key-nvim
+
+      snacks-nvim
+      nvim-aider
     ];
     defaultEditor = true;
   };

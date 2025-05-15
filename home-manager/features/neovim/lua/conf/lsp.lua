@@ -1,40 +1,18 @@
 local function setup_lsp_rust(capabilities)
   local util = require 'lspconfig/util'
-  local extension_path = vim.fn.expand("$HOME/.vscode-oss/extensions/vadimcn.vscode-lldb-1.7.0/", nil, nil)
-  local codelldb_path = extension_path .. 'adapter/codelldb'
-  local liblldb_path = extension_path .. 'lldb/lib/liblldb.so'
-  require 'rust-tools'.setup {
-    tools = {
-      hover_with_actions = false,
-    },
-    hover_actions = {
-      auto_focus = true,
-    },
+  vim.g.rustaceanvim = {
     server = {
-      standalone = false,
-      root_dir = util.root_pattern("Cargo.lock", "rust-project.json"),
-      init_options = {
-        publishDecorations = true;
-      },
       capabilities = capabilities,
+      root_dir = util.root_pattern("Cargo.lock", "rust-project.json"),
       settings = {
         ['rust-analyzer'] = {
           cargo = {
             loadOutDirsFromCheck = true,
             allFeatures = true,
           },
-          procMacro = {
-            -- enable = true,
-            ignored = {
-              -- ['async-trait'] = { 'async_trait' },
-            },
-          },
         },
       },
     },
-    dap = {
-      adapter = require 'rust-tools.dap'.get_codelldb_adapter(codelldb_path, liblldb_path, nil)
-    }
   }
 end
 

@@ -58,6 +58,7 @@
       lima
       uv
       awscli2
+      mitmproxy
     ];
 
   fonts.fontconfig.enable = true;

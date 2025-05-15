@@ -48,6 +48,7 @@ end
 local function setup_mappings()
   vim.o.timeoutlen = 300
   local folders = {
+    { "<leader>a", group = "Aider/AI" },
     { "<leader>b", group = "Dap DeBbuger" },
     { "<leader>d", group = "Diagnostics" },
     { "<leader>g", group = "Git" },
@@ -82,12 +83,12 @@ local function setup_mappings()
       ['<leader>li'] = { inlay_toggle, 'toggle inlay hints' },
 
       -- Rust tools
-      ['<leader>lre'] = { require 'rust-tools.expand_macro'.expand_macro, 'Expand Rust Macro' },
-      ['<leader>lrr'] = { require 'rust-tools.runnables'.runnables, 'Rust runnables' },
-      ['<leader>lrp'] = { require 'rust-tools.parent_module'.parent_module, 'Rust go to parent module' },
-      ['<leader>lrc'] = { require 'rust-tools.open_cargo_toml'.open_cargo_toml, 'Rust open Cargo.toml' },
-      ['<leader>lrj'] = { require 'rust-tools.join_lines'.join_lines, 'Rust join lines' },
-      ['<leader>lrh'] = { require 'rust-tools.hover_actions'.hover_actions, 'Hover actions' },
+      ['<leader>lre'] = { function() vim.cmd.RustAnalyzer('expandMacro') end, 'Expand Rust Macro' },
+      ['<leader>lrr'] = { function() vim.cmd.RustAnalyzer('runnables') end, 'Rust runnables' },
+      ['<leader>lrp'] = { function() vim.cmd.RustAnalyzer('parentModule') end, 'Rust go to parent module' },
+      ['<leader>lrc'] = { function() vim.cmd.RustAnalyzer('openCargo') end, 'Rust open Cargo.toml' },
+      ['<leader>lrj'] = { function() vim.cmd.RustAnalyzer('joinLines') end, 'Rust join lines' },
+      ['<leader>lrh'] = { function() vim.cmd.RustAnalyzer('hover', 'actions') end, 'Hover actions' },
 
       -- diagnostics related
       ['<leader>dl'] = { vim.diagnostic.setloclist, 'loclist of diagnostics' },
@@ -128,7 +129,40 @@ local function setup_mappings()
       ['<cr>'] = { 'za', 'fold toggle current' },
 
       -- treesitter related
-      -- ['<leader>t.'] = { require'ts-node-action'.node_action, 'node action' },
+      ['<leader>t<space>'] = { require'treesj'.toggle, 'treesitter - toggle split join' },
+
+      -- aider
+      ['<leader>aa'] = {
+        function()
+          local aider_api = require'nvim_aider'.api
+          Snacks.picker.files({
+            confirm = function(picker, _)
+              picker:close()
+              local items = picker:selected({ fallback = true })
+              for _, item in ipairs(items) do
+                aider_api.add_file(Snacks.picker.util.path(item))
+              end
+            end,
+          });
+        end,
+        'aider add files'
+      },
+      ['<leader>ad'] = {
+        function()
+          local aider_api = require'nvim_aider'.api
+          Snacks.picker.files({
+            confirm = function(picker, _)
+              picker:close()
+              local items = picker:selected({ fallback = true })
+              for _, item in ipairs(items) do
+                aider_api.drop_file(Snacks.picker.util.path(item))
+              end
+            end,
+          });
+        end,
+        'aider drop files'
+      },
+
     },
     v = {
       ['<leader>.'] = { '<esc><cmd>lua vim.lsp.buf.range_code_action()<CR>', 'code range actions' },
