@@ -131,7 +131,6 @@ in {
   };
 
   wayland.windowManager.hyprland = {
-    catppuccin.enable = true;
     enable = true;
     package = pkgs-hyprland;
 

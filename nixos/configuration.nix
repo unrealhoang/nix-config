@@ -1,7 +1,7 @@
 # This is your system's configuration file.
 # Use this to configure your system environment (it replaces /etc/nixos/configuration.nix)
 
-{ inputs, outputs, lib, config, pkgs, ... }@args: {
+{ inputs, outputs, lib, config, pkgs, ... }: {
   # You can import other NixOS modules here
   imports = [
     # If you want to use modules your own flake exports (from modules/nixos):
@@ -77,14 +77,18 @@
   networking.hostName = "unrealPc";
   networking.networkmanager.enable = true;
 
-  catppuccin.flavor = "mocha";
+  catppuccin = {
+    flavor = "mocha";
+    grub.enable = true;
+    hyprland.enable = true;
+    btop.enable = true;
+  };
   boot.loader = {
     efi = {
       canTouchEfiVariables = true;
       efiSysMountPoint = "/boot/efi";
     };
     grub = {
-      catppuccin.enable = true;
       efiSupport = true;
       device = "nodev";
       useOSProber = true;

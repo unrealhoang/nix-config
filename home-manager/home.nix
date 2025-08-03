@@ -10,7 +10,7 @@
     # Or modules exported from other flakes (such as nix-colors):
     inputs.nix-colors.homeManagerModules.default
     inputs.impermanence.nixosModules.home-manager.impermanence
-    inputs.catppuccin.homeManagerModules.catppuccin
+    inputs.catppuccin.homeModules.catppuccin
     # inputs.hyprland.homeManagerModules.default
 
     # You can also split up your configuration and import pieces of it here:
@@ -88,7 +88,6 @@
 
   xdg.enable = true;
   programs.btop = {
-    catppuccin.enable = true;
     enable = true;
   };
 
