@@ -80,7 +80,6 @@
   catppuccin = {
     flavor = "mocha";
     grub.enable = true;
-    hyprland.enable = true;
   };
   boot.loader = {
     efi = {
@@ -130,7 +129,9 @@
     steam-run
     clinfo
     inputs.hyprlock.packages.${pkgs.system}.hyprlock
+    sunshine
   ];
+
   programs.steam = {
     enable = true;
     remotePlay.openFirewall = true;
@@ -203,6 +204,46 @@
   };
   services.ratbagd.enable = true;
   services.tailscale.enable = true;
+
+  # ==================================== REMOTE HYPRLAND
+  # auto start Hyprland
+  services.getty.autologinUser = "unreal";
+  systemd.services."getty@tty6" = {
+    enable = true;
+    wantedBy = [ "multi-user.target" ];
+    serviceConfig = {
+      Type = "idle";
+      ExecStart = [
+        ""
+        "-/sbin/agetty -o '-p -- \\u' --noclear --autologin unreal %I $TERM"
+      ];
+      Restart = "always";
+      RestartSec = "10";
+    };
+    environment = {
+      # This environment variable will be used in home.nix to start Hyprland
+      "AUTOSTART_HYPR" = "1";
+    };
+  };
+
+  # Enable and configure Sunshine for remote desktop
+  services.sunshine.enable = true;
+  services.sunshine.openFirewall = true;
+  security.wrappers.sunshine = {
+    owner = "root";
+    group = "root";
+    capabilities = "cap_sys_admin+p";
+    source = "${pkgs.sunshine}/bin/sunshine";
+  };
+
+  # Systemd configuration
+  systemd.user.services.hyprland-session = {
+    description = "Hyprland session for remote access";
+    serviceConfig.Type = "simple";
+    wantedBy = [ "graphical-session.target" ];
+  };
+  # ==================================== REMOTE HYPRLAND
+
 
   # https://nixos.wiki/wiki/FAQ/When_do_I_update_stateVersion
   system.stateVersion = "24.05";

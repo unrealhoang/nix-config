@@ -179,6 +179,48 @@
   # Nicely reload system units when changing configs
   systemd.user.startServices = "sd-switch";
 
+  # ==================================== REMOTE HYPRLAND
+  # Your custom autostart script
+  home.file.".local/bin/start-hyprland-remote" = {
+    executable = true;
+    text = ''
+      #!/bin/sh
+      # Start Hyprland with a specific config for remote sessions
+      exec Hyprland --config ~/.config/hypr/hyprlandRemote.conf
+    '';
+  };
+
+  # This will be added to your .profile
+  home.profile.text = ''
+    if [ -n "$AUTOSTART_HYPR" ] && [ "$(tty)" = "/dev/tty6" ]; then
+      ~/.local/bin/start-hyprland-remote
+    fi
+  '';
+
+  home.file.".config/hypr/hyprlandRemote.conf" = {
+    text = ''
+      # This file is managed by NixOS (home.nix)
+      #
+      # Hyprland configuration for remote desktop sessions via Sunshine.
+
+      # Disable all physical monitors to ensure we only output to the virtual one.
+      monitor=,disable
+
+      # Create a virtual (headless) monitor for Sunshine to capture. [17]
+      # This is the primary display for the remote session.
+      exec-once = hyprctl output create headless
+
+      # The bug workaround you discovered: create and immediately destroy another
+      # headless output. This seems to kickstart Hyprland's exec/client handling
+      # when no physical monitors are present.
+      exec-once = sleep 2 && hyprctl output create headless && hyprctl output remove HEADLESS-2
+
+      # Start Sunshine with a delay to ensure the Hyprland environment is fully initialized.
+      exec-once = sleep 5 && sunshine
+    '';
+  };
+  # ==================================== REMOTE HYPRLAND
+
   # https://nixos.wiki/wiki/FAQ/When_do_I_update_stateVersion
   home.stateVersion = "24.05";
 }
