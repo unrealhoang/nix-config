@@ -17,8 +17,6 @@ let
   pkgs-hyprland = inputs.hyprland.packages.${pkgs.system}.hyprland;
   pkgs-hyprlock = inputs.hyprlock.packages.${pkgs.system}.hyprlock;
   # pkgs-waybar = inputs.waybar.packages.${pkgs.system}.waybar;
-  pkgs-xdph =
-    inputs.hyprland.packages.${pkgs.system}.xdg-desktop-portal-hyprland;
 
   hyprlock = "${pkgs-hyprlock}/bin/hyprlock";
   hyprctl = "${pkgs-hyprland}/bin/hyprctl";
@@ -32,7 +30,6 @@ in {
     wlsunset
     wl-clipboard
     pavucontrol
-    pkgs-xdph
     xdg-desktop-portal-gtk
     xdg-utils
     waybar
