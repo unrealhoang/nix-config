@@ -49,12 +49,6 @@
       url = "github:Alexays/Waybar";
       inputs.nixpkgs.follows = "nixpkgs";
     };
-
-    ghostty = {
-      url = "github:ghostty-org/ghostty";
-      inputs.nixpkgs-unstable.follows = "nixpkgs-unstable";
-      inputs.nixpkgs-stable.follows = "nixpkgs";
-    };
   };
 
   outputs = { self, nixpkgs, home-manager, catppuccin, ... }@inputs:

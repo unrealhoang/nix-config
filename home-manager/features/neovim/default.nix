@@ -78,6 +78,7 @@ in {
 
       snacks-nvim
       nvim-aider
+      codecompanion-nvim
     ];
     defaultEditor = true;
   };

@@ -59,6 +59,8 @@
       uv
       awscli2
       mitmproxy
+      duckdb
+      cloudflared
     ];
 
   fonts.fontconfig.enable = true;

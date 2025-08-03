@@ -152,7 +152,7 @@ local function setup_global_helpers()
 
     local str = vim.inspect(val)
     string2buf(buf, str)
-    vim.api.nvim_buf_set_option(buf, 'filetype', 'lua')
+    vim.api.nvim_set_option_value('filetype', 'lua', {scope = 'local'})
     vim.api.nvim_buf_set_var(buf, 'inspect_scratch', true)
   end
 
@@ -258,6 +258,19 @@ local function bootstrap()
   })
 
   require 'conf/mappings'.setup()
+  require 'codecompanion'.setup({
+    strategies = {
+      chat = {
+        adapter = "gemini",
+      },
+      inline = {
+        adapter = "gemini",
+      },
+      cmd = {
+        adapter = "gemini",
+      }
+    },
+  })
 end
 
 bootstrap()
