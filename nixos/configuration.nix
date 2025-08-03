@@ -81,7 +81,6 @@
     flavor = "mocha";
     grub.enable = true;
     hyprland.enable = true;
-    btop.enable = true;
   };
   boot.loader = {
     efi = {
