@@ -137,7 +137,10 @@
   services.openssh = {
     enable = true;
     # Forbid root login through SSH.
-    settings = { PermitRootLogin = "no"; };
+    settings = {
+      PermitRootLogin = "no";
+      AllowAgentForwarding = true;
+    };
   };
   services.printing = {
     enable = true;

@@ -35,7 +35,6 @@ in {
     pkgs-xdph
     xdg-desktop-portal-gtk
     xdg-utils
-    polkit-kde-agent
     waybar
     dunst
     python3
@@ -148,7 +147,7 @@ in {
         "XDG_CURRENT_DESKTOP,Hyprland"
       ];
       exec-once = [
-        "${pkgs.polkit-kde-agent}/libexec/polkit-kde-authentication-agent-1"
+        "${pkgs.kdePackages.polkit-kde-agent-1}/libexec/polkit-kde-authentication-agent-1"
         "${pkgs.dunst}/bin/dunst"
         # "hyprctl setcursor Bibata-Modern-Amber 24"
         "waybar"
