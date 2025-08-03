@@ -85,6 +85,7 @@
     starship.enable = true;
     alacritty.enable = true;
     btop.enable = true;
+    hyprland.enable = true;
   };
 
   services.gnome-keyring = {
