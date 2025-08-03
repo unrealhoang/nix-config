@@ -131,9 +131,14 @@
     mplus-outline-fonts.githubRelease
     proggyfonts
     jetbrains-mono
-    (nerdfonts.override {
-      fonts = [ "FiraCode" "DroidSansMono" "JetBrainsMono" "Iosevka" ];
-    })
+    # (nerdfonts.override {
+    #   fonts = [ "FiraCode" "DroidSansMono" "JetBrainsMono" "Iosevka" ];
+    # })
+    nerd-fonts.jetbrains-mono
+    nerd-fonts.iosevka
+    nerd-fonts.fira-code
+    nerd-fonts.droid-sans-mono
+
     archcraft-font
 
     vscode
