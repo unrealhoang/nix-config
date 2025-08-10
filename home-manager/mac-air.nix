@@ -61,6 +61,7 @@
       mitmproxy
       duckdb
       cloudflared
+      fnm
     ];
 
   fonts.fontconfig.enable = true;

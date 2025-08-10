@@ -191,7 +191,9 @@
   };
 
   # This will be added to your .profile
-  home.profile.text = ''
+  programs.zsh.shellInit = ''
+    echo HELLO
+    echo $AUTOSTART_HYPR
     if [ -n "$AUTOSTART_HYPR" ] && [ "$(tty)" = "/dev/tty6" ]; then
       ~/.local/bin/start-hyprland-remote
     fi
