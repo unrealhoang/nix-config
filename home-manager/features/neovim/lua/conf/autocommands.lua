@@ -1,10 +1,8 @@
+-- Autocommands module
+-- Note: Fugitive buffer cleanup is now handled in init.lua with lze lazy loading
+
 local function setup_autocommands()
-  local group = vim.api.nvim_create_augroup("FugitiveDeleteBuf", { clear = true })
-  vim.api.nvim_create_autocmd("BufReadPost", {
-    pattern = "fugitive://*",
-    callback = function() vim.opt.bufhidden = "delete" end,
-    group = group,
-  })
+  -- Add any additional autocommands here
 end
 
 return {
