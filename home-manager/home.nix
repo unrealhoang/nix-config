@@ -164,6 +164,7 @@
     jq
     awscli2
     thunderbird
+    xvkbd
   ];
 
   # Enable home-manager and git

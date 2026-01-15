@@ -49,6 +49,14 @@
       url = "github:Alexays/Waybar";
       inputs.nixpkgs.follows = "nixpkgs";
     };
+    kindle-weather-dashboard = {
+      url = "github:unrealhoang/kindle-weather-dashboard";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
+    nixvim = {
+      url = "github:nix-community/nixvim";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
   };
 
   outputs = { self, nixpkgs, home-manager, catppuccin, ... }@inputs:
@@ -95,7 +103,10 @@
             home-manager.nixosModules.home-manager
             {
               home-manager.users.unreal = { ... }: {
-                imports = [ ./home-manager/home.nix ];
+                imports = [
+                  inputs.nixvim.homeModules.nixvim
+                  ./home-manager/home.nix
+                ];
               };
               home-manager.extraSpecialArgs = { inherit inputs outputs; };
             }
@@ -136,13 +147,17 @@
           pkgs =
             nixpkgs.legacyPackages.x86_64-linux; # Home-manager requires 'pkgs' instance
           extraSpecialArgs = { inherit inputs outputs; };
-          modules = [ ./home-manager/home.nix ];
+          modules = [
+            inputs.nixvim.homeModules.nixvim
+            ./home-manager/home.nix
+          ];
         };
         "unreal@macAir" = home-manager.lib.homeManagerConfiguration {
           pkgs =
             nixpkgs.legacyPackages.aarch64-darwin; # Home-manager requires 'pkgs' instance
           extraSpecialArgs = { inherit inputs outputs; };
           modules = [
+            inputs.nixvim.homeModules.nixvim
             catppuccin.homeModules.catppuccin
             homeManagerModules.darwin-trampoline-apps
             # > Our main home-manager configuration file <

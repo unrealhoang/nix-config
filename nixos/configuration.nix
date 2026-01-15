@@ -87,6 +87,7 @@
       efiSysMountPoint = "/boot/efi";
     };
     grub = {
+      timeoutStyle = "hidden";
       efiSupport = true;
       device = "nodev";
       useOSProber = true;

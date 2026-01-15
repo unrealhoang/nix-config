@@ -54,15 +54,30 @@
       nerd-fonts.iosevka
 
       docker-client
+      docker-buildx
       nushell
       lima
       uv
       awscli2
-      mitmproxy
       duckdb
       cloudflared
       fnm
+      freerdp
     ];
+
+  home.file = {
+    ".docker/config.json" = {
+      text = builtins.toJSON {
+        experimental = "enabled";
+        currentContext = "lima-default";
+        auths = {};
+        cliPluginsExtraDirs = [
+            "${pkgs.docker-buildx}/libexec/docker/cli-plugins"
+        ];
+        detachKeys = "ctrl-z,z";
+      };
+    };
+  };
 
   fonts.fontconfig.enable = true;
 

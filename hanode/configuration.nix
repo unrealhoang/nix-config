@@ -153,6 +153,7 @@
         };
         "ha.binginu.homes" = proxy { port = 8123; };
         "pihole.binginu.homes" = proxy { port = 1333; };
+        "kindle-dashboard.binginu.homes" = proxy { port = 4000; };
         "immich.binginu.homes" = proxy {
           port = config.services.immich.port;
           vhostConf = {
@@ -214,7 +215,7 @@
     networking = {
       nat = {
         enable = true;
-        externalInterface = "eth0";
+        externalInterface = "enp2s0";
         internalInterfaces = [ "wg0" ];
       };
       firewall = {
@@ -234,12 +235,12 @@
             # This allows the wireguard server to route your traffic to the internet and hence be like a VPN
             # For this to work you have to set the dnsserver IP of your router (or dnsserver of choice) in your clients
             postSetup = ''
-              ${pkgs.iptables}/bin/iptables -t nat -A POSTROUTING -s 10.100.0.0/24 -o eth0 -j MASQUERADE
+              ${pkgs.iptables}/bin/iptables -t nat -A POSTROUTING -s 10.100.0.0/24 -o enp2s0 -j MASQUERADE
             '';
 
             # This undoes the above command
             postShutdown = ''
-              ${pkgs.iptables}/bin/iptables -t nat -D POSTROUTING -s 10.100.0.0/24 -o eth0 -j MASQUERADE
+              ${pkgs.iptables}/bin/iptables -t nat -D POSTROUTING -s 10.100.0.0/24 -o enp2s0 -j MASQUERADE
             '';
 
             # Path to the private key file.
@@ -247,14 +248,21 @@
             # Note: The private key can also be included inline via the privateKey option,
             # but this makes the private key world-readable; thus, using privateKeyFile is
             # recommended.
-            privateKey = "cBmXmNDWAkmrIbAXC+38t/pxRvzdTYpeCLw+wLdJG04=";
+            privateKeyFile = "/etc/wireguard/wgPrivate";
             peers = [
               # List of allowed peers.
               { # Feel free to give a meaning full name
                 # Public key of the peer (not a file path).
-                publicKey = "MZPri8Fwy2ljIxSpqIEkTxGfZNL4svZpP4pJGDvURlk=";
+                name = "iphone";
+                publicKey = "heMoy9qf6lZlxBqrGXidT0Qv92NXUArFpxx71nyY9iI=";
                 # List of IPs assigned to this peer within the tunnel subnet. Used to configure routing.
                 allowedIPs = [ "10.100.0.2/32" ];
+              }
+              {
+                name = "ipad";
+                publicKey = "kqB7IQKBJbEdnR+o22W6k4HWwAtKdlq2OXej6Af5TVM=";
+                # List of IPs assigned to this peer within the tunnel subnet. Used to configure routing.
+                allowedIPs = [ "10.100.0.3/32" ];
               }
             ];
           };
@@ -306,6 +314,15 @@
       enable = true;
       apiTokenFile = "/var/lib/secrets/cf_token.secret";
       domains = [ "home.binginu.homes" "immich.binginu.homes" ];
+    };
+
+    systemd.services.kindle-dashboard = {
+      wantedBy = [ "network-online.target" ];
+      serviceConfig = {
+        EnvironmentFile = "/etc/kindle-dashboard.env";
+        ExecStart = "${inputs.kindle-weather-dashboard.packages.${pkgs.system}.default}/bin/kindle-weather-dashboard -p 4000";
+        Restart = "always";
+      };
     };
 
     # This value determines the NixOS release from which the default

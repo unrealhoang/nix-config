@@ -2,7 +2,7 @@
   # You can import other home-manager modules here
   imports = [
     ./features/zsh
-    inputs.catppuccin.homeManagerModules.catppuccin
+    inputs.catppuccin.homeModules.catppuccin
   ];
   nixpkgs = {
     overlays = [

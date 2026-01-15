@@ -3,29 +3,30 @@
   config = {
     programs.git = {
       enable = true;
-      userName = "Unreal Hoang";
-      userEmail = "unrealhoang@gmail.com";
-      aliases = {
-        ci = "checkin";
-        st = "status";
-        br = "branch";
-        co = "checkout";
-        df = "diff";
-        cm = "commit";
-        cp = "cherry-pick";
+      signing = {
+        format = "ssh";
+        signer = config.userConf.gitGpgSSHSignProgram;
+        signByDefault = true;
       };
-      extraConfig = {
-        user.signingKey =
-          "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIDmRDJOAiOymGN+VSuyCpKHbVbBQF5/2Q6E2XdjIiIdm";
-        gpg = {
-          format = "ssh";
-          ssh.program = config.userConf.gitGpgSSHSignProgram;
+      settings = {
+        user = {
+          name = "Unreal Hoang";
+          email = "unrealhoang@gmail.com";
+          signingKey = "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIDmRDJOAiOymGN+VSuyCpKHbVbBQF5/2Q6E2XdjIiIdm";
+        };
+        alias = {
+          ci = "checkin";
+          st = "status";
+          br = "branch";
+          co = "checkout";
+          df = "diff";
+          cm = "commit";
+          cp = "cherry-pick";
         };
         core = {
           autocrlf = "input";
           editor = "nvim";
         };
-        commit.gpgsign = true;
         push.default = "current";
         pull.ff = "only";
         diff = {
