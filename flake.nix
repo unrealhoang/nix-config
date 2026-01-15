@@ -57,6 +57,9 @@
       url = "github:nix-community/nixvim";
       inputs.nixpkgs.follows = "nixpkgs";
     };
+    nixCats = {
+      url = "github:BirdeeHub/nixCats-nvim";
+    };
   };
 
   outputs = { self, nixpkgs, home-manager, catppuccin, ... }@inputs:
@@ -104,7 +107,6 @@
             {
               home-manager.users.unreal = { ... }: {
                 imports = [
-                  inputs.nixvim.homeModules.nixvim
                   ./home-manager/home.nix
                 ];
               };
@@ -148,7 +150,6 @@
             nixpkgs.legacyPackages.x86_64-linux; # Home-manager requires 'pkgs' instance
           extraSpecialArgs = { inherit inputs outputs; };
           modules = [
-            inputs.nixvim.homeModules.nixvim
             ./home-manager/home.nix
           ];
         };
@@ -157,7 +158,6 @@
             nixpkgs.legacyPackages.aarch64-darwin; # Home-manager requires 'pkgs' instance
           extraSpecialArgs = { inherit inputs outputs; };
           modules = [
-            inputs.nixvim.homeModules.nixvim
             catppuccin.homeModules.catppuccin
             homeManagerModules.darwin-trampoline-apps
             # > Our main home-manager configuration file <

@@ -46,24 +46,10 @@ local function inlay_toggle()
 end
 
 local function setup_mappings()
-  vim.o.timeoutlen = 300
-  local folders = {
-    { "<leader>a", group = "Aider/AI" },
-    { "<leader>b", group = "Dap DeBbuger" },
-    { "<leader>d", group = "Diagnostics" },
-    { "<leader>g", group = "Git" },
-    { "<leader>l", group = "Lsp" },
-    { "<leader>lr", group = "Rust Tools" },
-    { "<leader>p", group = "Project Navigation" },
-    { "<leader>t", group = "Treesitter" },
-    { "<leader>f", group = "Files/Formatting" },
-  }
-  local wk = require 'which-key'
-  wk.setup{}
-  wk.add(folders)
+  -- Note: which-key setup and folder groups are now in init.lua
   local mappings = {
     n = {
-      -- common navigation
+      -- common navigation (LSP)
       ['gsd'] = { '<cmd>rightbelow vertical lua vim.lsp.buf.definition()<CR>', 'go to definition in split' },
       ['gd'] = { vim.lsp.buf.definition, 'go to definition' },
       ['K'] = { vim.lsp.buf.hover, 'show hover information' },
@@ -76,8 +62,6 @@ local function setup_mappings()
 
       -- lsp specific
       ['<leader>ld'] = { vim.diagnostic.open_float, 'show diagnostic in float' },
-      ['<leader>ls'] = { require 'telescope.builtin'.lsp_document_symbols, 'document symbols' },
-      ['<leader>lS'] = { require 'telescope.builtin'.lsp_workspace_symbols, 'workspace symbols' },
       ['<leader>lf'] = { vim.lsp.buf.format, 'code formatting' },
       ['<leader>ln'] = { vim.lsp.buf.rename, 'rename' },
       ['<leader>li'] = { inlay_toggle, 'toggle inlay hints' },
@@ -92,77 +76,20 @@ local function setup_mappings()
 
       -- diagnostics related
       ['<leader>dl'] = { vim.diagnostic.setloclist, 'loclist of diagnostics' },
-      ['<leader>dt'] = { function() require 'telescope.builtin'.diagnostics({ bufnr = 0 }) end,
-        'current file diagnostics' },
-      ['<leader>dT'] = { function() require 'telescope.builtin'.diagnostics() end, 'project diagnostics' },
       ['<leader>dn'] = { vim.diagnostic.goto_next, 'go to next diagnostics' },
       ['<leader>dp'] = { vim.diagnostic.goto_prev, 'go to prev diagnostics' },
-
-      -- project navigation
-      ['<leader>pf'] = { '<cmd>Files<cr>', 'find files' },
-      ['<leader>pg'] = { '<cmd>GFiles<cr>', 'find git fiels' },
-      ['<leader>pb'] = { '<cmd>Buffers<cr>', 'find buffers' },
-      ['<leader>pa'] = { '<cmd>exec ":Rg ".input("Rg> ")<cr>', 'Search from input' },
-      ['<leader>ps'] = { '<cmd>exec ":Rg ".expand("<cword>")<cr>', 'Search current word' },
-      ['<leader>gc'] = { '<cmd>Commits<cr>', 'find git commits' },
-      ['<leader>gg'] = { '<cmd>BCommits<cr>', 'find git commits for current buffer' },
-      ['<leader>fo'] = { ':e %:h/', 'open file relative to current buffer' },
 
       -- buffer navigation
       ['<leader>]'] = { ':bn<cr>', 'next buffer' },
       ['<leader>['] = { ':bp<cr>', 'prev buffer' },
       ['<leader><tab>'] = { ':b#<cr>', 'last buffer' },
 
-      -- dap debugger
-      ['<leader>bs'] = { require'dap'.toggle_breakpoint, 'set breakpoint' },
-      ['<leader>bc'] = { require'dap'.continue, 'continue' },
-      ['<leader>bi'] = { require'dap'.step_into, 'step Into' },
-      ['<leader>bo'] = { require'dap'.step_over, 'step Over' },
-      ['<leader>bt'] = { require'dap'.terminate, 'Terminate request' },
-      ['<leader>bd'] = { require'dap'.disconnect, 'Disconnect from dap server' },
-      ['<leader>bu'] = { require'dapui'.toggle, 'toggle dap UI' },
-
       -- misc
       ['<leader>n'] = { rename_file, 'rename current file' },
       ['<leader><space>'] = { '<cmd>StripWhitespace<cr>', 'remove trailing whitespace' },
       ['<c-l>'] = { '<cmd>nohl<cr><c-l>', 'refersh no highlight search' },
       ['<cr>'] = { 'za', 'fold toggle current' },
-
-      -- treesitter related
-      ['<leader>t<space>'] = { require'treesj'.toggle, 'treesitter - toggle split join' },
-
-      -- aider
-      ['<leader>aa'] = {
-        function()
-          local aider_api = require'nvim_aider'.api
-          Snacks.picker.files({
-            confirm = function(picker, _)
-              picker:close()
-              local items = picker:selected({ fallback = true })
-              for _, item in ipairs(items) do
-                aider_api.add_file(Snacks.picker.util.path(item))
-              end
-            end,
-          });
-        end,
-        'aider add files'
-      },
-      ['<leader>ad'] = {
-        function()
-          local aider_api = require'nvim_aider'.api
-          Snacks.picker.files({
-            confirm = function(picker, _)
-              picker:close()
-              local items = picker:selected({ fallback = true })
-              for _, item in ipairs(items) do
-                aider_api.drop_file(Snacks.picker.util.path(item))
-              end
-            end,
-          });
-        end,
-        'aider drop files'
-      },
-
+      ['<leader>fo'] = { ':e %:h/', 'open file relative to current buffer' },
     },
     v = {
       ['<leader>.'] = { '<esc><cmd>lua vim.lsp.buf.range_code_action()<CR>', 'code range actions' },

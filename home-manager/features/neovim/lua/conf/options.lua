@@ -40,12 +40,7 @@ local function setup()
   opt.ttimeoutlen = 0
   opt.inccommand = "nosplit"
   opt.mouse = "a"
-  if g.catppuccin_flavour == nil then
-    g.catppuccin_flavour = "frappe"
-  end
-  vim.cmd [[colorscheme catppuccin]]
-
-  g.mapleader = " "
+  -- Note: catppuccin colorscheme and mapleader are set in init.lua
 end
 
 return {
