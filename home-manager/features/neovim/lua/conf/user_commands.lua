@@ -6,14 +6,6 @@ local function setup_user_commands()
     { bang = true, desc = 'Rename current file' }
   )
   vim.api.nvim_create_user_command(
-    'SourceConf',
-    function()
-      local conf_path = "$HOME/.config/nvim/init.vim"
-      vim.cmd(string.format("source %s", conf_path))
-    end,
-    { desc = "Reload config file" }
-  )
-  vim.api.nvim_create_user_command(
     'Files',
     function(input)
       vim.call('fzf#vim#files', input.args,

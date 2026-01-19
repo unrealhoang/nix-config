@@ -57,7 +57,6 @@ local function setup_plugs()
   Plug 'RishabhRD/nvim-lsputils'
   Plug 'nvim-lua/popup.nvim'
   Plug 'nvim-lua/plenary.nvim'
-  Plug 'nvim-lua/telescope.nvim'
   Plug 'onsails/lspkind-nvim'
   Plug 'folke/lsp-colors.nvim'
   Plug 'mrcjkb/rustaceanvim'
@@ -71,15 +70,7 @@ local function setup_plugs()
   Plug 'folke/trouble.nvim'
   Plug 'folke/neodev.nvim'
 
-  -- completion
-  Plug 'hrsh7th/cmp-nvim-lsp'
-  Plug 'hrsh7th/cmp-buffer'
-  Plug 'hrsh7th/cmp-path'
-  Plug 'hrsh7th/cmp-cmdline'
-  Plug 'hrsh7th/nvim-cmp'
-
-  -- Snippets support
-  Plug 'saadparwaiz1/cmp_luasnip' -- Snippets source for nvim-cmp
+  -- snippet
   Plug 'L3MON4D3/LuaSnip' -- Snippets plugin
 
   -- git

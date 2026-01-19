@@ -888,6 +888,21 @@
         "type": "github"
       }
     },
+    "nixCats": {
+      "locked": {
+        "lastModified": 1768727497,
+        "narHash": "sha256-oBhjXBWUMRSCSKobRHMb8X+WIetU76SdZAOtvVy+000=",
+        "owner": "BirdeeHub",
+        "repo": "nixCats-nvim",
+        "rev": "742da085b07b845d7987d771694742e6432b10ef",
+        "type": "github"
+      },
+      "original": {
+        "owner": "BirdeeHub",
+        "repo": "nixCats-nvim",
+        "type": "github"
+      }
+    },
     "nixinate": {
       "inputs": {
         "nixpkgs": [
@@ -1043,6 +1058,7 @@
         "impermanence": "impermanence",
         "kindle-weather-dashboard": "kindle-weather-dashboard",
         "nix-colors": "nix-colors",
+        "nixCats": "nixCats",
         "nixinate": "nixinate",
         "nixpkgs": "nixpkgs_3",
         "nixpkgs-unstable": "nixpkgs-unstable",

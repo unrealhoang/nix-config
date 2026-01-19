@@ -30,7 +30,6 @@ end
 
 local function install_autocmd_mappings(autocmd_mappings)
   for autocmd, mappings in pairs(autocmd_mappings) do
-
     local autocmd_s = vim.split(autocmd, "/", { plain = true })
     local event = autocmd_s[1]
     local pattern = autocmd_s[2] or error(string.format("autocmd is not valid: %s", autocmd))
@@ -76,8 +75,8 @@ local function setup_mappings()
 
       -- lsp specific
       ['<leader>ld'] = { vim.diagnostic.open_float, 'show diagnostic in float' },
-      ['<leader>ls'] = { require 'telescope.builtin'.lsp_document_symbols, 'document symbols' },
-      ['<leader>lS'] = { require 'telescope.builtin'.lsp_workspace_symbols, 'workspace symbols' },
+      ['<leader>ls'] = { Snacks.picker.lsp_symbols, 'document symbols' },
+      ['<leader>lS'] = { Snacks.picker.lsp_workspace_symbols, 'workspace symbols' },
       ['<leader>lf'] = { vim.lsp.buf.format, 'code formatting' },
       ['<leader>ln'] = { vim.lsp.buf.rename, 'rename' },
       ['<leader>li'] = { inlay_toggle, 'toggle inlay hints' },
@@ -92,21 +91,20 @@ local function setup_mappings()
 
       -- diagnostics related
       ['<leader>dl'] = { vim.diagnostic.setloclist, 'loclist of diagnostics' },
-      ['<leader>dt'] = { function() require 'telescope.builtin'.diagnostics({ bufnr = 0 }) end,
-        'current file diagnostics' },
-      ['<leader>dT'] = { function() require 'telescope.builtin'.diagnostics() end, 'project diagnostics' },
-      ['<leader>dn'] = { vim.diagnostic.goto_next, 'go to next diagnostics' },
-      ['<leader>dp'] = { vim.diagnostic.goto_prev, 'go to prev diagnostics' },
+      ['<leader>dt'] = { Snacks.picker.diagnostics_buffer, 'current file diagnostics' },
+      ['<leader>dT'] = { Snacks.picker.diagnostics, 'project diagnostics' },
+      [']]'] = { require'trouble'.next, 'go to next diagnostics' },
+      ['[['] = { require'trouble'.prev, 'go to prev diagnostics' },
 
       -- project navigation
-      ['<leader>pf'] = { '<cmd>Files<cr>', 'find files' },
-      ['<leader>pg'] = { '<cmd>GFiles<cr>', 'find git fiels' },
-      ['<leader>pb'] = { '<cmd>Buffers<cr>', 'find buffers' },
-      ['<leader>pa'] = { '<cmd>exec ":Rg ".input("Rg> ")<cr>', 'Search from input' },
-      ['<leader>ps'] = { '<cmd>exec ":Rg ".expand("<cword>")<cr>', 'Search current word' },
-      ['<leader>gc'] = { '<cmd>Commits<cr>', 'find git commits' },
-      ['<leader>gg'] = { '<cmd>BCommits<cr>', 'find git commits for current buffer' },
-      ['<leader>fo'] = { ':e %:h/', 'open file relative to current buffer' },
+      ['<leader>pf'] = { Snacks.picker.files, 'find files' },
+      ['<leader>pg'] = { Snacks.picker.git_files, 'find git fiels' },
+      ['<leader>pb'] = { Snacks.picker.buffers, 'find buffers' },
+      ['<leader>pa'] = { Snacks.picker.grep, 'Search from input' },
+      ['<leader>ps'] = { Snacks.picker.grep_word, 'Search current word' },
+      ['<leader>gc'] = { Snacks.picker.git_log, 'find git commits' },
+      ['<leader>gg'] = { Snacks.picker.git_log_file, 'find git commits for current buffer' },
+      ['<leader>fo'] = { function() Snacks.explorer() end, 'open file relative to current buffer' },
 
       -- buffer navigation
       ['<leader>]'] = { ':bn<cr>', 'next buffer' },
@@ -130,45 +128,26 @@ local function setup_mappings()
 
       -- treesitter related
       ['<leader>t<space>'] = { require'treesj'.toggle, 'treesitter - toggle split join' },
-
-      -- aider
-      ['<leader>aa'] = {
-        function()
-          local aider_api = require'nvim_aider'.api
-          Snacks.picker.files({
-            confirm = function(picker, _)
-              picker:close()
-              local items = picker:selected({ fallback = true })
-              for _, item in ipairs(items) do
-                aider_api.add_file(Snacks.picker.util.path(item))
-              end
-            end,
-          });
-        end,
-        'aider add files'
-      },
-      ['<leader>ad'] = {
-        function()
-          local aider_api = require'nvim_aider'.api
-          Snacks.picker.files({
-            confirm = function(picker, _)
-              picker:close()
-              local items = picker:selected({ fallback = true })
-              for _, item in ipairs(items) do
-                aider_api.drop_file(Snacks.picker.util.path(item))
-              end
-            end,
-          });
-        end,
-        'aider drop files'
-      },
-
     },
     v = {
       ['<leader>.'] = { '<esc><cmd>lua vim.lsp.buf.range_code_action()<CR>', 'code range actions' },
     },
     i = {
-      ['<c-x><c-f>'] = { '<plug>(fzf-complete-path)', 'complete file path' },
+      ['<c-x><c-f>'] = {
+        function() require'blink.cmp'.show({ providers = {'path'} }) end,
+        'complete file path',
+      },
+      ['<c-x><c-l>'] = {
+        function()
+          local bl = require'blink.cmp'
+          if not bl.show() then
+            if not bl.show_documentation() then
+              bl.hide_documentation()
+            end
+          end
+        end,
+        'complete',
+      },
     },
   }
   install_mappings(mappings)
