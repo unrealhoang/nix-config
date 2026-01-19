@@ -1,72 +1,33 @@
 { pkgs, inputs, config, ... }:
 let
   palette = config.catppuccin.flavor;
-  nvim-aider = pkgs.vimUtils.buildVimPlugin {
-    pname = "nvim-aider";
-    version = "2025-04-09";
-    src = pkgs.fetchFromGitHub {
-      owner = "GeorgesAlkhouri";
-      repo = "nvim-aider";
-      rev = "a9a707b24f2987b3c73a3589f02c838a572298a4";
-      sha256 = "ipwYJon55rFu6gkOdaI3nw05mp4bJaJvGek/hEQTnXI=";
-    };
-    meta.homepage = "https://github.com/GeorgesAlkhouri/nvim-aider";
-  };
 in
 {
   imports = [
     ../user-configurations
     inputs.nixCats.homeModule
   ];
+  config = {
+    home.packages = [ pkgs.lua-language-server pkgs.nil ];
+    programs.ripgrep.enable = true;
+    programs.bat.enable = true;
 
-  home.packages = [ pkgs.lua-language-server pkgs.nil ];
-  programs.ripgrep.enable = true;
-  programs.bat.enable = true;
+    # Disable programs.neovim since we're using nixCats
+    programs.neovim.enable = false;
 
-  # Disable programs.neovim since we're using nixCats
-  programs.neovim.enable = false;
+    nixCats = {
+      enable = true;
 
-  nixCats = {
-    enable = true;
+      # Use the nixCats plugin utils
+      addOverlays = [
+        (inputs.nixCats.utils.standardPluginOverlay inputs)
+      ];
 
-    # Use the nixCats plugin utils
-    addOverlays = [
-      (inputs.nixCats.utils.standardPluginOverlay inputs)
-    ];
+      packageNames = [ "homeNvim" ];
 
-    packageNames = [ "nvim" ];
+      luaPath = ./.;
 
-    luaPath = "${./.}";
-
-    packages = {
-      nvim = {
-        settings = {
-          wrapRc = true;
-          configDirName = "nvim";
-          aliases = [ "vim" "vi" ];
-          neovim-unwrapped = null;
-        };
-
-        categories = {
-          general = true;
-          treesitter = true;
-          completion = true;
-          lsp = true;
-          telescope = true;
-          git = true;
-          ui = true;
-          debug = true;
-          rust = true;
-          ai = true;
-          catppuccin_flavour = palette;
-        };
-
-        extra = {
-          nixdExtras = {
-            nixpkgs = inputs.nixpkgs;
-          };
-        };
-
+      categoryDefinitions.replace = ({ pkgs, settings, categories, extra, name, mkPlugin, ... }@packageDef: {
         # Runtime dependencies
         lspsAndRuntimeDeps = {
           general = with pkgs; [
@@ -76,10 +37,10 @@ in
           lsp = with pkgs; [
             lua-language-server
             nil
-            gopls
           ];
-          rust = with pkgs; [
-            rust-analyzer
+          nix = with pkgs; [
+            nixd
+            alejandra
           ];
         };
 
@@ -163,10 +124,36 @@ in
             rustaceanvim
             crates-nvim
           ];
-          ai = [
-            pkgs.vimPlugins.codecompanion-nvim
-            nvim-aider
-          ];
+        };
+      });
+
+      packageDefinitions.replace = {
+        homeNvim = {pkgs, name, ... }: {
+          settings = {
+            wrapRc = false;
+            configDirName = "nvim";
+            aliases = [ "nvim" "vim" ];
+            neovim-unwrapped = null;
+          };
+
+          categories = {
+            general = true;
+            treesitter = true;
+            completion = true;
+            lsp = true;
+            telescope = true;
+            git = true;
+            ui = true;
+            debug = true;
+            rust = true;
+            catppuccin_flavour = palette;
+          };
+
+          extra = {
+            nixdExtras = {
+              nixpkgs = inputs.nixpkgs;
+            };
+          };
         };
       };
     };

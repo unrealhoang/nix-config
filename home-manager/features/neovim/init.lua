@@ -66,7 +66,6 @@ if cat('ui') then
       local wk = require('which-key')
       wk.setup {}
       wk.add({
-        { "<leader>a", group = "Aider/AI" },
         { "<leader>b", group = "Dap DeBbuger" },
         { "<leader>d", group = "Diagnostics" },
         { "<leader>g", group = "Git" },
@@ -104,7 +103,7 @@ if cat('treesitter') then
       vim.cmd.packadd('nvim-treesitter-endwise')
     end,
     after = function()
-      require('nvim-treesitter.configs').setup {
+      require('nvim-treesitter').setup {
         highlight = {
           disable = { "sql" },
           enable = true,
@@ -239,7 +238,13 @@ if cat('lsp') then
   table.insert(plugins, {
     'nvim-lspconfig',
     for_cat = 'lsp',
+    -- Handler for individual LSP server specs
     lsp = function(plugin)
+      vim.lsp.config(plugin.name, plugin.lsp or {})
+      vim.lsp.enable(plugin.name)
+    end,
+    -- Global LSP setup runs before any server is configured
+    after = function(_)
       -- Load dependencies
       vim.cmd.packadd('neodev.nvim')
       vim.cmd.packadd('trouble.nvim')
@@ -273,45 +278,10 @@ if cat('lsp') then
         properties = { 'documentation', 'detail', 'additionalTextEdits' },
       }
 
-      -- Setup LSP servers based on the trigger
-      local server = plugin.name
-      local lspconfig = require('lspconfig')
-
-      if server == 'lua_ls' then
-        lspconfig.lua_ls.setup({
-          on_init = function(client)
-            local path = client.workspace_folders[1].name
-            if not vim.loop.fs_stat(path..'/.luarc.json') and not vim.loop.fs_stat(path..'/.luarc.jsonc') then
-              client.config.settings = vim.tbl_deep_extend('force', client.config.settings, {
-                Lua = {
-                  runtime = { version = 'LuaJIT' },
-                  diagnostics = { globals = { 'vim' } },
-                  workspace = {
-                    checkThirdParty = false,
-                    library = { vim.env.VIMRUNTIME }
-                  }
-                }
-              })
-              client.notify("workspace/didChangeConfiguration", { settings = client.config.settings })
-            end
-            return true
-          end,
-          capabilities = capabilities,
-        })
-      elseif server == 'nil_ls' then
-        lspconfig.nil_ls.setup({
-          capabilities = capabilities,
-        })
-      elseif server == 'gopls' then
-        local cmd = vim.fn.executable('gopls') == 1 and 'gopls'
-          or (vim.fn.getenv('GOPATH') ~= vim.NIL and vim.fn.expand('$GOPATH/bin/gopls'))
-          or vim.fn.expand('$HOME/go/bin/gopls')
-        lspconfig.gopls.setup({
-          inlay_hints = { enable = true },
-          cmd = { cmd },
-          capabilities = capabilities,
-        })
-      end
+      -- Global LSP config applied to all servers
+      vim.lsp.config('*', {
+        capabilities = capabilities,
+      })
 
       -- Setup lsputils handlers
       vim.lsp.handlers['textDocument/codeAction'] = require('lsputil.codeAction').code_action_handler
@@ -329,10 +299,60 @@ if cat('lsp') then
     end,
   })
 
-  -- Register LSP servers
-  table.insert(plugins, { 'lua_ls', lsp = { enabled = 'lsp' } })
-  table.insert(plugins, { 'nil_ls', lsp = { enabled = 'lsp' } })
-  table.insert(plugins, { 'gopls', lsp = { enabled = 'lsp' } })
+  -- Individual LSP server configurations
+  table.insert(plugins, {
+    'lua_ls',
+    lsp = {
+      filetypes = { 'lua' },
+      on_init = function(client)
+        local path = client.workspace_folders[1].name
+        if not vim.uv.fs_stat(path..'/.luarc.json') and not vim.uv.fs_stat(path..'/.luarc.jsonc') then
+          client.config.settings = vim.tbl_deep_extend('force', client.config.settings, {
+            Lua = {
+              runtime = { version = 'LuaJIT' },
+              diagnostics = { globals = { 'vim' } },
+              workspace = {
+                checkThirdParty = false,
+                library = { vim.env.VIMRUNTIME }
+              }
+            }
+          })
+          client.notify("workspace/didChangeConfiguration", { settings = client.config.settings })
+        end
+        return true
+      end,
+    },
+  })
+
+  table.insert(plugins, {
+    'nil_ls',
+    lsp = {
+      filetypes = { 'nix' },
+    },
+  })
+
+  local gopls_cmd = vim.fn.executable('gopls') == 1 and 'gopls'
+    or (vim.fn.getenv('GOPATH') ~= vim.NIL and vim.fn.expand('$GOPATH/bin/gopls'))
+    or vim.fn.expand('$HOME/go/bin/gopls')
+  table.insert(plugins, {
+    'gopls',
+    lsp = {
+      filetypes = { 'go', 'gomod', 'gowork', 'gotmpl' },
+      cmd = { gopls_cmd },
+      settings = {
+        gopls = {
+          hints = {
+            assignVariableTypes = true,
+            compositeLiteralFields = true,
+            constantValues = true,
+            functionTypeParameters = true,
+            parameterNames = true,
+            rangeVariableTypes = true,
+          },
+        },
+      },
+    },
+  })
 end
 
 -- ============================================================================
@@ -473,101 +493,6 @@ if cat('rust') then
           cmp = { enabled = true },
         },
       }
-    end,
-  })
-end
-
--- ============================================================================
--- AI Plugins
--- ============================================================================
-
-if cat('ai') then
-  table.insert(plugins, {
-    'snacks.nvim',
-    for_cat = 'ai',
-    event = 'DeferredUIEnter',
-    after = function()
-      require('snacks').setup()
-    end,
-  })
-
-  table.insert(plugins, {
-    'nvim-aider',
-    for_cat = 'ai',
-    keys = {
-      {
-        '<leader>aa',
-        function()
-          local aider_api = require('nvim_aider').api
-          Snacks.picker.files({
-            confirm = function(picker, _)
-              picker:close()
-              local items = picker:selected({ fallback = true })
-              for _, item in ipairs(items) do
-                aider_api.add_file(Snacks.picker.util.path(item))
-              end
-            end,
-          })
-        end,
-        desc = 'aider add files'
-      },
-      {
-        '<leader>ad',
-        function()
-          local aider_api = require('nvim_aider').api
-          Snacks.picker.files({
-            confirm = function(picker, _)
-              picker:close()
-              local items = picker:selected({ fallback = true })
-              for _, item in ipairs(items) do
-                aider_api.drop_file(Snacks.picker.util.path(item))
-              end
-            end,
-          })
-        end,
-        desc = 'aider drop files'
-      },
-    },
-    load = function(name)
-      vim.cmd.packadd(name)
-      vim.cmd.packadd('snacks.nvim')
-    end,
-    after = function()
-      require('nvim_aider').setup({
-        aider_cmd = "/Users/unreal/.local/bin/aider",
-        args = {
-          "--no-gitignore",
-          "--pretty",
-          "--stream",
-        },
-        picker_cfg = {
-          preset = "vscode",
-        },
-        config = {
-          os = { editPreset = "nvim-remote" },
-          gui = { nerdFontsVersion = "3" },
-        },
-        win = {
-          wo = { winbar = "Aider" },
-          style = "nvim_aider",
-          position = "right",
-        },
-      })
-    end,
-  })
-
-  table.insert(plugins, {
-    'codecompanion.nvim',
-    for_cat = 'ai',
-    cmd = { 'CodeCompanion', 'CodeCompanionChat', 'CodeCompanionActions' },
-    after = function()
-      require('codecompanion').setup({
-        strategies = {
-          chat = { adapter = "gemini" },
-          inline = { adapter = "gemini" },
-          cmd = { adapter = "gemini" }
-        },
-      })
     end,
   })
 end
