@@ -77,6 +77,25 @@
   networking.hostName = "unrealPc";
   networking.networkmanager.enable = true;
 
+  # Wake-on-LAN: disable WOL before shutdown to prevent immediate restart.
+  # BIOS re-enables WOL after full power-off, so magic packet wake still works.
+  systemd.services.wol-disable-on-shutdown = {
+    description = "Disable Wake-on-LAN before shutdown";
+    wantedBy = [ "multi-user.target" ];
+    before = [ "shutdown.target" ];
+    serviceConfig = {
+      Type = "oneshot";
+      RemainAfterExit = true;
+      ExecStart = "${pkgs.coreutils}/bin/true";
+      ExecStop = pkgs.writeShellScript "wol-disable" ''
+        for iface in /sys/class/net/en*; do
+          ifname=$(${pkgs.coreutils}/bin/basename "$iface")
+          ${pkgs.ethtool}/bin/ethtool -s "$ifname" wol d || true
+        done
+      '';
+    };
+  };
+
   catppuccin = {
     flavor = "mocha";
     grub.enable = true;
