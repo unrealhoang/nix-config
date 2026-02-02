@@ -93,14 +93,14 @@
     systemd.targets.suspend.enable = false;
     systemd.targets.hibernate.enable = false;
     systemd.targets.hybrid-sleep.enable = false;
-    services.xserver.displayManager.gdm.autoSuspend = false;
+    services.displayManager.gdm.autoSuspend = false;
 
     # Allow unfree packages
     nixpkgs.config.allowUnfree = true;
 
     # List packages installed in system profile. To search, run:
     # $ nix search wget
-    environment.systemPackages = [ pkgs.btop ];
+    environment.systemPackages = [ pkgs.btop pkgs.bluetui ];
 
     # Some programs need SUID wrappers, can be configured further or are
     # started in user sessions.
@@ -142,7 +142,7 @@
         proxy = { port, ws ? true, host ? "localhost", vhostConf ? {} }:
           base {
             "/" = {
-              proxyPass = "http://${host}:" + builtins.toString (port) + "/";
+              proxyPass = "http://${host}:" + builtins.toString port + "/";
               proxyWebsockets = ws;
             };
           } vhostConf;
@@ -154,6 +154,7 @@
         "ha.binginu.homes" = proxy { port = 8123; };
         "pihole.binginu.homes" = proxy { port = 1333; };
         "kindle-dashboard.binginu.homes" = proxy { port = 4000; };
+        "music.binginu.homes" = proxy { port = 6680; };
         "immich.binginu.homes" = proxy {
           port = config.services.immich.port;
           vhostConf = {
@@ -165,6 +166,20 @@
               send_timeout       600s;
             '';
           };
+        };
+      };
+    };
+
+    services.mopidy = {
+      enable = true;
+      extensionPackages = [
+        pkgs.mopidy-youtube
+        pkgs.mopidy-iris
+      ];
+      settings = {
+        youtube.youtube_dl_package = "youtube-dl";
+        mpd = {
+          hostname = "::";
         };
       };
     };
@@ -309,6 +324,7 @@
         libvdpau-va-gl
       ];
     };
+    hardware.bluetooth.enable = true;
 
     services.cloudflare-dyndns = {
       enable = true;

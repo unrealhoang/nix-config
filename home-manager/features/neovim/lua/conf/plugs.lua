@@ -31,8 +31,6 @@ local function setup_plugs()
   Plug 'windwp/windline.nvim'
   Plug 'j-hui/fidget.nvim'
 
-  Plug('junegunn/fzf', { dir = '~/.fzf', ['do'] = './install --all' })
-  Plug 'junegunn/fzf.vim'
   Plug 'junegunn/vim-peekaboo'
   Plug 'kchmck/vim-coffee-script'
   Plug 'ntpeters/vim-better-whitespace'

@@ -6,7 +6,7 @@
     ./features/neovim
     ./features/tmux
     ./features/zsh
-    ./features/nushell
+    # ./features/nushell
     ./features/user-configurations
   ];
 
@@ -55,14 +55,13 @@
 
       docker-client
       docker-buildx
-      nushell
+      # nushell
       lima
       uv
       awscli2
       duckdb
       cloudflared
       fnm
-      freerdp
     ];
 
   home.file = {

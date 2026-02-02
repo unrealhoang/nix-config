@@ -4,9 +4,10 @@ let
   nixCatsUtils = import inputs.nixCats;
   luaPath = ./.;
 
-  categoryDefinitions = { pkgs, settings, categories, extra, name, mkPlugin, ... }: {
+  categoryDefinitions = { pkgs, ... }: {
     lspsAndRuntimeDeps = {
       general = with pkgs; [
+        typescript-language-server
         lua-language-server
         nil
         fd
@@ -19,26 +20,31 @@ let
         nvim-web-devicons
         bufferline-nvim
         fidget-nvim
-        fzf-vim
         vim-peekaboo
         vim-better-whitespace
-        BufOnly-vim
-        nerdtree
         nvim-treesitter-endwise
         vim-fugitive
         vim-nix
         vim-sleuth
         undotree
-        nvim-treesitter.withAllGrammars
+        (nvim-treesitter.withPlugins (p: [
+          p.tree-sitter-nix
+          p.tree-sitter-go
+          p.tree-sitter-rust
+          p.tree-sitter-nu
+          p.tree-sitter-lua
+          p.tree-sitter-json
+          p.tree-sitter-yaml
+          p.tree-sitter-toml
+          p.tree-sitter-html
+          p.tree-sitter-javascript
+          p.tree-sitter-typescript
+          p.tree-sitter-tsx
+        ]))
         nvim-treesitter-textobjects
 
         nvim-lspconfig
-        popfix
-        nvim-lsputils
-        popup-nvim
-        plenary-nvim
         lspkind-nvim
-        lsp-colors-nvim
         rustaceanvim
         crates-nvim
         treesj
@@ -54,10 +60,7 @@ let
         luasnip
 
         oil-nvim
-
-        mini-nvim
         which-key-nvim
-
         snacks-nvim
       ];
     };
@@ -68,7 +71,7 @@ let
   };
 
   packageDefinitions = {
-    nvim = { pkgs, name, mkPlugin, ... }: {
+    nvim = { pkgs, ... }: {
       settings = {
         wrapRc = false;
       };
@@ -77,6 +80,11 @@ let
       };
       extra = {
         catppuccin_flavour = palette;
+        nixdExtras = {
+          nixpkgs = ''import ${pkgs.path} {}'';
+          nixos_options = ''(builtins.getFlake "path:${builtins.toString inputs.self.outPath}").nixosConfigurations.configname.options'';
+          home_manager_options = ''(builtins.getFlake "path:${builtins.toString inputs.self.outPath}").homeConfigurations.configname.options'';
+        };
       };
     };
   };

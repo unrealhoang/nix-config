@@ -20,6 +20,7 @@ in {
             y = 2;
           };
           startup_mode = "Maximized";
+          option_as_alt = "OnlyLeft";
         };
         general = {
           live_config_reload = true;

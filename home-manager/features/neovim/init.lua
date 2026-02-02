@@ -78,6 +78,8 @@ local function setup_treesitter()
       }
     },
   }
+  require 'nvim-treesitter-textobjects'.setup {
+  }
 end
 
 local function bootstrap()
@@ -113,6 +115,9 @@ local function bootstrap()
         preset = 'ivy',
       }
     },
+    indent = {},
+    input = {},
+    notifier = {},
   })
   require 'conf/mappings'.setup()
 end

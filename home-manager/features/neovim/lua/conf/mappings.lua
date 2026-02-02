@@ -1,5 +1,3 @@
-local rename_file = require 'conf/utils'.rename_file
-
 local function keymap(mode, keybind, target, desc, opts)
   local default_opts = { remap = false, silent = true }
   local opts2 = vim.tbl_deep_extend("force", default_opts, opts or {})
@@ -82,17 +80,21 @@ local function setup_mappings()
       ['<leader>li'] = { inlay_toggle, 'toggle inlay hints' },
 
       -- Rust tools
-      ['<leader>lre'] = { function() vim.cmd.RustAnalyzer('expandMacro') end, 'Expand Rust Macro' },
-      ['<leader>lrr'] = { function() vim.cmd.RustAnalyzer('runnables') end, 'Rust runnables' },
-      ['<leader>lrp'] = { function() vim.cmd.RustAnalyzer('parentModule') end, 'Rust go to parent module' },
-      ['<leader>lrc'] = { function() vim.cmd.RustAnalyzer('openCargo') end, 'Rust open Cargo.toml' },
-      ['<leader>lrj'] = { function() vim.cmd.RustAnalyzer('joinLines') end, 'Rust join lines' },
-      ['<leader>lrh'] = { function() vim.cmd.RustAnalyzer('hover', 'actions') end, 'Hover actions' },
+      ['<leader>lre'] = { function() vim.cmd.RustLsp('expandMacro') end, 'Expand Rust Macro' },
+      ['<leader>lrr'] = { function() vim.cmd.RustLsp('runnables') end, 'Rust runnables' },
+      ['<leader>lrp'] = { function() vim.cmd.RustLsp('parentModule') end, 'Rust go to parent module' },
+      ['<leader>lrc'] = { function() vim.cmd.RustLsp('openCargo') end, 'Rust open Cargo.toml' },
+      ['<leader>lrj'] = { function() vim.cmd.RustLsp('joinLines') end, 'Rust join lines' },
+      ['<leader>lrh'] = { function() vim.cmd.RustLsp('hover', 'actions') end, 'Hover actions' },
 
       -- diagnostics related
       ['<leader>dl'] = { vim.diagnostic.setloclist, 'loclist of diagnostics' },
       ['<leader>dt'] = { Snacks.picker.diagnostics_buffer, 'current file diagnostics' },
       ['<leader>dT'] = { Snacks.picker.diagnostics, 'project diagnostics' },
+      ['<leader>dd'] = { function()
+        local new_config = not vim.diagnostic.config().virtual_lines
+        vim.diagnostic.config({ virtual_lines = new_config })
+      end, 'toggle hide virtual text diagnostic' },
       [']]'] = { require'trouble'.next, 'go to next diagnostics' },
       ['[['] = { require'trouble'.prev, 'go to prev diagnostics' },
 
@@ -121,7 +123,7 @@ local function setup_mappings()
       ['<leader>bu'] = { require'dapui'.toggle, 'toggle dap UI' },
 
       -- misc
-      ['<leader>n'] = { rename_file, 'rename current file' },
+      ['<leader>n'] = { Snacks.rename.rename_file, 'rename current file' },
       ['<leader><space>'] = { '<cmd>StripWhitespace<cr>', 'remove trailing whitespace' },
       ['<c-l>'] = { '<cmd>nohl<cr><c-l>', 'refersh no highlight search' },
       ['<cr>'] = { 'za', 'fold toggle current' },
@@ -131,6 +133,7 @@ local function setup_mappings()
     },
     v = {
       ['<leader>.'] = { '<esc><cmd>lua vim.lsp.buf.range_code_action()<CR>', 'code range actions' },
+      ['<leader>ps'] = { Snacks.picker.grep_word, 'Search current word' },
     },
     i = {
       ['<c-x><c-f>'] = {

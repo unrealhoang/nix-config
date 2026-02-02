@@ -4,12 +4,20 @@
   inputs = {
     # Nixpkgs
     nixpkgs.url = "github:nixos/nixpkgs/nixos-unstable";
+
     # You can access packages and modules from different nixpkgs revs
     # at the same time. Here's an working example:
     nixpkgs-unstable.url = "github:nixos/nixpkgs/nixos-unstable";
     # Also see the 'unstable-packages' overlay at 'overlays/default.nix'.
-    impermanence = { url = "github:nix-community/impermanence"; };
-    catppuccin.url = "github:catppuccin/nix";
+    impermanence = {
+      url = "github:nix-community/impermanence";
+      inputs.nixpkgs.follows = "nixpkgs";
+      inputs.home-manager.follows = "home-manager";
+    };
+    catppuccin = {
+      url = "github:catppuccin/nix";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
 
     nixinate = {
       url = "github:matthewcroughan/nixinate";
@@ -51,10 +59,6 @@
     };
     kindle-weather-dashboard = {
       url = "github:unrealhoang/kindle-weather-dashboard";
-      inputs.nixpkgs.follows = "nixpkgs";
-    };
-    nixvim = {
-      url = "github:nix-community/nixvim";
       inputs.nixpkgs.follows = "nixpkgs";
     };
     nixCats = {
@@ -107,7 +111,6 @@
             {
               home-manager.users.unreal = { ... }: {
                 imports = [
-                  inputs.nixvim.homeModules.nixvim
                   ./home-manager/home.nix
                 ];
               };
@@ -151,7 +154,6 @@
             nixpkgs.legacyPackages.x86_64-linux; # Home-manager requires 'pkgs' instance
           extraSpecialArgs = { inherit inputs outputs; };
           modules = [
-            inputs.nixvim.homeModules.nixvim
             ./home-manager/home.nix
           ];
         };
@@ -160,7 +162,6 @@
             nixpkgs.legacyPackages.aarch64-darwin; # Home-manager requires 'pkgs' instance
           extraSpecialArgs = { inherit inputs outputs; };
           modules = [
-            inputs.nixvim.homeModules.nixvim
             catppuccin.homeModules.catppuccin
             homeManagerModules.darwin-trampoline-apps
             # > Our main home-manager configuration file <
