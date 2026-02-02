@@ -74,8 +74,18 @@
   };
 
   time.timeZone = "Asia/Tokyo";
+  networking.interfaces.enp5s0.wakeOnLan.enable = true;
   networking.hostName = "unrealPc";
   networking.networkmanager.enable = true;
+  networking.firewall = {
+    enable = true;
+    allowedTCPPorts = [ 47984 47989 47990 48010 22 5900 3389 ];
+    allowedUDPPorts = [ 3389 ];
+    allowedUDPPortRanges = [
+      { from = 47998; to = 48000; }
+      { from = 8000; to = 8010; }
+    ];
+  };
 
   catppuccin = {
     flavor = "mocha";
@@ -92,7 +102,6 @@
       device = "nodev";
       useOSProber = true;
       memtest86.enable = true;
-      extraFiles = { "memtest.bin" = "${pkgs.memtest86plus}/memtest.bin"; };
     };
   };
 
@@ -129,14 +138,20 @@
     steam
     steam-run
     clinfo
-    inputs.hyprlock.packages.${pkgs.system}.hyprlock
+    # inputs.hyprlock.packages.${pkgs.system}.hyprlock
     sunshine
+    wayvnc
   ];
 
+  programs.gamescope = {
+    enable = true;
+    capSysNice = true;
+  };
   programs.steam = {
     enable = true;
     remotePlay.openFirewall = true;
     dedicatedServer.openFirewall = true;
+    gamescopeSession.enable = true;
   };
 
   services.openssh = {
@@ -186,11 +201,11 @@
   programs.fuse.userAllowOther = true;
   programs.zsh.enable = true;
 
-  programs.hyprland = {
-    enable = true;
-    package = inputs.hyprland.packages.${pkgs.system}.hyprland;
-    portalPackage = inputs.hyprland.packages.${pkgs.system}.xdg-desktop-portal-hyprland;
-  };
+  # programs.hyprland = {
+  #   enable = true;
+  #   package = inputs.hyprland.packages.${pkgs.system}.hyprland;
+  #   portalPackage = inputs.hyprland.packages.${pkgs.system}.xdg-desktop-portal-hyprland;
+  # };
 
   programs._1password.enable = true;
   programs._1password-gui = {
@@ -200,7 +215,7 @@
 
   programs.seahorse.enable = true;
   security.pam.services = {
-    hyprlock = { };
+    # hyprlock = { };
     login.enableGnomeKeyring = true;
   };
   services.ratbagd.enable = true;
@@ -208,23 +223,41 @@
 
   # ==================================== REMOTE HYPRLAND
   # auto start Hyprland
-  services.getty.autologinUser = "unreal";
-  systemd.services."getty@tty6" = {
+  services.xserver = {
     enable = true;
-    wantedBy = [ "multi-user.target" ];
-    serviceConfig = {
-      Type = "idle";
-      ExecStart = [
-        ""
-        "-/sbin/agetty -o '-p -- \\u' --noclear --autologin unreal %I $TERM"
-      ];
-      Restart = "always";
-      RestartSec = "10";
+
+    desktopManager = {
+      xterm.enable = false;
+      xfce.enable = true;
     };
-    environment = {
-      # This environment variable will be used in home.nix to start Hyprland
-      "AUTOSTART_HYPR" = "1";
+  };
+  services.displayManager = {
+    enable = true;
+    defaultSession = "xfce";
+    autoLogin = {
+      enable = true;
+      user = "unreal";
     };
+  };
+
+  services.keyd = {
+    enable = true;
+    keyboards = {
+      default = {
+        ids = [ "*" ]; # Select all keyboards
+        settings = {
+          main = {
+            capslock = "layer(control)";
+          };
+        };
+      };
+    };
+  };
+
+  services.xrdp = {
+    enable = true;
+    defaultWindowManager = "${pkgs.xfce.xfce4-session}/bin/xfce4-session";
+    openFirewall = true;
   };
 
   # Enable and configure Sunshine for remote desktop
@@ -235,13 +268,6 @@
     group = "root";
     capabilities = "cap_sys_admin+p";
     source = "${pkgs.sunshine}/bin/sunshine";
-  };
-
-  # Systemd configuration
-  systemd.user.services.hyprland-session = {
-    description = "Hyprland session for remote access";
-    serviceConfig.Type = "simple";
-    wantedBy = [ "graphical-session.target" ];
   };
   # ==================================== REMOTE HYPRLAND
 
