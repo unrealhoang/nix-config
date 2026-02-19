@@ -123,6 +123,9 @@
     services.immich = {
       enable = true;
       mediaLocation = "/mnt/data/immich";
+      environment = {
+        IMMICH_TELEMETRY_INCLUDE="all";
+      };
     };
 
     #### Services ####
@@ -205,6 +208,18 @@
             targets = [ "localhost:${toString promConf.exporters.node.port}" ];
           }];
         }
+        {
+          job_name = "immich-api";
+          static_configs = [{
+            targets = [ "localhost:8081" ];
+          }];
+        }
+        {
+          job_name = "immich-services";
+          static_configs = [{
+            targets = [ "localhost:8082" ];
+          }];
+        }
       ];
     };
     services.grafana = {
@@ -242,7 +257,7 @@
         enable = true;
         interfaces = {
           wg0 = {
-      # Determines the IP address and subnet of the server's end of the tunnel interface.
+            # Determines the IP address and subnet of the server's end of the tunnel interface.
             ips = [ "10.100.0.1/24" ];
 
             # The port that WireGuard listens to. Must be accessible by the client.
@@ -279,6 +294,11 @@
                 publicKey = "kqB7IQKBJbEdnR+o22W6k4HWwAtKdlq2OXej6Af5TVM=";
                 # List of IPs assigned to this peer within the tunnel subnet. Used to configure routing.
                 allowedIPs = [ "10.100.0.3/32" ];
+              }
+              {
+                name = "h2mac";
+                publicKey = "FMzD2WI5s7CyJTK004WQs2z3MGJS8vgo6zZET91fMFM=";
+                allowedIPs = [ "10.100.0.4/32" ];
               }
             ];
           };
