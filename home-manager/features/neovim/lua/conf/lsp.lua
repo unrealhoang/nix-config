@@ -1,6 +1,5 @@
 local _, nixCats_extra = pcall(function() return require('nixCats').extra end)
 local function setup_lsp_rust()
-  vim.lsp.enable('rust_analyzer')
 end
 
 local function setup_lsp_go()

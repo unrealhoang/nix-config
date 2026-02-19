@@ -62,6 +62,7 @@
       duckdb
       cloudflared
       fnm
+      wol
     ];
 
   home.file = {
