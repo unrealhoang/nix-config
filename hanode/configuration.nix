@@ -230,6 +230,9 @@
           http_port = 2345;
           http_addr = "127.0.0.1";
         };
+        security = {
+          secret_key = "$__file{/var/lib/secrets/grafana-secret-key}";
+        };
       };
     };
 
