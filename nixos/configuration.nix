@@ -7,7 +7,6 @@
     # If you want to use modules your own flake exports (from modules/nixos):
     # outputs.nixosModules.example
     inputs.catppuccin.nixosModules.catppuccin
-    inputs.impermanence.nixosModules.impermanence
     # Or modules from other flakes (such as nixos-hardware):
     # inputs.hardware.nixosModules.common-cpu-amd
     # inputs.hardware.nixosModules.common-ssd
@@ -273,5 +272,5 @@
 
 
   # https://nixos.wiki/wiki/FAQ/When_do_I_update_stateVersion
-  system.stateVersion = "24.05";
+  system.stateVersion = "26.05";
 }

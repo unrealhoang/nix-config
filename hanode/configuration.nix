@@ -155,6 +155,7 @@
         "pihole.binginu.homes" = proxy { port = 1333; };
         "kindle-dashboard.binginu.homes" = proxy { port = 4000; };
         "music.binginu.homes" = proxy { port = 6680; };
+        "m.binginu.homes" = proxy { port = 4567; };
         "immich.binginu.homes" = proxy {
           port = config.services.immich.port;
           vhostConf = {
@@ -338,6 +339,22 @@
         EnvironmentFile = "/etc/kindle-dashboard.env";
         ExecStart = "${inputs.kindle-weather-dashboard.packages.${pkgs.system}.default}/bin/kindle-weather-dashboard -p 4000";
         Restart = "always";
+      };
+    };
+
+    services.suwayomi-server = {
+      enable = true;
+      openFirewall = true;
+
+      settings = {
+        server = {
+          port = 4567;
+          autoDownloadNewChapters = false;
+          maxSourcesInParallel = 6;
+          extensionRepos = [
+            "https://raw.githubusercontent.com/keiyoushi/extensions/repo/index.min.json"
+          ];
+        };
       };
     };
 

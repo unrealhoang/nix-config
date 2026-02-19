@@ -4,14 +4,10 @@
 { inputs, outputs, lib, pkgs, ... }: {
   # You can import other home-manager modules here
   imports = [
-    # If you want to use modules your own flake exports (from modules/home-manager):
-    # outputs.homeManagerModules.default
 
     # Or modules exported from other flakes (such as nix-colors):
     inputs.nix-colors.homeManagerModules.default
-    inputs.impermanence.nixosModules.home-manager.impermanence
     inputs.catppuccin.homeModules.catppuccin
-    # inputs.hyprland.homeManagerModules.default
 
     # You can also split up your configuration and import pieces of it here:
     ./features/alacritty
@@ -60,11 +56,9 @@
     persistence = {
       "/mnt/data/Shared" = {
         directories = [ ".mozilla" "dotfiles" ];
-        allowOther = false;
       };
       "/mnt/data" = {
         directories = [ "Resources" "Workspace" "Downloads" ];
-        allowOther = true;
       };
     };
 
@@ -116,7 +110,7 @@
   i18n.inputMethod = {
     enable = true;
     type = "fcitx5";
-    fcitx5.addons = with pkgs; [ fcitx5-gtk fcitx5-unikey fcitx5-bamboo ];
+    fcitx5.addons = with pkgs; [ fcitx5-gtk qt6Packages.fcitx5-unikey fcitx5-bamboo ];
   };
   fonts.fontconfig.enable = true;
 
@@ -125,13 +119,12 @@
 
   programs.firefox = {
     enable = true;
-    package = pkgs.firefox-wayland;
   };
   home.packages = with pkgs; [
     # fonts
     noto-fonts
     noto-fonts-cjk-sans
-    noto-fonts-emoji
+    noto-fonts-color-emoji
     liberation_ttf
     fira-code
     fira-code-symbols
@@ -157,7 +150,6 @@
     xfce.tumbler
     remmina
     chromium
-    chiaki
     antimicrox
     pnpm
     protontricks
@@ -165,6 +157,8 @@
     awscli2
     thunderbird
     xvkbd
+    claude-code
+    ethtool
   ];
 
   # Enable home-manager and git
@@ -180,50 +174,6 @@
   # Nicely reload system units when changing configs
   systemd.user.startServices = "sd-switch";
 
-  # ==================================== REMOTE HYPRLAND
-  # Your custom autostart script
-  home.file.".local/bin/start-hyprland-remote" = {
-    executable = true;
-    text = ''
-      #!/bin/sh
-      # Start Hyprland with a specific config for remote sessions
-      exec Hyprland --config ~/.config/hypr/hyprlandRemote.conf
-    '';
-  };
-
-  # This will be added to your .profile
-  programs.zsh.shellInit = ''
-    echo HELLO
-    echo $AUTOSTART_HYPR
-    if [ -n "$AUTOSTART_HYPR" ] && [ "$(tty)" = "/dev/tty6" ]; then
-      ~/.local/bin/start-hyprland-remote
-    fi
-  '';
-
-  home.file.".config/hypr/hyprlandRemote.conf" = {
-    text = ''
-      # This file is managed by NixOS (home.nix)
-      #
-      # Hyprland configuration for remote desktop sessions via Sunshine.
-
-      # Disable all physical monitors to ensure we only output to the virtual one.
-      monitor=,disable
-
-      # Create a virtual (headless) monitor for Sunshine to capture. [17]
-      # This is the primary display for the remote session.
-      exec-once = hyprctl output create headless
-
-      # The bug workaround you discovered: create and immediately destroy another
-      # headless output. This seems to kickstart Hyprland's exec/client handling
-      # when no physical monitors are present.
-      exec-once = sleep 2 && hyprctl output create headless && hyprctl output remove HEADLESS-2
-
-      # Start Sunshine with a delay to ensure the Hyprland environment is fully initialized.
-      exec-once = sleep 5 && sunshine
-    '';
-  };
-  # ==================================== REMOTE HYPRLAND
-
   # https://nixos.wiki/wiki/FAQ/When_do_I_update_stateVersion
-  home.stateVersion = "24.05";
+  home.stateVersion = "26.05";
 }

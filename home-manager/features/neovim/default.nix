@@ -73,7 +73,7 @@ let
   packageDefinitions = {
     nvim = { pkgs, ... }: {
       settings = {
-        wrapRc = false;
+        wrapRc = true;
       };
       categories = {
         general = true;
@@ -101,8 +101,8 @@ in {
 
   # Symlink config for live reload (wrapRc = false)
   # Use mkOutOfStoreSymlink to point directly to repo files, not nix store copies
-  xdg.configFile."nvim/init.lua".source = config.lib.file.mkOutOfStoreSymlink "/Users/unreal/nix-config/home-manager/features/neovim/init.lua";
-  xdg.configFile."nvim/lua".source = config.lib.file.mkOutOfStoreSymlink "/Users/unreal/nix-config/home-manager/features/neovim/lua";
+  # xdg.configFile."nvim/init.lua".source = config.lib.file.mkOutOfStoreSymlink "/Users/unreal/nix-config/home-manager/features/neovim/init.lua";
+  # xdg.configFile."nvim/lua".source = config.lib.file.mkOutOfStoreSymlink "/Users/unreal/nix-config/home-manager/features/neovim/lua";
 
   programs.ripgrep.enable = true;
   programs.bat.enable = true;

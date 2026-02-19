@@ -14,6 +14,7 @@
     enable = true;
     enableZshIntegration = true;
   };
+  programs.atuin.enable = true;
   programs.zsh = {
     enable = true;
     envExtra = ''

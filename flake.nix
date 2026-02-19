@@ -66,7 +66,7 @@
     };
   };
 
-  outputs = { self, nixpkgs, home-manager, catppuccin, ... }@inputs:
+  outputs = { self, nixpkgs, home-manager, impermanence, catppuccin, ... }@inputs:
     let
       inherit (self) outputs;
       forAllSystems = nixpkgs.lib.genAttrs [
@@ -108,6 +108,7 @@
           specialArgs = { inherit inputs outputs; };
           modules = [
             home-manager.nixosModules.home-manager
+            impermanence.nixosModules.impermanence
             {
               home-manager.users.unreal = { ... }: {
                 imports = [
