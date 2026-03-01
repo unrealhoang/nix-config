@@ -360,7 +360,7 @@
       wantedBy = [ "network-online.target" ];
       serviceConfig = {
         EnvironmentFile = "/etc/kindle-dashboard.env";
-        ExecStart = "${inputs.kindle-weather-dashboard.packages.${pkgs.system}.default}/bin/kindle-weather-dashboard -p 4000";
+        ExecStart = "${inputs.kindle-weather-dashboard.packages.${pkgs.stdenv.hostPlatform.system}.default}/bin/kindle-weather-dashboard -p 4000";
         Restart = "always";
       };
     };

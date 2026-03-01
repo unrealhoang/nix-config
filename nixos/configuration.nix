@@ -137,8 +137,6 @@
     steam
     steam-run
     clinfo
-    # inputs.hyprlock.packages.${pkgs.system}.hyprlock
-    sunshine
     wayvnc
   ];
 
@@ -255,7 +253,7 @@
 
   services.xrdp = {
     enable = true;
-    defaultWindowManager = "${pkgs.xfce.xfce4-session}/bin/xfce4-session";
+    defaultWindowManager = "${pkgs.xfce4-session}/bin/xfce4-session";
     openFirewall = true;
   };
 

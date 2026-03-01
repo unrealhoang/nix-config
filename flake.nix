@@ -37,32 +37,18 @@
     # everything match nicely? Try nix-colors!
     nix-colors = { url = "github:misterio77/nix-colors"; };
 
-    hyprland = {
-      url = "git+https://github.com/hyprwm/Hyprland?submodules=1";
-      inputs.nixpkgs.follows = "nixpkgs";
-    };
-    hyprlock = {
-      url = "github:hyprwm/hyprlock";
-      inputs.nixpkgs.follows = "nixpkgs";
-    };
-    hypridle = {
-      url = "github:hyprwm/hypridle";
-      inputs.nixpkgs.follows = "nixpkgs";
-    };
-    hyprland-contrib = {
-      url = "github:hyprwm/contrib";
-      inputs.nixpkgs.follows = "nixpkgs";
-    };
-    waybar = {
-      url = "github:Alexays/Waybar";
-      inputs.nixpkgs.follows = "nixpkgs";
-    };
     kindle-weather-dashboard = {
       url = "github:unrealhoang/kindle-weather-dashboard";
       inputs.nixpkgs.follows = "nixpkgs";
+      inputs.flake-utils.follow = "flake-utils";
     };
     nixCats = {
       url = "github:BirdeeHub/nixCats-nvim";
+    };
+
+    claude-code-nix = {
+      url = "github:sadjow/claude-code-nix";
+      inputs.nixpkgs.follows = "nixpkgs";
     };
   };
 

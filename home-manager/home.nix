@@ -12,7 +12,6 @@
     # You can also split up your configuration and import pieces of it here:
     ./features/alacritty
     ./features/git
-    ./features/hyprland
     ./features/neovim
     ./features/slack
     ./features/tmux
@@ -27,6 +26,7 @@
       outputs.overlays.additions
       outputs.overlays.modifications
       outputs.overlays.unstable-packages
+      inputs.claude-code-nix.overlays.default
 
       # You can also add overlays exported from other flakes:
       # neovim-nightly-overlay.overlays.default
@@ -79,7 +79,6 @@
     starship.enable = true;
     alacritty.enable = true;
     btop.enable = true;
-    hyprland.enable = true;
   };
 
   services.gnome-keyring = {
@@ -145,9 +144,9 @@
     gnumake
     telegram-desktop
     discord
-    xfce.thunar
-    xfce.ristretto
-    xfce.tumbler
+    thunar
+    ristretto
+    tumbler
     remmina
     chromium
     antimicrox
