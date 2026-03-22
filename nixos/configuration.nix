@@ -78,7 +78,7 @@
   networking.networkmanager.enable = true;
   networking.firewall = {
     enable = true;
-    allowedTCPPorts = [ 47984 47989 47990 48010 22 5900 3389 ];
+    allowedTCPPorts = [ 47984 47989 47990 48010 22 5900 3389 8080 ];
     allowedUDPPorts = [ 3389 ];
     allowedUDPPortRanges = [
       { from = 47998; to = 48000; }
@@ -133,12 +133,13 @@
     git
     neovim
     zsh
-    helvum
     steam
     steam-run
     clinfo
     wayvnc
   ];
+
+  programs.mosh.enable = true;
 
   programs.gamescope = {
     enable = true;

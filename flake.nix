@@ -19,11 +19,6 @@
       inputs.nixpkgs.follows = "nixpkgs";
     };
 
-    nixinate = {
-      url = "github:matthewcroughan/nixinate";
-      inputs.nixpkgs.follows = "nixpkgs";
-    };
-
     # Home manager
     home-manager = {
       url = "github:nix-community/home-manager";
@@ -40,7 +35,6 @@
     kindle-weather-dashboard = {
       url = "github:unrealhoang/kindle-weather-dashboard";
       inputs.nixpkgs.follows = "nixpkgs";
-      inputs.flake-utils.follow = "flake-utils";
     };
     nixCats = {
       url = "github:BirdeeHub/nixCats-nvim";
@@ -63,7 +57,6 @@
         "x86_64-darwin"
       ];
     in rec {
-      apps = forAllSystems (system: inputs.nixinate.nixinate.${system} self);
       # Your custom packages
       # Acessible through 'nix build', 'nix shell', etc
       packages = forAllSystems (system:
@@ -117,17 +110,6 @@
             }
             # > Our main nixos configuration file <
             ./hanode/configuration.nix
-            {
-              _module.args.nixinate = {
-                host = "home.binginu.homes";
-                sshUser = "bing";
-                buildOn = "local";
-                substituteOnTarget =
-                  true; # if buildOn is "local" then it will substitute on the target, "-s"
-                hermetic = true;
-                nixOptions = [ "--show-trace" ];
-              };
-            }
           ];
         };
       };

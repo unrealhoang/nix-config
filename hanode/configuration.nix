@@ -83,6 +83,13 @@
       shell = pkgs.zsh;
     };
 
+    security.sudo.extraRules = [
+      {
+        users = [ "bing" ];
+        commands = [ { command = "ALL"; options = [ "NOPASSWD" ]; } ];
+      }
+    ];
+
     # Enable automatic login for the user.
     services.displayManager.autoLogin = {
       enable = true;
@@ -371,6 +378,9 @@
 
       settings = {
         server = {
+          authMode = "simple_login";
+          authUsername = "m";
+          authPassword = "p";
           port = 4567;
           autoDownloadNewChapters = false;
           maxSourcesInParallel = 6;

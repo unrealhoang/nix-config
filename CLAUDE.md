@@ -28,7 +28,9 @@ home-manager --flake .#hanode-bing switch
 
 # NixOS rebuild (requires sudo, run on target machine)
 sudo nixos-rebuild --flake .#unrealPc switch
-sudo nixos-rebuild --flake .#hanode switch
+
+# Deploy hanode remotely (build locally, deploy via SSH)
+nixos-rebuild --flake .#hanode --target-host bing@home.binginu.homes --sudo switch
 
 # Build custom packages
 nix build .#archcraft-font
@@ -64,7 +66,7 @@ nix build .#fcitx5-bamboo
 
 **Impermanence**: unrealPc uses ephemeral root with persistent data at `/mnt/data2/persist/`.
 
-**Remote Deployment**: hanode uses nixinate for remote deployment (configured in flake.nix).
+**Remote Deployment**: hanode is deployed remotely using `nixos-rebuild --target-host` which builds locally and copies the closure via SSH to activate on the target.
 
 ### State Versions
 - unrealPc: 24.05
