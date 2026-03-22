@@ -158,6 +158,7 @@
     xvkbd
     claude-code
     ethtool
+    mosh
   ];
 
   # Enable home-manager and git
