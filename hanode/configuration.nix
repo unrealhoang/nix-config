@@ -161,12 +161,12 @@
           host = grafConf.http_addr;
           port = grafConf.http_port;
         };
-        "ha.binginu.homes" = proxy { port = 8123; };
-        "pihole.binginu.homes" = proxy { port = 1333; };
-        "kindle-dashboard.binginu.homes" = proxy { port = 4000; };
-        "music.binginu.homes" = proxy { port = 6680; };
-        "m.binginu.homes" = proxy { port = 4567; };
-        "immich.binginu.homes" = proxy {
+        "ha.bongbing.net" = proxy { port = 8123; };
+        "pihole.bongbing.net" = proxy { port = 1333; };
+        "kindle-dashboard.bongbing.net" = proxy { port = 4000; };
+        "music.bongbing.net" = proxy { port = 6680; };
+        "m.bongbing.net" = proxy { port = 4567; };
+        "immich.bongbing.net" = proxy {
           port = config.services.immich.port;
           vhostConf = {
             extraConfig = ''
@@ -233,7 +233,7 @@
       enable = true;
       settings = {
         server = {
-          domain = "grafana.binginu.homes";
+          domain = "grafana.bongbing.net";
           http_port = 2345;
           http_addr = "127.0.0.1";
         };
@@ -360,7 +360,7 @@
     services.cloudflare-dyndns = {
       enable = true;
       apiTokenFile = "/var/lib/secrets/cf_token.secret";
-      domains = [ "home.binginu.homes" "immich.binginu.homes" ];
+      domains = [ "home.bongbing.net" "immich.bongbing.net" ];
     };
 
     systemd.services.kindle-dashboard = {
@@ -386,6 +386,7 @@
           maxSourcesInParallel = 6;
           extensionRepos = [
             "https://raw.githubusercontent.com/keiyoushi/extensions/repo/index.min.json"
+            "https://raw.githubusercontent.com/yuzono/cursed-manga-repo/repo/index.min.json"
           ];
         };
       };

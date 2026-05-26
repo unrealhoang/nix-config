@@ -5,4 +5,5 @@
   # example = pkgs.callPackage ./example { };
   archcraft-font = pkgs.callPackage ./archcraft-font { };
   fcitx5-bamboo = pkgs.callPackage ./fcitx5-bamboo { };
+  polaris = pkgs.callPackage ./polaris { };
 }

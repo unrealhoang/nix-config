@@ -5,7 +5,7 @@
   # You can import other NixOS modules here
   imports = [
     # If you want to use modules your own flake exports (from modules/nixos):
-    # outputs.nixosModules.example
+    outputs.nixosModules.polaris
     inputs.catppuccin.nixosModules.catppuccin
     # Or modules from other flakes (such as nixos-hardware):
     # inputs.hardware.nixosModules.common-cpu-amd
@@ -26,6 +26,7 @@
       outputs.overlays.customs
       outputs.overlays.modifications
       outputs.overlays.unstable-packages
+      inputs.llm-agents.overlays.default
 
       # You can also add overlays exported from other flakes:
       # neovim-nightly-overlay.overlays.default
@@ -78,7 +79,7 @@
   networking.networkmanager.enable = true;
   networking.firewall = {
     enable = true;
-    allowedTCPPorts = [ 47984 47989 47990 48010 22 5900 3389 8080 ];
+    allowedTCPPorts = [ 47984 47989 47990 48010 22 5900 3389 8080 3001 5173 ];
     allowedUDPPorts = [ 3389 ];
     allowedUDPPortRanges = [
       { from = 47998; to = 48000; }
@@ -137,6 +138,7 @@
     steam-run
     clinfo
     wayvnc
+    llm-agents.codex
   ];
 
   programs.mosh.enable = true;
@@ -258,14 +260,12 @@
     openFirewall = true;
   };
 
-  # Enable and configure Sunshine for remote desktop
-  services.sunshine.enable = true;
-  services.sunshine.openFirewall = true;
-  security.wrappers.sunshine = {
-    owner = "root";
-    group = "root";
-    capabilities = "cap_sys_admin+p";
-    source = "${pkgs.sunshine}/bin/sunshine";
+  # Enable and configure Polaris (Sunshine fork) for remote desktop
+  services.polaris = {
+    enable = true;
+    openFirewall = true;
+    capSysAdmin = true;
+    evdi.enable = true;
   };
   # ==================================== REMOTE HYPRLAND
 

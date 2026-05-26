@@ -47,7 +47,11 @@
     };
   };
 
-  nix.gc.automatic = true;
+  nix.gc = {
+    automatic = true;
+    dates = "daily";
+    options = "--delete-older-than 7d";
+  };
   # TODO: Set your username
   home = {
     username = "unreal";
@@ -109,7 +113,7 @@
   i18n.inputMethod = {
     enable = true;
     type = "fcitx5";
-    fcitx5.addons = with pkgs; [ fcitx5-gtk qt6Packages.fcitx5-unikey fcitx5-bamboo ];
+    fcitx5.addons = with pkgs; [ qt6Packages.fcitx5-unikey ];
   };
   fonts.fontconfig.enable = true;
 
@@ -160,6 +164,17 @@
     ethtool
     mosh
   ];
+
+  # Stable SSH agent socket symlink for tmux agent forwarding
+  programs.zsh.initContent = ''
+    if [ -S "$SSH_AUTH_SOCK" ] && [ "$SSH_AUTH_SOCK" != "$HOME/.ssh/agent.sock" ]; then
+      ln -sf "$SSH_AUTH_SOCK" "$HOME/.ssh/agent.sock"
+      export SSH_AUTH_SOCK="$HOME/.ssh/agent.sock"
+    fi
+  '';
+  programs.tmux.extraConfig = ''
+    set-environment -g SSH_AUTH_SOCK "$HOME/.ssh/agent.sock"
+  '';
 
   # Enable home-manager and git
   programs.home-manager.enable = true;
