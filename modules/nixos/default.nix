@@ -3,5 +3,4 @@
 
 {
   # List your module files here
-  polaris = import ./polaris.nix;
 }

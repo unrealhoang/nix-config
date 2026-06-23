@@ -1,5 +1,18 @@
 local _, nixCats_extra = pcall(function() return require('nixCats').extra end)
 local function setup_lsp_rust()
+  -- Let rust-analyzer honor the project's rust-analyzer.toml.
+  -- Client (LSP) settings take precedence over rust-analyzer.toml, and rustaceanvim's
+  -- default `server.settings` is a function that injects a clippy check/checkOnSave into
+  -- the client settings (when cargo-clippy is on PATH), which would override the toml.
+  -- Sending an empty `rust-analyzer` table as a plain value bypasses that injection, so the
+  -- server falls back to its own config discovery (rust-analyzer.toml + user config).
+  vim.g.rustaceanvim = {
+    server = {
+      settings = {
+        ['rust-analyzer'] = {},
+      },
+    },
+  }
 end
 
 local function setup_lsp_go()

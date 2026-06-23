@@ -13,6 +13,7 @@
     ./features/alacritty
     ./features/git
     ./features/neovim
+    ./features/niri
     ./features/slack
     ./features/tmux
     ./features/zsh
@@ -78,6 +79,9 @@
     };
   };
   catppuccin = {
+    # See nixos/configuration.nix for rationale (per-port opt-in lockdown).
+    enable = true;
+    autoEnable = false;
     flavor = "mocha";
     tmux.enable = true;
     starship.enable = true;

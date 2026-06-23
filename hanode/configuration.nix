@@ -157,6 +157,17 @@
             };
           } vhostConf;
       in {
+        # Catch-all default server: drop requests with no/unknown Host (scan
+        # bots hitting the IP directly). Real vhosts below have explicit
+        # server_names and always match first; only unmatched traffic lands here.
+        # - HTTP: return 444 (close the connection without a response).
+        # - HTTPS: reject the TLS handshake when SNI matches no real vhost
+        #   (ssl_reject_handshake on), so no certificate is served.
+        "_" = {
+          default = true;
+          rejectSSL = true;
+          locations."/".return = "444";
+        };
         "${grafConf.domain}" = proxy {
           host = grafConf.http_addr;
           port = grafConf.http_port;

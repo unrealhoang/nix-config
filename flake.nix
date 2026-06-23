@@ -21,6 +21,9 @@
 
     # Home manager
     home-manager = {
+      # Track master: nixpkgs nixos-unstable currently reports 26.11, but HM's
+      # next release branch (release-26.11) hasn't been cut yet, so master is
+      # the matching branch. Switch to release-26.11 once it exists upstream.
       url = "github:nix-community/home-manager";
       inputs.nixpkgs.follows = "nixpkgs";
     };
@@ -47,6 +50,17 @@
 
     llm-agents = {
       url = "github:numtide/llm-agents.nix";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
+
+    # niri compositor (do NOT override nixpkgs here — niri-flake ships
+    # binaries via its own cache pinned to a specific nixpkgs)
+    niri.url = "github:sodiboo/niri-flake";
+
+    noctalia-shell = {
+      # v5 is now the main line; the old `v5` pre-release branch was deleted
+      # upstream (v4 moved to the `legacy-v4` branch).
+      url = "github:noctalia-dev/noctalia-shell/main";
       inputs.nixpkgs.follows = "nixpkgs";
     };
   };

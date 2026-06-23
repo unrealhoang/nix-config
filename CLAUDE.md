@@ -72,3 +72,13 @@ nix build .#fcitx5-bamboo
 - unrealPc: 24.05
 - macAir: 23.05
 - hanode: 24.05
+
+## Rules for Claude
+
+**Never cite hashes, cachix public keys, sha256 sums, store-path-shaped strings, or upstream version numbers from memory.** Always look them up from an authoritative source before pasting:
+- Cachix public keys: grep the upstream flake source (e.g. `grep -rn 'trusted-public-keys' <flake-src>`) or fetch from the cache's own `/nix-cache-info` endpoint.
+- `sha256`/`hash` for `fetchFromGitHub` and friends: let Nix compute it (`nix-prefetch-...`, or set a fake hash and read the error).
+- Store paths: derive via `nix eval --raw ...drvPath` / `...outPath`, never reconstruct.
+- Package / upstream versions: check the actual source — `curl -s https://api.github.com/repos/<owner>/<repo>/releases/latest`, the project's tags, or `nix eval` on the relevant attribute. Do not guess "the latest is X.Y.Z" from training data.
+
+Even if a value "looks right" from prior context, verify before writing it into a file or telling the user it's the correct value.
