@@ -61,11 +61,13 @@ in
       # XWayland support: niri's built-in xwayland-satellite integration is
       # enabled by default but only looks for `xwayland-satellite` on niri's
       # PATH, which the SDDM-launched session doesn't carry. Pin it to the
-      # niri-flake package (the stable variant, matching niri-stable) so X11
+      # niri-flake package (the unstable variant, matching niri-unstable) so X11
       # apps — e.g. Steam and many games — get a working DISPLAY.
       xwayland-satellite = {
         enable = true;
-        path = lib.getExe inputs.niri.packages.${pkgs.stdenv.hostPlatform.system}.xwayland-satellite-stable;
+        path =
+          lib.getExe
+            inputs.niri.packages.${pkgs.stdenv.hostPlatform.system}.xwayland-satellite-unstable;
       };
 
       # Spawn noctalia-shell on session start (per
@@ -186,6 +188,9 @@ in
           # Move workspaces between monitors
           "Mod+Alt+H".action.move-workspace-to-monitor-left = { };
           "Mod+Alt+L".action.move-workspace-to-monitor-right = { };
+
+          # Focus next monitor
+          "Mod+Comma".action.focus-monitor-next = { };
 
           # Audio / brightness
           "XF86AudioRaiseVolume".action.spawn = [

@@ -14,6 +14,7 @@
     ./features/git
     ./features/neovim
     ./features/niri
+    ./features/signal
     ./features/slack
     ./features/tmux
     ./features/zsh

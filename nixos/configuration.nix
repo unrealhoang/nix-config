@@ -268,9 +268,11 @@
 
   programs.niri = {
     enable = true;
-    # Stable niri, prebuilt on niri.cachix.org. Sunshine streams the real niri
-    # output via wlr-screencopy (no virtual-output build needed).
-    package = inputs.niri.packages.${pkgs.stdenv.hostPlatform.system}.niri-stable;
+    # niri-unstable (main): needed for the built-in Alt-Tab MRU window switcher
+    # with live thumbnails (niri PR #1704, merged 2025-11; not in the 25.08
+    # stable that niri-flake still pins). Sunshine streams the real niri output
+    # via wlr-screencopy (no virtual-output build needed).
+    package = inputs.niri.packages.${pkgs.stdenv.hostPlatform.system}.niri-unstable;
   };
 
   programs._1password.enable = true;

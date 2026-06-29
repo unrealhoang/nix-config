@@ -9,15 +9,13 @@
 #   sway-sunshine.service  — headless Sway compositor on its own Wayland display
 #   sunshine.service       — Sunshine pointed at that display (capture = wlr)
 #
-# pkgs.steam-old (the isolated /mnt/data2/SteamOld library) is launched *inside*
-# the headless Sway, so it streams to Moonlight while the niri desktop — its
-# display, audio and input — is untouched. Because steam-old is a fully separate
-# Steam instance, no migration/shutdown of a main Steam is needed.
+# Steam is launched *inside* the headless Sway so it streams to Moonlight on its
+# own display. Steam is single-instance, so the launcher shuts down any running
+# Steam first to migrate the one instance into this session (see startSteam).
 {
   config,
   lib,
   pkgs,
-  inputs,
   ...
 }:
 let
@@ -25,9 +23,8 @@ let
 
   swaybgBin = getExe pkgs.swaybg;
   footBin = getExe pkgs.foot;
-  # Same noctalia shell the niri session runs (flake input package), referenced
-  # by absolute path since the sway service runs with a controlled PATH.
-  noctaliaBin = getExe inputs.noctalia-shell.packages.${pkgs.stdenv.hostPlatform.system}.default;
+  fuzzelBin = getExe pkgs.fuzzel;
+  steamBin = getExe config.programs.steam.package;
   sunshineBin = getExe config.services.sunshine.package;
   audioSink = "sink-sunshine-stereo";
 
@@ -50,9 +47,6 @@ let
 
     # Dark background so the stream isn't black before an app launches.
     exec ${swaybgBin} -c '#1a1a2e'
-
-    # Run the noctalia shell (same one the niri session uses).
-    exec ${noctaliaBin}
 
     # Publish the runtime WAYLAND_DISPLAY for the Sunshine service to read.
     exec echo "$WAYLAND_DISPLAY" > "$XDG_RUNTIME_DIR/sway-sunshine.display"
@@ -79,6 +73,9 @@ let
 
     # Apps / window control
     bindsym $mod+Return exec $term
+    # App launcher. fuzzel is spawned by sway, so it (and the apps it launches)
+    # inherit sway's WAYLAND_DISPLAY and open on the streamed output.
+    bindsym $mod+d exec ${fuzzelBin}
     bindsym $mod+Shift+q kill
     bindsym $mod+Shift+c reload
     floating_modifier $mod normal
@@ -154,19 +151,23 @@ let
 
   # Launch the headless compositor with a deterministic IPC socket. Uses
   # writeShellScript (NOT writeShellApplication) so the inherited session PATH
-  # survives, and prepends bash/coreutils/steam-old: Sway runs every `exec` via
+  # survives, and prepends bash/coreutils/steam: Sway runs every `exec` via
   # `execlp("sh", "-c", …)`, which searches only $PATH (never /bin/sh), so its
-  # spawned apps — swaybg, the display-file writer, and steam-old — need `sh`
+  # spawned apps — swaybg, the display-file writer, and steam — need `sh`
   # plus a usable PATH present here.
   swayLauncher = pkgs.writeShellScript "sway-sunshine" ''
     export SWAYSOCK="${sockShell}"
+    # The bare systemd-user-service PATH only has a minimal toolset, so apps
+    # launched by name (fuzzel uses each .desktop's `Exec=`, e.g. "alacritty")
+    # aren't found and silently fail to spawn. Add the system and user profile
+    # bin dirs (where installed apps live) plus sh/coreutils for Sway's exec.
     export PATH="${
       lib.makeBinPath [
         pkgs.bash
         pkgs.coreutils
-        pkgs.steam-old
+        config.programs.steam.package
       ]
-    }:$PATH"
+    }:/run/current-system/sw/bin:/etc/profiles/per-user/unreal/bin:$PATH"
     ${pkgs.coreutils}/bin/rm -f "$SWAYSOCK" "${displayShell}"
     exec ${getExe pkgs.sway} --config ${swayConfig}
   '';
@@ -258,28 +259,38 @@ let
     '';
   };
 
-  # Launch the isolated steam-old library in Big Picture inside the headless
-  # Sway (swaymsg exec runs it in that session, so it renders to HEADLESS-1).
-  startSteamOld = pkgs.writeShellApplication {
-    name = "sunshine-start-steam-old";
-    runtimeInputs = [ pkgs.sway ];
+  # Launch Steam in Big Picture inside the headless Sway. Steam is
+  # single-instance, so first shut down any running Steam (e.g. on the niri
+  # desktop): that migrates the one instance into this session instead of
+  # forwarding the launch to the desktop's instance. (No-op if Steam isn't
+  # running.) swaymsg exec runs it in this session, so it renders to HEADLESS-1.
+  startSteam = pkgs.writeShellApplication {
+    name = "sunshine-start-steam";
+    runtimeInputs = [
+      pkgs.sway
+      pkgs.procps
+      pkgs.coreutils
+    ];
     text = ''
       export SWAYSOCK="${sockShell}"
-      swaymsg exec "${getExe pkgs.steam-old} steam://open/bigpicture"
+      if pgrep -x steam >/dev/null 2>&1; then
+        ${steamBin} -shutdown || true
+        for _ in $(seq 1 15); do
+          pgrep -x steam >/dev/null 2>&1 || break
+          sleep 1
+        done
+      fi
+      swaymsg exec "${steamBin} steam://open/bigpicture"
     '';
   };
 
-  # Teardown on disconnect: kill *only* steam-old (its bwrap cmdline uniquely
-  # contains the SteamOld bind — never matches a main Steam), then reset the
+  # Teardown on disconnect: shut the streamed Steam down cleanly, then reset the
   # headless output to 1080p.
-  stopSteamOld = pkgs.writeShellApplication {
-    name = "sunshine-stop-steam-old";
-    runtimeInputs = [
-      pkgs.procps
-      pkgs.sway
-    ];
+  stopSteam = pkgs.writeShellApplication {
+    name = "sunshine-stop-steam";
+    runtimeInputs = [ pkgs.sway ];
     text = ''
-      pkill -f 'SteamOld' || true
+      ${steamBin} -shutdown || true
       swaymsg -s "${sockShell}" "output HEADLESS-1 mode 1920x1080@60Hz" || true
     '';
   };
@@ -324,6 +335,43 @@ let
       swaymsg -s "${sockShell}" "output HEADLESS-1 mode 1920x1080@60Hz" || true
     '';
   };
+
+  # --- Input isolation via VT switch (run as root via the sudo rule below) ---
+  # niri and the headless sway both use libinput on seat0, so a udev tag can't
+  # reveal a device to one and hide it from the other (and seatd can't provide a
+  # second seat — it hardcodes "seat0"). Instead, on stream start we switch the
+  # active VT off niri's: logind then marks niri's session inactive and PAUSES
+  # its input devices, so streamed input no longer leaks into the desktop. The
+  # headless sway is unaffected — it opens devices directly (input group), not
+  # via logind — so it keeps receiving input. On stream end we switch back.
+  vtFile = "/run/sunshine-prestream-vt";
+  # >NAutoVTs (default 6) so no getty spawns there; the console is blank and any
+  # leaked keystrokes land in a buffer no process reads.
+  awayVt = "12";
+  vtAway = pkgs.writeShellApplication {
+    name = "sunshine-vt-away";
+    runtimeInputs = [
+      pkgs.coreutils
+      pkgs.kbd
+    ];
+    text = ''
+      cur="$(cat /sys/class/tty/tty0/active 2>/dev/null | tr -dc '0-9' || true)"
+      if [ -n "$cur" ]; then printf '%s' "$cur" > ${vtFile}; fi
+      exec chvt ${awayVt}
+    '';
+  };
+  vtBack = pkgs.writeShellApplication {
+    name = "sunshine-vt-back";
+    runtimeInputs = [
+      pkgs.coreutils
+      pkgs.kbd
+    ];
+    text = ''
+      vt="$(cat ${vtFile} 2>/dev/null || true)"
+      [ -n "$vt" ] || vt=1
+      exec chvt "$vt"
+    '';
+  };
 in
 {
   # Sunshine module: provides the package, uinput (hardware.uinput.enable), its
@@ -339,6 +387,15 @@ in
       capture = "wlr";
       audio_sink = audioSink;
       min_threads = 6;
+      # Runs for every app (unless excluded): switch the VT off niri on connect
+      # (isolating its input), switch back on disconnect. Absolute sudo path
+      # since Sunshine runs prep-cmds with PATH unset; NOPASSWD rule below.
+      global_prep_cmd = builtins.toJSON [
+        {
+          do = "${config.security.wrapperDir}/sudo ${getExe vtAway}";
+          undo = "${config.security.wrapperDir}/sudo ${getExe vtBack}";
+        }
+      ];
     };
 
     applications.apps = [
@@ -358,9 +415,9 @@ in
         ];
       }
       {
-        name = "Steam (Old Library)";
+        name = "Steam";
         image-path = "steam.png";
-        detached = [ (getExe startSteamOld) ];
+        detached = [ (getExe startSteam) ];
         prep-cmd = [
           {
             do = getExe restoreDefaultSink;
@@ -368,7 +425,7 @@ in
           }
           {
             do = getExe setResolution;
-            undo = getExe stopSteamOld;
+            undo = getExe stopSteam;
           }
         ];
       }
@@ -445,13 +502,31 @@ in
     ];
   };
 
-  # Input isolation is intentionally NOT applied yet. The upstream approach
-  # (stripping ID_INPUT from the 0xBEEF/0xDEAD virtual devices) hides them from
-  # the host compositor, but on this setup it ALSO hides them from the headless
-  # Sway: both run libinput on seat0, which filters on ID_INPUT, so the streamed
-  # cursor never moves (confirmed via swaymsg get_inputs). Without the rule Sway
-  # sees the devices and input works — the trade-off is Moonlight input also
-  # reaches the niri desktop ("leak"). Proper niri-side isolation is a follow-up:
-  # niri has no mutter-device-ignore equivalent, so it likely needs a dedicated
-  # logind seat for the virtual devices rather than a udev tag.
+  # Let the Sunshine user service run only the two VT-switch helpers as root,
+  # without a password, so the global prep-cmd can isolate niri's input during a
+  # stream (see the VT-switch helpers above).
+  security.sudo.extraRules = [
+    {
+      users = [ "unreal" ];
+      commands = [
+        {
+          command = getExe vtAway;
+          options = [ "NOPASSWD" ];
+        }
+        {
+          command = getExe vtBack;
+          options = [ "NOPASSWD" ];
+        }
+      ];
+    }
+  ];
+
+  # Input isolation note: we do NOT use the upstream udev approach (stripping
+  # ID_INPUT from the 0xBEEF/0xDEAD devices). On this setup that hides them from
+  # the headless Sway too — both Sway and niri run libinput on seat0, which
+  # filters on ID_INPUT (confirmed via swaymsg get_inputs) — and seatd can't give
+  # Sway a separate seat (it hardcodes "seat0"). Instead, the global_prep_cmd VT
+  # switch (above) makes niri's session inactive for the duration of a stream so
+  # logind pauses ITS input; Sway keeps direct (input-group) access. niri's own
+  # device-ignore isn't merged upstream yet — revisit when it lands.
 }
