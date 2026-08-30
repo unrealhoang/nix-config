@@ -40,6 +40,8 @@
   tmuxOpts.shell = config.userConf.shellProgram;
 
   catppuccin = {
+    enable = true;
+    autoEnable = false;
     flavor = "mocha";
     tmux.enable = true;
     starship.enable = true;
@@ -62,7 +64,7 @@
       duckdb
       cloudflared
       fnm
-      wol
+      # wol
     ];
 
   home.file = {
