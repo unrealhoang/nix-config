@@ -7,6 +7,7 @@
 {
   # example = pkgs.callPackage ./example { };
   archcraft-font = pkgs.callPackage ./archcraft-font { };
+  alacritty-icon = pkgs.callPackage ./alacritty-icon { };
   fcitx5-bamboo = pkgs.callPackage ./fcitx5-bamboo {
     extra-cmake-modules = pkgs.kdePackages.extra-cmake-modules;
   };

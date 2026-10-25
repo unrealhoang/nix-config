@@ -9,7 +9,12 @@
       };
     };
   };
-  programs.fzf.enable = true;
+  programs.fzf = {
+    enable = true;
+    # Atuin's zsh integration is sourced after fzf's and owns Ctrl-R;
+    # an empty command disables fzf's Ctrl-R widget so they don't fight.
+    historyWidget.zsh.command = "";
+  };
   programs.zoxide = {
     enable = true;
     enableZshIntegration = true;

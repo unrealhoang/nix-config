@@ -46,7 +46,6 @@ local function setup_mappings()
   vim.o.timeoutlen = 300
   local folders = {
     { "<leader>a", group = "Aider/AI" },
-    { "<leader>b", group = "Dap DeBbuger" },
     { "<leader>d", group = "Diagnostics" },
     { "<leader>g", group = "Git" },
     { "<leader>l", group = "Lsp" },
@@ -112,15 +111,6 @@ local function setup_mappings()
       ['<leader>]'] = { ':bn<cr>', 'next buffer' },
       ['<leader>['] = { ':bp<cr>', 'prev buffer' },
       ['<leader><tab>'] = { ':b#<cr>', 'last buffer' },
-
-      -- dap debugger
-      ['<leader>bs'] = { require'dap'.toggle_breakpoint, 'set breakpoint' },
-      ['<leader>bc'] = { require'dap'.continue, 'continue' },
-      ['<leader>bi'] = { require'dap'.step_into, 'step Into' },
-      ['<leader>bo'] = { require'dap'.step_over, 'step Over' },
-      ['<leader>bt'] = { require'dap'.terminate, 'Terminate request' },
-      ['<leader>bd'] = { require'dap'.disconnect, 'Disconnect from dap server' },
-      ['<leader>bu'] = { require'dapui'.toggle, 'toggle dap UI' },
 
       -- misc
       ['<leader>n'] = { Snacks.rename.rename_file, 'rename current file' },

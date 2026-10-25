@@ -60,10 +60,6 @@ local function setup_plugs()
   Plug 'mrcjkb/rustaceanvim'
   Plug 'saecki/crates.nvim'
 
-  -- dap-related
-  Plug 'mfussenegger/nvim-dap'
-  Plug 'rcarriga/nvim-dap-ui'
-
   -- diagnostics
   Plug 'folke/trouble.nvim'
   Plug 'folke/neodev.nvim'

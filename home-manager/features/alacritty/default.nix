@@ -1,10 +1,16 @@
-{ config, ... }:
+{ config, pkgs, ... }:
 let font-family = "JetBrainsMono Nerd Font Mono";
 in {
   imports = [ ../user-configurations ];
   config = {
     programs.alacritty = {
       enable = true;
+      # On macOS ship the bundle with our custom icon from
+      # resources/Alacritty.icns
+      package = if pkgs.stdenv.hostPlatform.isDarwin then
+        pkgs.alacritty-icon
+      else
+        pkgs.alacritty;
       settings = {
         terminal = {
           shell = {

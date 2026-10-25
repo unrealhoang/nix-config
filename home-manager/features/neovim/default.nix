@@ -49,10 +49,6 @@ let
         crates-nvim
         treesj
 
-        nvim-dap
-        nvim-dap-ui
-        nvim-nio
-
         trouble-nvim
         lazydev-nvim
 
