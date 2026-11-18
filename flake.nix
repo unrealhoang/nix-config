@@ -33,25 +33,32 @@
 
     # Shameless plug: looking for a way to nixify your themes and make
     # everything match nicely? Try nix-colors!
-    nix-colors = { url = "github:misterio77/nix-colors"; };
-
-    kindle-weather-dashboard = {
-      url = "github:unrealhoang/kindle-weather-dashboard";
-      inputs.nixpkgs.follows = "nixpkgs";
+    nix-colors = {
+      url = "github:misterio77/nix-colors";
     };
+
     nixCats = {
       url = "github:BirdeeHub/nixCats-nvim";
     };
 
-    claude-code-nix = {
-      url = "github:sadjow/claude-code-nix";
+    herdr-nix = {
+      url = "github:herdrdev/herdr-nix";
       inputs.nixpkgs.follows = "nixpkgs";
     };
 
-    llm-agents = {
-      url = "github:numtide/llm-agents.nix";
+    tgfs = {
+      url = "github:unrealhoang/tgfs";
       inputs.nixpkgs.follows = "nixpkgs";
     };
+
+    # Do NOT override nixpkgs here: llm-agents' packages resolve helpers like
+    # `installAgentSkills` out of the nixpkgs they are built against, and that
+    # attribute only exists in a newer nixpkgs than this flake pins. Following
+    # our nixpkgs makes the whole package set fail to evaluate with
+    # "callPackageWith: Function called without required argument
+    # installAgentSkills". Letting it use its own nixpkgs-unstable pin also
+    # keeps its binaries substitutable from cache.numtide.com.
+    llm-agents.url = "github:numtide/llm-agents.nix";
 
     # niri compositor (do NOT override nixpkgs here — niri-flake ships
     # binaries via its own cache pinned to a specific nixpkgs)
@@ -65,7 +72,15 @@
     };
   };
 
-  outputs = { self, nixpkgs, home-manager, impermanence, catppuccin, ... }@inputs:
+  outputs =
+    {
+      self,
+      nixpkgs,
+      home-manager,
+      impermanence,
+      catppuccin,
+      ...
+    }@inputs:
     let
       inherit (self) outputs;
       forAllSystems = nixpkgs.lib.genAttrs [
@@ -75,20 +90,28 @@
         "aarch64-darwin"
         "x86_64-darwin"
       ];
-    in rec {
+    in
+    rec {
       # Your custom packages
       # Acessible through 'nix build', 'nix shell', etc
-      packages = forAllSystems (system:
-        let pkgs = nixpkgs.legacyPackages.${system};
-        in import ./pkgs { inherit pkgs; });
+      packages = forAllSystems (
+        system:
+        let
+          pkgs = nixpkgs.legacyPackages.${system};
+        in
+        import ./pkgs { inherit pkgs; }
+      );
       # Devshell for bootstrapping
       # Acessible through 'nix develop' or 'nix-shell' (legacy)
-      devShells = forAllSystems (system:
-        let pkgs = nixpkgs.legacyPackages.${system};
-        in import ./shell.nix { inherit pkgs; });
+      devShells = forAllSystems (
+        system:
+        let
+          pkgs = nixpkgs.legacyPackages.${system};
+        in
+        import ./shell.nix { inherit pkgs; }
+      );
 
-      formatter =
-        forAllSystems (system: nixpkgs.legacyPackages.${system}.nixfmt);
+      formatter = forAllSystems (system: nixpkgs.legacyPackages.${system}.nixfmt);
 
       # Your custom packages and modifications, exported as overlays
       overlays = import ./overlays { inherit inputs; };
@@ -138,16 +161,14 @@
       homeConfigurations = {
         # FIXME replace with your username@hostname
         "unreal@unrealPc" = home-manager.lib.homeManagerConfiguration {
-          pkgs =
-            nixpkgs.legacyPackages.x86_64-linux; # Home-manager requires 'pkgs' instance
+          pkgs = nixpkgs.legacyPackages.x86_64-linux; # Home-manager requires 'pkgs' instance
           extraSpecialArgs = { inherit inputs outputs; };
           modules = [
             ./home-manager/home.nix
           ];
         };
         "unreal@macAir" = home-manager.lib.homeManagerConfiguration {
-          pkgs =
-            nixpkgs.legacyPackages.aarch64-darwin; # Home-manager requires 'pkgs' instance
+          pkgs = nixpkgs.legacyPackages.aarch64-darwin; # Home-manager requires 'pkgs' instance
           extraSpecialArgs = { inherit inputs outputs; };
           modules = [
             catppuccin.homeModules.catppuccin

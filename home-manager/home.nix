@@ -1,7 +1,25 @@
 # This is your home-manager configuration file
 # Use this to configure your home environment (it replaces ~/.config/nixpkgs/home.nix)
 
-{ inputs, outputs, lib, pkgs, ... }: {
+{
+  inputs,
+  outputs,
+  lib,
+  pkgs,
+  ...
+}:
+let
+  # claude-code comes from llm-agents.nix (same input that provides codex in
+  # nixos/configuration.nix), not from nixpkgs or a dedicated overlay.
+  claude-code = inputs.llm-agents.packages.${pkgs.stdenv.hostPlatform.system}.claude-code;
+  mkClaudeProfile =
+    name:
+    pkgs.writeShellScriptBin "claude-${name}" ''
+      export CLAUDE_CONFIG_DIR="$HOME/.claude-${name}"
+      exec ${claude-code}/bin/claude "$@"
+    '';
+in
+{
   # You can import other home-manager modules here
   imports = [
 
@@ -12,6 +30,7 @@
     # You can also split up your configuration and import pieces of it here:
     ./features/alacritty
     ./features/git
+    ./features/herdr
     ./features/neovim
     ./features/niri
     ./features/signal
@@ -28,7 +47,6 @@
       outputs.overlays.additions
       outputs.overlays.modifications
       outputs.overlays.unstable-packages
-      inputs.claude-code-nix.overlays.default
 
       # You can also add overlays exported from other flakes:
       # neovim-nightly-overlay.overlays.default
@@ -58,20 +76,31 @@
   home = {
     username = "unreal";
     homeDirectory = "/home/unreal";
-
-    persistence = {
-      "/mnt/data/Shared" = {
-        directories = [ ".mozilla" "dotfiles" ];
-      };
-      "/mnt/data" = {
-        directories = [ "Resources" "Workspace" "Downloads" ];
-      };
-    };
-
     sessionVariables = {
+      EDITOR = "nvim";
+      VISUAL = "nvim";
+      BROWSER = "firefox";
       GTK_IM_MODULE = "fcitx";
       QT_IM_MODULE = lib.mkForce "fcitx";
       XMODIFIERS = "@im=fcitx";
+    };
+
+    persistence = {
+      "/mnt/data/Shared" = {
+        directories = [
+          ".mozilla"
+          "dotfiles"
+          ".claude-personal"
+          ".claude-work"
+        ];
+      };
+      "/mnt/data" = {
+        directories = [
+          "Resources"
+          "Workspace"
+          "Downloads"
+        ];
+      };
     };
   };
   userConf = {
@@ -92,10 +121,33 @@
 
   services.gnome-keyring = {
     enable = true;
-    components = [ "pkcs11" "secrets" "ssh" ];
+    components = [
+      "pkcs11"
+      "secrets"
+      "ssh"
+    ];
   };
 
-  xdg.enable = true;
+  xdg = {
+    enable = true;
+    # Thunar handles "Open Containing Folder" from Firefox and any other app
+    # that opens a directory via xdg-open (inode/directory MIME type).
+    mimeApps = {
+      enable = true;
+      defaultApplications = {
+        "inode/directory" = "thunar.desktop";
+        "text/html" = "firefox.desktop";
+        "x-scheme-handler/http" = "firefox.desktop";
+        "x-scheme-handler/https" = "firefox.desktop";
+        "x-scheme-handler/about" = "firefox.desktop";
+        "x-scheme-handler/unknown" = "firefox.desktop";
+      };
+    };
+    # Apps (and xdg-mime itself) write mimeapps.list at runtime, so an
+    # unmanaged copy is usually already present. Let HM own it declaratively
+    # instead of refusing to clobber it.
+    configFile."mimeapps.list".force = true;
+  };
   programs.btop = {
     enable = true;
   };
@@ -156,6 +208,7 @@
     thunar
     ristretto
     tumbler
+    unzip
     remmina
     chromium
     antimicrox
@@ -165,15 +218,31 @@
     awscli2
     thunderbird
     xvkbd
-    claude-code
+    (mkClaudeProfile "personal")
+    (mkClaudeProfile "work")
+    inputs.tgfs.packages.${pkgs.stdenv.hostPlatform.system}.tgfs
     ethtool
     mosh
   ];
 
-  # Stable SSH agent socket symlink for tmux agent forwarding
+  # Stable SSH agent socket at ~/.ssh/agent.sock. tmux pins SSH_AUTH_SOCK to
+  # this path (see extraConfig below), so we keep the symlink pointed at
+  # whichever agent is appropriate for the current session:
+  #   - In an SSH session with a forwarded agent, use the forwarded socket
+  #     (the client's 1Password), preserving the existing tmux-forwarding setup.
+  #   - Otherwise (a local, non-SSH login — e.g. the autologin niri session),
+  #     fall back to this host's own 1Password SSH agent so git can still
+  #     authenticate to GitHub. gnome-keyring's ssh component also sets
+  #     SSH_AUTH_SOCK on local login, but its agent doesn't hold the GitHub
+  #     key, so we override it here.
   programs.zsh.initContent = ''
-    if [ -S "$SSH_AUTH_SOCK" ] && [ "$SSH_AUTH_SOCK" != "$HOME/.ssh/agent.sock" ]; then
-      ln -sf "$SSH_AUTH_SOCK" "$HOME/.ssh/agent.sock"
+    if [ -n "$SSH_CONNECTION" ] && [ -S "$SSH_AUTH_SOCK" ]; then
+      if [ "$SSH_AUTH_SOCK" != "$HOME/.ssh/agent.sock" ]; then
+        ln -sf "$SSH_AUTH_SOCK" "$HOME/.ssh/agent.sock"
+        export SSH_AUTH_SOCK="$HOME/.ssh/agent.sock"
+      fi
+    elif [ -S "$HOME/.1password/agent.sock" ]; then
+      ln -sf "$HOME/.1password/agent.sock" "$HOME/.ssh/agent.sock"
       export SSH_AUTH_SOCK="$HOME/.ssh/agent.sock"
     fi
   '';
@@ -188,8 +257,7 @@
     enable = true;
     nix-direnv.enable = true;
   };
-  nixpkgs.config.chromium.commandLineArgs =
-    "--enable-features=UseOzonePlatform,WebRTCPipeWireCapturer --enable-wayland-ime --ozone-platform=wayland";
+  nixpkgs.config.chromium.commandLineArgs = "--enable-features=UseOzonePlatform,WebRTCPipeWireCapturer --enable-wayland-ime --ozone-platform=wayland";
 
   # Nicely reload system units when changing configs
   systemd.user.startServices = "sd-switch";

@@ -23,6 +23,15 @@
   };
   programs.home-manager.enable = true;
 
+  # catppuccin/nix is moving to: `enable` = global on/off toggle, `autoEnable` =
+  # auto-enroll every supported port. Adopt the new semantics explicitly to
+  # silence the migration warning while preserving current behavior (no ports
+  # themed): global toggle on, but nothing auto-enrolled.
+  catppuccin = {
+    enable = true;
+    autoEnable = false;
+  };
+
   # Stable SSH agent socket symlink so tmux sessions always find the agent
   programs.zsh.initContent = ''
     if [ -S "$SSH_AUTH_SOCK" ] && [ "$SSH_AUTH_SOCK" != "$HOME/.ssh/agent.sock" ]; then

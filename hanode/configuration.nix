@@ -18,7 +18,7 @@
       package = pkgs.nixVersions.stable;
       settings = {
         # Enable flakes and new 'nix' command
-        experimental-features = "nix-command flakes";
+        experimental-features = [ "nix-command" "flakes" ];
         # Deduplicate and optimize nix store
         auto-optimise-store = true;
         trusted-users = [ "unreal" "bing" ];
@@ -107,7 +107,11 @@
 
     # List packages installed in system profile. To search, run:
     # $ nix search wget
-    environment.systemPackages = [ pkgs.btop pkgs.bluetui ];
+    environment.systemPackages = [
+      pkgs.btop
+      pkgs.bluetui
+      inputs.tgfs.packages.${pkgs.stdenv.hostPlatform.system}.tgfs
+    ];
 
     # Some programs need SUID wrappers, can be configured further or are
     # started in user sessions.
@@ -132,6 +136,36 @@
       mediaLocation = "/mnt/data/immich";
       environment = {
         IMMICH_TELEMETRY_INCLUDE="all";
+      };
+    };
+
+    systemd.services.tgfs-immich-backup = {
+      description = "Back up Immich media with tgfs";
+      wants = [ "network-online.target" ];
+      after = [ "network-online.target" ];
+      unitConfig.RequiresMountsFor = [ "/mnt/data/immich" ];
+      environment = {
+        XDG_CONFIG_HOME = "/var/lib/tgfs/config";
+        XDG_DATA_HOME = "/var/lib/tgfs/data";
+        TGFS_KEYFILE = "/var/lib/tgfs/immich.key";
+      };
+      serviceConfig = {
+        Type = "oneshot";
+        User = "immich";
+        Group = "immich";
+        WorkingDirectory = "/mnt/data/immich";
+        ExecStart = "${inputs.tgfs.packages.${pkgs.stdenv.hostPlatform.system}.tgfs}/bin/tgfs push";
+        TimeoutStartSec = "infinity";
+        UMask = "0077";
+      };
+    };
+
+    systemd.timers.tgfs-immich-backup = {
+      description = "Run the Immich tgfs backup every 7 days";
+      wantedBy = [ "timers.target" ];
+      timerConfig = {
+        OnCalendar = "weekly";
+        Persistent = true;
       };
     };
 
@@ -175,7 +209,6 @@
         "ha.bongbing.net" = proxy { port = 8123; };
         "pihole.bongbing.net" = proxy { port = 1333; };
         "kindle-dashboard.bongbing.net" = proxy { port = 4000; };
-        "music.bongbing.net" = proxy { port = 6680; };
         "m.bongbing.net" = proxy { port = 4567; };
         "immich.bongbing.net" = proxy {
           port = config.services.immich.port;
@@ -188,20 +221,6 @@
               send_timeout       600s;
             '';
           };
-        };
-      };
-    };
-
-    services.mopidy = {
-      enable = true;
-      extensionPackages = [
-        pkgs.mopidy-youtube
-        pkgs.mopidy-iris
-      ];
-      settings = {
-        youtube.youtube_dl_package = "youtube-dl";
-        mpd = {
-          hostname = "::";
         };
       };
     };
@@ -353,6 +372,11 @@
           TZ = "Asia/Tokyo";
           FTLCONF_webserver_api_password = "pihole password";
           FTLCONF_dns_listeningMode = "all";
+          # Disable per-client query rate limiting. In Pi-hole v6 this is two
+          # leaf settings (dns.rateLimit.count / .interval), not the v5-style
+          # combined "count/interval" value; count=0 disables it.
+          FTLCONF_dns_rateLimit_count = "0";
+          FTLCONF_dns_rateLimit_interval = "0";
         };
       };
     };
@@ -372,15 +396,6 @@
       enable = true;
       apiTokenFile = "/var/lib/secrets/cf_token.secret";
       domains = [ "home.bongbing.net" "immich.bongbing.net" ];
-    };
-
-    systemd.services.kindle-dashboard = {
-      wantedBy = [ "network-online.target" ];
-      serviceConfig = {
-        EnvironmentFile = "/etc/kindle-dashboard.env";
-        ExecStart = "${inputs.kindle-weather-dashboard.packages.${pkgs.stdenv.hostPlatform.system}.default}/bin/kindle-weather-dashboard -p 4000";
-        Restart = "always";
-      };
     };
 
     services.suwayomi-server = {

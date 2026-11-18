@@ -25,7 +25,6 @@ in
 
   home.packages = with pkgs; [
     fuzzel # app launcher
-    swaybg # wallpaper
     wl-clipboard
     grim
     slurp # screenshots
@@ -53,6 +52,16 @@ in
         source = "builtin";
         builtin = "Catppuccin";
       };
+      # Noctalia draws the wallpaper itself (replacing the old swaybg spawn).
+      # `crop` is the equivalent of swaybg's `-m fill`. The default path is
+      # applied to every output; the picker folder points at the same library.
+      # Schema: https://docs.noctalia.dev/v5/desktop/wallpaper/
+      wallpaper = {
+        enabled = true;
+        fill_mode = "crop";
+        directory = "/home/unreal/Pictures/Wallpapers";
+        default.path = "/home/unreal/Pictures/Wallpapers/fuji.png";
+      };
     };
   };
 
@@ -72,24 +81,23 @@ in
 
       # Spawn noctalia-shell on session start (per
       # https://docs.noctalia.dev/v5/getting-started/compositor-settings/niri/).
+      # Wallpaper is drawn by noctalia's own wallpaper service (see
+      # programs.noctalia.settings.wallpaper below) — running swaybg here as
+      # well meant two surfaces fought over the background layer and noctalia's
+      # (briefly empty) one won, leaving niri's purple default visible.
       spawn-at-startup = [
         { command = [ "noctalia" ]; }
-        # Wallpaper on both physical outputs.
+        # Start 1Password minimised to the tray so its SSH agent socket
+        # (~/.1password/agent.sock) is available in this local autologin
+        # session — home.nix points SSH_AUTH_SOCK at it when there's no
+        # forwarded agent, letting git authenticate to GitHub without SSH.
+        # Use the system-wrapped binary from programs._1password-gui (polkit
+        # integration), referenced by absolute path per the PATH rules in
+        # CLAUDE.md.
         {
           command = [
-            "${pkgs.swaybg}/bin/swaybg"
-            "-o"
-            "DP-1"
-            "-i"
-            "/home/unreal/Pictures/Wallpapers/fuji.png"
-            "-m"
-            "fill"
-            "-o"
-            "DP-2"
-            "-i"
-            "/home/unreal/Pictures/Wallpapers/fuji.png"
-            "-m"
-            "fill"
+            "/run/current-system/sw/bin/1password"
+            "--silent"
           ];
         }
       ];
@@ -122,6 +130,8 @@ in
           height = 2160;
           refresh = 60.0;
         };
+        # Physically mounted in portrait; rotate the output so content is upright.
+        transform.rotation = 90;
         position = {
           x = 1920;
           y = 0;
@@ -174,6 +184,17 @@ in
           "Mod+L".action.focus-column-right = { };
           "Mod+J".action.focus-window-down = { };
           "Mod+K".action.focus-window-up = { };
+
+          # Mod+wheel scrolls focus across all columns. cooldown-ms keeps a
+          # hi-res / free-spinning wheel from skipping several columns per notch.
+          "Mod+WheelScrollDown" = {
+            action.focus-column-right = { };
+            cooldown-ms = 100;
+          };
+          "Mod+WheelScrollUp" = {
+            action.focus-column-left = { };
+            cooldown-ms = 100;
+          };
 
           # Move columns / windows
           "Mod+Shift+H".action.move-column-left = { };

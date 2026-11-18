@@ -19,9 +19,13 @@
     fsType = "vfat";
   };
 
-  fileSystems."/mnt/arch" = {
-    device = "/dev/disk/by-uuid/334e9200-6c9b-4f45-a3c8-4bc223e2c234";
+  # Nix store on the Samsung 860 EVO (sdb2, formerly the Arch install) rather
+  # than the DRAM-less Transcend that holds /. By label so the UUID doesn't
+  # need to be known before `mkfs.ext4 -L nix`.
+  fileSystems."/nix" = {
+    device = "/dev/disk/by-label/nix";
     fsType = "ext4";
+    options = [ "noatime" ];
   };
 
   fileSystems."/mnt/data" = {
@@ -36,8 +40,9 @@
     neededForBoot = true;
   };
 
-  swapDevices =
-    [{ device = "/dev/disk/by-uuid/cdeb6614-9f88-4be1-99e2-f9c45fbe2c80"; }];
+  # By label: the swap partition at the end of sdb was recreated during the
+  # /nix move, so its UUID changed.
+  swapDevices = [{ device = "/dev/disk/by-label/swap"; }];
 
   # Set your system kind (needed for flakes)
   nixpkgs.hostPlatform = "x86_64-linux";

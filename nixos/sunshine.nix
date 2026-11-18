@@ -28,6 +28,58 @@ let
   sunshineBin = getExe config.services.sunshine.package;
   audioSink = "sink-sunshine-stereo";
 
+  # swaybar status generator (i3bar/swaybar JSON protocol): renders a clickable
+  # "Apps" button (a named block) plus a clock. With click_events, swaybar makes
+  # each block a hotspot and writes a click-event JSON object to our stdin on
+  # click; a background reader launches fuzzel when the "launcher" block is hit.
+  # Clicks only fire over the block itself (label-only), and — per sway PR #6482
+  # — hotspots take priority over any bar bindsym. The matcher greps the bare
+  # value "launcher" rather than a quoted "name":"launcher" pair, because
+  # swaybar serialises the event with a space ("name": "launcher") and may split
+  # it across lines; matching the value is robust to both. Only the launcher
+  # block carries that string, so the clock block's clicks are ignored.
+  barStatus = pkgs.writeShellApplication {
+    name = "sway-sunshine-bar";
+    runtimeInputs = [
+      pkgs.coreutils
+      pkgs.fuzzel
+      pkgs.procps
+    ];
+    text = ''
+      # swaybar delivers one click-event JSON object per click on our stdin and
+      # reads status blocks from our stdout. Read CLICKS in the foreground and
+      # run the status/clock WRITER in the background — NOT the other way around.
+      # A backgrounded command (`&`) in a shell without job control (which is
+      # how systemd runs this) has its stdin silently redirected from /dev/null,
+      # so a backgrounded reader hits EOF immediately, exits, and never sees a
+      # single click — the exact bug that made the launcher button dead. The
+      # writer only needs stdout (which background jobs keep), so it's the safe
+      # one to background. The leading "[" and the clock block's events never
+      # match *launcher*, so only the "Apps" block launches fuzzel.
+      (
+        # Header (click_events on), then the infinite array: empty first
+        # element, comma-led updates.
+        printf '{"version":1,"click_events":true}\n[\n[]\n'
+        while :; do
+          clock=$(date +'%a %d %b   %H:%M')
+          printf ',[{"name":"launcher","full_text":"  Apps  ","background":"#89b4fa","color":"#1a1a2e"},{"full_text":"  %s  ","color":"#cdd6f4"}]\n' "$clock"
+          sleep 30
+        done
+      ) &
+
+      while IFS= read -r line; do
+        case "$line" in
+          # Detach fuzzel's stdin/stdout from this script's: our stdout IS the
+          # pipe swaybar parses as i3bar JSON, so anything fuzzel (or an app it
+          # launches, which inherits these fds) prints there corrupts the
+          # stream ("invalid i3bar json"). stderr is left on the journal for
+          # debugging. fuzzel still finds the display via the inherited env.
+          *launcher*) pgrep -x fuzzel >/dev/null || fuzzel </dev/null >/dev/null & ;;
+        esac
+      done
+    '';
+  };
+
   # Per-user runtime paths. User services always have $XDG_RUNTIME_DIR
   # (= /run/user/<uid>), so deriving these in shell avoids systemd %-specifier
   # quirks in Environment=.
@@ -147,6 +199,33 @@ let
         bindsym Escape mode "default"
     }
     bindsym $mod+r mode "resize"
+
+    # Status bar (swaybar, bundled with sway). Its status_command renders an
+    # "Apps" button label + clock (see barStatus); left-clicking anywhere on the
+    # bar opens the launcher, so no window/game click is intercepted the way
+    # --whole-window would.
+    bar {
+        position top
+        # sway spawns the bar by bare name "swaybar" via the session PATH, which
+        # this headless-only sway isn't on (no system-wide install), so the bar
+        # silently never appears. Pin the absolute swaybar from the sway package.
+        swaybar_command ${pkgs.sway}/bin/swaybar
+        status_command ${getExe barStatus}
+        # No bar-wide bindsym: the launcher is scoped to the "Apps" block via
+        # the status click-event protocol (see barStatus), so clicks elsewhere
+        # on the bar do nothing.
+        # Disable the tray: swaybar otherwise adopts the shared user session's
+        # StatusNotifier items (Sunshine, blueman) and renders their SVGs — which
+        # it cannot parse — as broken/coloured fallback icons (the stray "red"
+        # icon on the right). This headless bar has no use for a tray.
+        tray_output none
+        colors {
+            background #1a1a2e
+            statusline #cdd6f4
+            focused_workspace  #89b4fa #89b4fa #1a1a2e
+            inactive_workspace #1a1a2e #1a1a2e #cdd6f4
+        }
+    }
   '';
 
   # Launch the headless compositor with a deterministic IPC socket. Uses
@@ -159,15 +238,17 @@ let
     export SWAYSOCK="${sockShell}"
     # The bare systemd-user-service PATH only has a minimal toolset, so apps
     # launched by name (fuzzel uses each .desktop's `Exec=`, e.g. "alacritty")
-    # aren't found and silently fail to spawn. Add the system and user profile
-    # bin dirs (where installed apps live) plus sh/coreutils for Sway's exec.
+    # aren't found and silently fail to spawn. Add the bin dirs where apps live:
+    # system, NixOS-integrated home-manager, and the STANDALONE home-manager
+    # profile ($HOME/.nix-profile + .local/state/nix/profile) this host actually
+    # installs user apps into. Plus sh/coreutils/steam for Sway's own `exec`.
     export PATH="${
       lib.makeBinPath [
         pkgs.bash
         pkgs.coreutils
         config.programs.steam.package
       ]
-    }:/run/current-system/sw/bin:/etc/profiles/per-user/unreal/bin:$PATH"
+    }:/run/current-system/sw/bin:/etc/profiles/per-user/unreal/bin:$HOME/.nix-profile/bin:$HOME/.local/state/nix/profile/bin:$PATH"
     ${pkgs.coreutils}/bin/rm -f "$SWAYSOCK" "${displayShell}"
     exec ${getExe pkgs.sway} --config ${swayConfig}
   '';
@@ -520,6 +601,18 @@ in
       ];
     }
   ];
+
+  # Sunshine's PS5/DualSense (ds5) gamepad emulation creates its virtual pad
+  # through /dev/uhid, which ships as root:root 0600 (no group, no ACL) — so the
+  # unprivileged Sunshine user can't open it and ds5 is "disabled due to
+  # Permission denied", falling back to (and also failing on) the Xbox pad. The
+  # hardware.uinput module only grants /dev/uinput; uhid has no equivalent, so
+  # grant it here. GROUP=uinput is session-independent (unlike a logind uaccess
+  # ACL), so it survives the stream's VT-switch isolation. static_node retags
+  # the node the uhid module creates at load even without a fresh uevent.
+  services.udev.extraRules = ''
+    KERNEL=="uhid", SUBSYSTEM=="misc", MODE="0660", GROUP="uinput", OPTIONS+="static_node=uhid"
+  '';
 
   # Input isolation note: we do NOT use the upstream udev approach (stripping
   # ID_INPUT from the 0xBEEF/0xDEAD devices). On this setup that hides them from

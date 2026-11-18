@@ -37,7 +37,6 @@
       outputs.overlays.customs
       outputs.overlays.modifications
       outputs.overlays.unstable-packages
-      inputs.llm-agents.overlays.default
 
       # You can also add overlays exported from other flakes:
       # neovim-nightly-overlay.overlays.default
@@ -71,10 +70,17 @@
 
     settings = {
       # Enable flakes and new 'nix' command
-      experimental-features = "nix-command flakes";
+      experimental-features = [ "nix-command" "flakes" ];
       # Deduplicate and optimize nix store
       auto-optimise-store = true;
       trusted-users = [ "unreal" ];
+      # llm-agents.nix (claude-code, codex) prebuilds its agent binaries here.
+      # Values copied from the locked input's own `nixConfig` — grep
+      # `extra-substituters` in the llm-agents flake source if they change.
+      extra-substituters = [ "https://cache.numtide.com" ];
+      extra-trusted-public-keys = [
+        "niks3.numtide.com-1:DTx8wZduET09hRmMtKdQDxNNthLQETkc/yaX7M4qK0g="
+      ];
     };
     gc = {
       automatic = true;
@@ -100,6 +106,7 @@
       8080
       3001
       5173
+      8787
     ];
     allowedUDPPorts = [ 3389 ];
     allowedUDPPortRanges = [
@@ -132,7 +139,9 @@
       timeoutStyle = "hidden";
       efiSupport = true;
       device = "nodev";
-      useOSProber = true;
+      # /nix is its own filesystem, separate from /boot (on /), so GRUB must
+      # load kernels/initrds from copies in /boot/kernels.
+      copyKernels = true;
       memtest86.enable = true;
     };
   };
@@ -161,10 +170,19 @@
         "wheel"
         "docker"
         "networkmanager"
-        # Headless-Sunshine: lets the user's sway-sunshine / sunshine services
-        # read /dev/input/event* and create /dev/uinput devices without a
-        # logind seat (see ./sunshine.nix).
+        # Headless-Sunshine: the headless sway reads /dev/input/event* via the
+        # input group (no logind seat); see ./sunshine.nix.
         "input"
+        # Sunshine creates virtual input devices through /dev/uinput
+        # (root:uinput 0660) and /dev/uhid (PS5/DualSense emulation). Without
+        # uinput-group membership the only access is logind's per-session
+        # uaccess ACL — which the stream's VT-switch isolation (chvt off niri,
+        # see ./sunshine.nix) revokes by making this user's session inactive.
+        # Group membership is session-independent, so gamepad/touch/pen devices
+        # (created on demand *during* a stream, after the VT switch) can still
+        # be made; without it only the keyboard/mouse — created at service
+        # startup while the session is still active — worked.
+        "uinput"
       ];
       shell = pkgs.zsh;
     };
@@ -174,11 +192,12 @@
     git
     neovim
     zsh
-    steam
+    # Steam itself is installed by programs.steam below.
     steam-run
     clinfo
+    parted
     wayvnc
-    llm-agents.codex
+    inputs.llm-agents.packages.${pkgs.stdenv.hostPlatform.system}.codex
     # Second, isolated Steam instance rooted at /mnt/data2/SteamOld (see
     # pkgs/steam-old). Also launched by the headless Sunshine stream (./sunshine.nix).
     steam-old
@@ -208,6 +227,10 @@
   };
   programs.steam = {
     enable = true;
+    # Proton-GE: community Proton build that fixes many games which misbehave on
+    # stock Proton / Proton Experimental. Selectable per-game in Steam's
+    # compatibility settings as "GE-Proton…".
+    extraCompatPackages = with pkgs; [ proton-ge-bin ];
     remotePlay.openFirewall = true;
     dedicatedServer.openFirewall = true;
     gamescopeSession.enable = true;
@@ -288,6 +311,10 @@
   };
   services.ratbagd.enable = true;
   services.tailscale.enable = true;
+  # Cloudflare WARP / Zero Trust: runs the warp-svc daemon and puts warp-cli
+  # on PATH. Register/connect at runtime with `warp-cli registration new` then
+  # `warp-cli connect`.
+  services.cloudflare-warp.enable = true;
 
   services.displayManager.sddm = {
     enable = true;
